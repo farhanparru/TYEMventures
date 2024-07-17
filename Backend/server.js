@@ -20,8 +20,9 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 
 
-// Routes
+// Use the userRouter for handling routes
 app.use('/api/user', userRouter);
+app.use('/api/tyem/order_catalog', userRouter);
 
    
 

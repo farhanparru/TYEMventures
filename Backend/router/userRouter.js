@@ -6,6 +6,7 @@ const userCtrl = require('../controller/userCtrl')
 router
 
 .post('/orders',userCtrl.submitOrder)
+.post('/WhatsappOrder', userCtrl.onlineOrder);
 
      
 module.exports = router        

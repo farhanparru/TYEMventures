@@ -1,4 +1,5 @@
 const orderData = require("../Model/userModel");
+const Onlinorder = require('../Model/onlineOrdermodel')
 
 const validateOrderData = (data) => {
   const { status, orderDetails, location, itemDetails, method, total, discount, type }=data;
@@ -72,4 +73,35 @@ module.exports = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
+
+
+
+ onlineOrder:async(req,res)=>{
+   
+   try {
+    const orderData = {
+      orderDetails: {
+        posOrderId: req.body.order_id,
+        orderType: req.body.catalog_id, 
+        paymentMethod: req.body.payment_method,
+        paymentTendered: req.body.cart_total,
+        orderDate: new Date(req.body.ordered_at)
+      },
+      customer: {
+        name: req.body.customer_name,
+        email: "", 
+        phone: req.body.customer_phone_number
+      }
+    } 
+
+    const order = new Onlinorder(orderData)
+    await order.save()
+    res.status(201).send('Order saved successfully');
+   } catch (error) {
+    console.error('Error saving order:', error);
+    res.status(400).send('Error saving order');
+   }
+
+ }
+
 };
