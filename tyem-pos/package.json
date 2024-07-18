@@ -3,13 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "main": "../tyem-pos/src/main.js",
- "scripts": {
-  "dev": "cross-env NODE_ENV=development vite",
-  "start": "cross-env NODE_ENV=development electron .",
-  "build": "vite build",
-  "preview": "vite preview"
-},
-
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development vite",
+    "start": "cross-env NODE_ENV=development electron .",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@axenda/zatca": "^1.0.4",
     "@coreui/coreui": "^5.0.2",

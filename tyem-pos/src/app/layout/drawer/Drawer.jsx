@@ -1,4 +1,5 @@
 import React from "react";
+import { AiOutlineShoppingCart } from 'react-icons/ai';
 
 import { Layout } from "antd";
 import {
@@ -69,12 +70,12 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       onClick: () => setActiveMenu(drawerMenuLabels.customers.label),
       path: drawerMenuLabels.customers.path,
     },
-    // {
-    //   label: drawerMenuLabels.sales.label,
-    //   icon: UilArrowGrowth,
-    //   onClick: () => setActiveMenu(drawerMenuLabels.sales.label),
-    //   path: drawerMenuLabels.sales.path,
-    // },
+    {
+      label: drawerMenuLabels.sales.label,
+      icon: AiOutlineShoppingCart, // Updated to online orders icon
+      onClick: () => setActiveMenu(drawerMenuLabels.sales.label),
+      path: drawerMenuLabels.sales.path,
+    },
     {
       label: drawerMenuLabels.orders.label,
       icon: UilBox,

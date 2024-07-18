@@ -3,10 +3,11 @@ const router = express.Router()
 const userCtrl = require('../controller/userCtrl')
 
 
-router
+router   
 
 .post('/orders',userCtrl.submitOrder)
 .post('/WhatsappOrder', userCtrl.onlineOrder);
+
 
      
 module.exports = router        

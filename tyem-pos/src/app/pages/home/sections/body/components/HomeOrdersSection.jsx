@@ -3,6 +3,7 @@ import SearchInput from "../../../../../components/SearchInput";
 import { UilAngleDown } from "@iconscout/react-unicons";
 import { useDispatch, useSelector } from "react-redux";
 import { uniqueId } from "lodash";
+import sound from '../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3'
 import { Empty } from "antd";
 import Bill from "./printbill";
 import { getStoreUserData } from "../../../../../store/storeUser/storeUserSlice";
@@ -26,6 +27,9 @@ import {
 } from "../../../store/homeSlice";
 
 const HomeOrdersSection = () => {
+  const [orders, setOrders] = useState([]);
+  const [ordersToDisplay, setOrdersToDisplay] = useState([]);
+
   const { ordersList } = useSelector((state) => state.order);
   const { filteredOrders } = useSelector((state) => state.order);
   const [selectedOrder, setSelectedOrder] = React.useState(null);
@@ -305,298 +309,274 @@ const HomeOrdersSection = () => {
     ipcRenderer.send("print", JSON.stringify(data));
   };
 
+
+  // Orders Display
+
   const getOrdersToDisplay = () => {
-    let ordersToFilter = searching ? filteredOrders : ordersList;
+    let ordersToFilter = searching ? filteredOrders : orders;
 
-    if (selectedTab == "online-orders") {
-      ordersToFilter = ordersToFilter.filter(order => order.selling_price_group.toLowerCase() === "online")
-    } else if (selectedTab == "scheduled-orders") {
-      ordersToFilter = ordersToFilter.filter(order => order.is_scheduled == 1)
-
+    if (selectedTab === 'online-orders') {
+      ordersToFilter = ordersToFilter.filter(order => order.selling_price_group.toLowerCase() === 'online');
+    } else if (selectedTab === 'scheduled-orders') {
+      ordersToFilter = ordersToFilter.filter(order => order.is_scheduled === 1);
     }
-    // alert(selectedTab)
-    if (orderFilterType === "All") {
-      setEditOrder(ordersToFilter[0])
+
+    if (orderFilterType === 'All') {
+      setSelectedOrder(ordersToFilter[0]);
       return ordersToFilter;
     } else {
-      setEditOrder(ordersToFilter[0])
-
+      setSelectedOrder(ordersToFilter[0]);
       return ordersToFilter.filter(order => order.orderStatus.toLowerCase() === orderFilterType.toLowerCase());
     }
   };
 
-  const ordersToDisplay = getOrdersToDisplay();
+  useEffect(() => {
+    setOrdersToDisplay(getOrdersToDisplay());
+  }, [orders, searching, filteredOrders, selectedTab, orderFilterType]);
 
   const getScheduleTime = (inputTime) => {
-    // Assuming inputTime is the time string in 24-hour format
-
-    // Creating a Date object. We need a full date string to avoid errors, so adding a dummy date.
     const date = new Date(`1970-01-01T${inputTime}Z`);
-
-    // Formatting to 12-hour time format including AM/PM
     const time12hr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
-    return time12hr
+    return time12hr;
+  };
 
-  }
+
+  // Online Orders
+
+  useEffect(()=>{
+    const ws = new WebSocket('wss://tyem.word-network.site');
+
+
+    ws.onmessage = event => {
+      const newOrder = JSON.parse(event.data);
+      setOrders(prevOrders => [...prevOrders, newOrder]);
+      playNotificationSound();
+    };
+
+
+    ws.onopen = () => {
+      setLoading(false);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+    return () => ws.close();
+
+
+    
+  },[])
+
+  // const ordersToDisplay = orders; // Implement your logic to filter/display orders
+ 
+  // sound
+  const playNotificationSound = () => {
+    const audio = new Audio(sound);
+    audio.play();
+  };
+
+
+
   return (
-    <Detector
-      render={({ online }) => (
-        <>
-          <HomeTopBar selectedTab={selectedTab} />
+    <div>
+      <HomeTopBar selectedTab="Orders" />
+      <div className="flex flex-col gap-2 h-full w-full overflow-x-scroll">
+        {loading ? (
+          <LoadingScreen message="Syncing Orders" />
+        ) : (
+          <>
+            <div className="flex mt-100 w-full gap-2 border-b border-gray-200 p-3">
+              <SearchInput
+                className="flex-1"
+                placeholder="Search Order Number"
+                onInputChange={(value) => handleSearch(value.target.value)}
+              />
+              {['All', 'Draft', 'Received', 'Final'].map((item) => (
+                <DropButton key={item} title={item} />
+              ))}
+            </div>
 
-          <div className="flex flex-col gap-2 h-full w-full overflow-x-scroll">
-            {loading == true ? (
-              <LoadingScreen message="Syncing Orders" />
-            ) : (
-              <>
-                <div className="flex mt-100  w-full gap-2 border-b border-gray-200 p-3 ">
-                  <SearchInput
-                    className="flex-1"
-                    placeholder={"Search Order Number"}
-                    onInputChange={(value) => handleSearch(value.target.value)}
-                  />
-                  {["All", "Draft", "Received", "Final"].map((item, index) => {
-                    return <DropButton key={item} title={item} />;
-                  })}
-                </div>
-
-                <div
-                  className={`flex flex-1 h-full  ${ordersList?.length === 0
-                    ? " items-center justify-center"
-                    : ""
-                    }`}
-                >
-                  {ordersToDisplay?.length === 0 ? (
-                    <Empty description="Please place orders by selecting table to see order details" />
-                  ) : (
-                    <>
-                      <div className="flex h-full flex-1 flex-col w-[30%] overflow-y-auto border-r gap-2 border-gray-200 ">
-                        <div className="flex justify-between items-center mx-2">
-                          <p className="text-md font-bold">
-                            {ordersToDisplay?.length} Orders
+            <div className={`flex flex-1 h-full ${ordersToDisplay?.length === 0 ? 'items-center justify-center' : ''}`}>
+              {ordersToDisplay?.length === 0 ? (
+                <Empty description="Please place orders by selecting table to see order details" />
+              ) : (
+                <>
+                  <div className="flex h-full flex-1 flex-col w-[30%] overflow-y-auto border-r gap-2 border-gray-200">
+                    <div className="flex justify-between items-center mx-2">
+                      <p className="text-md font-bold">
+                        {ordersToDisplay?.length} Orders
+                      </p>
+                    </div>
+                    {showSyncButton && (
+                      <>
+                        <button
+                          className="bg-red-500 rounded-md hover:bg-red-600 m-2 p-2 flex gap-2 justify-center"
+                          onClick={syncAllOrders}
+                        >
+                          <p className="text-base font-bold text-white">
+                            Sync all orders
                           </p>
-                          {/* <DropButton title={"Date Range"} /> */}
-                        </div>
-                        {online && showSyncButton && (
-                          <>
-                            <button
-                              className="bg-red-500 rounded-md  hover:bg-red-600 m-2 p-2 flex gap-2 justify-center"
-                              onClick={() => {
-                                syncAllOrders();
-                              }}
-                            >
-                              <p className="text-base font-bold  text-white">
-                                Sync all orders
-                              </p>
-                            </button>
-                            <p className="text-md font-bold">Unsynced Orders</p>
-                            <div className="flex flex-col p-3 gap-2 h-full overflow-y-auto">
-
-                              {
-                                ordersToDisplay && ordersToDisplay?.length > 0 && ordersToDisplay?.map((order, index) => {
-                                  return (
-                                    <>
-                                      {order.is_synced == 0 && (
-                                        <OrderItemCard
-                                          order={order}
-                                          key={order.id}
-                                        />
-                                      )}
-                                    </>
-                                  );
-                                })}
-                            </div>
-                          </>
-                        )}
-                        {online && showSyncButton && (
-                          <p className="text-md font-bold">All Orders</p>
-                        )}
-                        <div className="p-3 gap-2 overflow-y-scroll h-100">
-
-                          {ordersToDisplay && ordersToDisplay?.length > 0 && ordersToDisplay?.map((order, index) => {
-                            return (
+                        </button>
+                        <p className="text-md font-bold">Unsynced Orders</p>
+                        <div className="flex flex-col p-3 gap-2 h-full overflow-y-auto">
+                          {ordersToDisplay?.map((order) => (
+                            order.is_synced === 0 && (
                               <OrderItemCard order={order} key={order.id} />
-                            );
-                          })}
-                          <div style={{ height: "500px" }}></div>
+                            )
+                          ))}
                         </div>
+                      </>
+                    )}
+                    {showSyncButton && (
+                      <p className="text-md font-bold">All Orders</p>
+                    )}
+                    <div className="p-3 gap-2 overflow-y-scroll h-100">
+                      {ordersToDisplay?.map((order) => (
+                        <OrderItemCard order={order} key={order.id} />
+                      ))}
+                      <div style={{ height: '500px' }}></div>
+                    </div>
+                  </div>
+                  {selectedOrder ? (
+                    <div className="flex flex-col gap-3 p-3 w-[70%] h-100 overflow-y-scroll">
+                      <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
+                        <p className="text-xl font-bold">Order Details</p>
                       </div>
-                      {selectedOrder ?
-                        <div className="flex flex-col  gap-3 p-3 w-[70%] h-100 overflow-y-scroll0">
-                          <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
-                            <p className="text-xl font-bold">Order Details</p>
-                          </div>
-                          <div className="flex bg-chicket-item rounded-lg flex-col gap-2 p-3 mt-4 border-b border-slate-200 pb-2">
-                            <div className="flex justify-between items-cente text-black mt-3 ">
-                              <p className="text-lg ">Order id</p>
-                              <p className="text-lg font-normal">
-                                {selectedOrder?.is_synced == 1
-                                  ? selectedOrder?.order_id
-                                  : selectedOrder?.id}
-                              </p>
-                            </div>
-                            {selectedOrder && selectedOrder.customer ? (
-                              <div className="flex justify-between items-cente text-black mt-3 ">
-                                <p className="text-lg ">Customer</p>
-                                <p className="text-lg font-normal">
-                                  {selectedOrder?.customer?.name}
-                                </p>
-                              </div>
-                            ) : (
-                              <div className="flex justify-between items-cente text-black mt-3 ">
-                                <p className="text-lg ">Customer</p>
-                                <p className="text-lg font-normal">
-                                  No Customer Selected
-                                </p>
-                              </div>
-                            )}
-                            <div className="flex justify-between items-cente text-black mt-3 ">
-                              <p className="text-lg ">No of Items</p>
-                              <p className="text-lg font-normal">
-                                {selectedOrder?.orderitems?.length}
-                              </p>
-                            </div>
-                            <div className="flex justify-between items-cente text-black mt-3 ">
-                              <p className="text-lg ">Final Total</p>
-                              <p className="text-lg font-normal">
-                                {selectedOrder?.is_synced == 1
-                                  ? parseFloat(
-                                    selectedOrder?.cartState.totalPayableAmount
-                                  ).toFixed(3)
-                                  : selectedOrder?.cartState?.totalPayableAmount}
-                                {/* ₹ {selectedOrder?.totalAmount.toFixed(3)} */}
-                              </p>
-                            </div>
-                            <div className="flex justify-between items-cente text-black mt-3 ">
-                              <p className="text-lg ">Payment Method</p>
-                              <p className="text-lg font-normal">
-                                {selectedOrder?.cartState?.paymentMethod}
-                              </p>
-                            </div>
-                            <div className="flex justify-between items-cente text-black mt-3 ">
-                              <p className="text-lg ">Payment Status</p>
-                              <p className="text-lg font-normal">
-                                {selectedOrder?.paymentStatus}
-                              </p>
-                            </div>
-                            <div className="flex justify-between items-cente text-black mt-3 ">
-                              <p className="text-lg ">Invoice Number</p>
-                              <p className="text-lg font-normal">
-                                {selectedOrder?.is_synced == 1
-                                  ? selectedOrder.invoice_no
-                                  : uniqueId() + uniqueId() + uniqueId()}
-                              </p>
-                            </div>
-                          </div>
-                          {selectedOrder?.is_scheduled == 1 &&
-
-                            <>
-                              <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
-                                <p className="text-xl font-bold">Schedule Details</p>
-                              </div>
-                              <div className="flex bg-chicket-item rounded-lg flex-col gap-2 p-3 mt-4 border-b border-slate-200 pb-2">
-                                <div className="flex justify-between items-cente text-black mt-3 ">
-                                  <p className="text-lg ">Schedule Date</p>
-                                  <p className="text-lg font-normal">
-                                    {selectedOrder?.schedule_date}
-                                  </p>
-                                </div>
-                                <div className="flex justify-between items-cente text-black mt-3 ">
-                                  <p className="text-lg ">Schedule Time</p>
-                                  <p className="text-lg font-normal">
-                                    {getScheduleTime(selectedOrder?.schedule_time)}
-                                    {/* { moment(selectedOrder?.schedule_time, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss A")} */}
-                                  </p>
-                                </div>
-                              </div>
-                            </>
-                          }
-                          <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
-                            <p className="text-xl font-bold">
-                              Order Items Details
+                      <div className="flex bg-chicket-item rounded-lg flex-col gap-2 p-3 mt-4 border-b border-slate-200 pb-2">
+                        <div className="flex justify-between items-center text-black mt-3">
+                          <p className="text-lg">Order id</p>
+                          <p className="text-lg font-normal">
+                            {selectedOrder?.is_synced === 1
+                              ? selectedOrder?.order_id
+                              : selectedOrder?.id}
+                          </p>
+                        </div>
+                        {selectedOrder.customer ? (
+                          <div className="flex justify-between items-center text-black mt-3">
+                            <p className="text-lg">Customer</p>
+                            <p className="text-lg font-normal">
+                              {selectedOrder.customer.name}
                             </p>
                           </div>
-                          <div className="gap-2 px-3 mt-4 border-b border-slate-200 pb-2">
-                            {selectedOrder?.orderitems?.map((item, index) => {
-                              return (
-                                <div className="flex py-2 justify-between items-cente text-slate-600">
-                                  <h2 className="text-xs font-bold">
-                                    {item.quantity} x {item.name}
-                                    <br />
-                                    {item?.is_refunded == 1 &&
-                                      <span class="inline-flex items-center rounded-md bg-red-400 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10">REFUNDED</span>
-                                    }
-                                  </h2>
-                                  <p className="text-md font-normal">
-                                    ₹ {item.totalPrice}
-                                  </p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <>
-                            {/* {printState == true && (
-                          <Bill selectedOrder={selectedOrder} />
-                        )} */}
-                            <button
-                              className={`${actionBtnClass}  bg-orange-500   hover:bg-orange-600 p-2 flex gap-2 justify-center `}
-                              onClick={() => {
-                                // setPrintState(true);
-                                // printThermal(selectedOrder);
-                                // setTimeout(() => {
-                                //   window.print();
-                                // }, 100);
-                                // setTimeout(() => {
-                                //   setPrintState(false);
-                                // }, 500);
-                                // dispatch(selectBodySection("home"));
-                              }}
-                            >
-                              <p className="text-sm font-semibold mt-[0.2rem] text-white">
-                                Print Bill
-                              </p>
-                            </button>
-                            {/* <button
-                          className={`${actionBtnClass}  bg-orange-500   hover:bg-orange-600 p-2 flex gap-2 justify-center `}
-                          onClick={() => {
-                            // dispatch(selectBodySection("home"));
-                          }}
-                        >
-                          <p className="text-sm font-semibold mt-[0.2rem] text-white">
-                            Add More Items to Order
-                          </p>
-                        </button> */}
-                            {selectedOrder?.is_synced == 1 ? (
-                              <button className="w-full bg-green-600 text-white font-bold py-2 rounded-md">
-                                Order Successfully Synced
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => syncSingleOrder(selectedOrder)}
-                                className="w-full bg-red-600 text-white font-bold py-2 rounded-md"
-                              >
-                                Order Not Synced . Click here to sync
-                              </button>
-                            )}
-                          </>
-                        </div>
-                        : (
-                          <div className="flex flex-col  gap-3 p-3 w-[70%] h-100 overflow-y-scroll0">
-
-                            No Orders Selected
+                        ) : (
+                          <div className="flex justify-between items-center text-black mt-3">
+                            <p className="text-lg">Customer</p>
+                            <p className="text-lg font-normal">
+                              No Customer Selected
+                            </p>
                           </div>
                         )}
-                    </>
+                        <div className="flex justify-between items-center text-black mt-3">
+                          <p className="text-lg">No of Items</p>
+                          <p className="text-lg font-normal">
+                            {selectedOrder.orderitems?.length}
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-center text-black mt-3">
+                          <p className="text-lg">Final Total</p>
+                          <p className="text-lg font-normal">
+                            {selectedOrder.is_synced === 1
+                              ? parseFloat(selectedOrder.cartState.totalPayableAmount).toFixed(3)
+                              : selectedOrder.cartState?.totalPayableAmount}
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-center text-black mt-3">
+                          <p className="text-lg">Payment Method</p>
+                          <p className="text-lg font-normal">
+                            {selectedOrder.cartState?.paymentMethod}
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-center text-black mt-3">
+                          <p className="text-lg">Payment Status</p>
+                          <p className="text-lg font-normal">
+                            {selectedOrder.paymentStatus}
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-center text-black mt-3">
+                          <p className="text-lg">Invoice Number</p>
+                          <p className="text-lg font-normal">
+                            {selectedOrder.is_synced === 1
+                              ? selectedOrder.invoice_no
+                              : `${uniqueId()}${uniqueId()}${uniqueId()}`}
+                          </p>
+                        </div>
+                      </div>
+                      {selectedOrder.is_scheduled === 1 && (
+                        <>
+                          <div className="flex justify-between items-center text-black mt-3">
+                            <p className="text-lg">Scheduled</p>
+                            <p className="text-lg font-normal">Yes</p>
+                          </div>
+                          <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
+                            <p className="text-xl font-bold">Schedule Details</p>
+                          </div>
+                          <div className="flex bg-chicket-item rounded-lg flex-col gap-2 p-3 mt-4 border-b border-slate-200 pb-2">
+                            <div className="flex justify-between items-center text-black mt-3 ">
+                              <p className="text-lg">Schedule Date</p>
+                              <p className="text-lg font-normal">
+                                {selectedOrder?.schedule_date}
+                              </p>
+                            </div>
+                            <div className="flex justify-between items-center text-black mt-3 ">
+                              <p className="text-lg">Schedule Time</p>
+                              <p className="text-lg font-normal">
+                                {getScheduleTime(selectedOrder?.schedule_time)}
+                                {/* { moment(selectedOrder?.schedule_time, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss A")} */}
+                              </p>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
+                        <p className="text-xl font-bold">Order Items Details</p>
+                      </div>
+                      <div className="gap-2 px-3 mt-4 border-b border-slate-200 pb-2">
+                        {selectedOrder?.orderitems?.map((item) => (
+                          <div className="flex py-2 justify-between items-center text-slate-600" key={item.id}>
+                            <h2 className="text-xs font-bold">
+                              {item.quantity} x {item.name}
+                              <br />
+                              {item?.is_refunded === 1 && (
+                                <span className="inline-flex items-center rounded-md bg-red-400 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-500/10">REFUNDED</span>
+                              )}
+                            </h2>
+                            <p className="text-md font-normal">₹ {item.totalPrice}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        className="bg-orange-500 hover:bg-orange-600 p-2 flex gap-2 justify-center"
+                        onClick={() => {
+                          // Implement print functionality
+                        }}
+                      >
+                        <p className="text-sm font-semibold mt-[0.2rem] text-white">Print Bill</p>
+                      </button>
+                      {selectedOrder?.is_synced === 1 ? (
+                        <button className="w-full bg-green-600 text-white font-bold py-2 rounded-md">
+                          Order Successfully Synced
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => syncSingleOrder(selectedOrder)}
+                          className="w-full bg-red-600 text-white font-bold py-2 rounded-md"
+                        >
+                          Order Not Synced. Click here to sync
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3 p-3 w-[70%] h-100 overflow-y-scroll">
+                      No Orders Selected
+                    </div>
                   )}
-                </div>
-              </>
-            )}
-          </div>
-        </>
-      )}
-
-
-    />
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 

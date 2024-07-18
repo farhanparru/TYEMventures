@@ -1,5 +1,5 @@
 const orderData = require("../Model/userModel");
-const Onlinorder = require('../Model/onlineOrdermodel')
+const OnlineOrder = require('../Model/onlineOrdermodel')
 
 const validateOrderData = (data) => {
   const { status, orderDetails, location, itemDetails, method, total, discount, type }=data;
@@ -76,32 +76,41 @@ module.exports = {
 
 
 
- onlineOrder:async(req,res)=>{
-   
-   try {
-    const orderData = {
-      orderDetails: {
-        posOrderId: req.body.order_id,
-        orderType: req.body.catalog_id, 
-        paymentMethod: req.body.payment_method,
-        paymentTendered: req.body.cart_total,
-        orderDate: new Date(req.body.ordered_at)
-      },
-      customer: {
-        name: req.body.customer_name,
-        email: "", 
-        phone: req.body.customer_phone_number
+  onlineOrder:async (req, res) => {
+    try {
+      // Validate request body
+      const { order_id, catalog_id, payment_method, cart_total, ordered_at, customer_name, customer_phone_number } = req.body;
+  
+      if (!order_id || !catalog_id || !payment_method || !cart_total || !ordered_at || !customer_name || !customer_phone_number) {
+        return res.status(400).send('Missing required order details');
       }
-    } 
-
-    const order = new Onlinorder(orderData)
-    await order.save()
-    res.status(201).send('Order saved successfully');
-   } catch (error) {
-    console.error('Error saving order:', error);
-    res.status(400).send('Error saving order');
-   }
-
- }
+  
+      // Construct order data
+      const orderData = {
+        orderDetails: {
+          posOrderId: order_id,
+          orderType: catalog_id,
+          paymentMethod: payment_method,
+          paymentTendered: cart_total,
+          orderDate: new Date(ordered_at),
+        },
+        customer: {
+          name: customer_name,
+          email: "", // Update this if email is available in req.body
+          phone: customer_phone_number,
+        },
+      };
+  
+      // Save order to database
+      const order = new OnlineOrder(orderData);
+      await order.save();
+  
+      // Respond to client
+      res.status(201).json({ message: 'Order saved successfully', orderId: order._id });
+    } catch (error) {
+      console.error('Error saving order:', error);
+      res.status(500).send('Error saving order');
+    }
+  }
 
 };
