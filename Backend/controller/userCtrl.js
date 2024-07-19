@@ -104,6 +104,14 @@ module.exports = {
       // Save order to database
       const order = new OnlineOrder(orderData);
       await order.save();
+
+          // Broadcast the new order to all WebSocket clients
+    const wss = req.app.get('wss');
+    wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(orderData));
+      }
+    });
   
       // Respond to client
       res.status(201).json({ message: 'Order saved successfully', orderId: order._id });

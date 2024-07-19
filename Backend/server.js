@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 // Use the userRouter for handling routes
 app.use('/api/user', userRouter);
-app.use('/api/tyem/order_catalog', userRouter);
+app.use('/api/tyem', userRouter);
 
    
 
@@ -40,4 +40,5 @@ wss.on('connection', ws => {
     ws.on('close', () => console.log('Client disconnected'));
   });
   
+  // Store the WebSocket server in the app object
   app.set('wss', wss);       
