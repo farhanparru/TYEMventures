@@ -2,7 +2,7 @@ import React,{useState} from 'react'
 import './App.css'
 import Headr from './Adminpanle/Headr'
 import Sidebar from './Adminpanle/Sidebar'
-import Home from './Adminpanle/Home'
+import FullWrapp from './Adminpanle/Home/FullWrapp'
 
 const Wrapp = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false)
@@ -15,7 +15,7 @@ const Wrapp = () => {
     <div className="grid-container">
      <Headr OpenSidebar={OpenSidebar}/>
      <Sidebar  openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar}/>
-     <Home/>
+     <FullWrapp/>
     </div>
 
   )

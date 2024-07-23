@@ -16,8 +16,10 @@ import Login from "./app/pages/auth";
 import { getStoreUserData } from "./app/store/storeUser/storeUserSlice";
 import { useSelector } from "react-redux";
 import HoldOrder from "./app/pages/HoldOrders/HoldOrders";
-import Wrapp from "./Wrapp";
 import Odersale from "./Adminpanle/Odersale";
+import FullWrapp from "./Adminpanle/Home/FullWrapp";
+import Item from "./Adminpanle/Item";
+import Print from "./app/pages/home/components/Print";
 
 
 
@@ -34,6 +36,9 @@ const App = () => {
   } = theme.useToken();
 
 
+
+
+  
 
 
   useEffect(() => {
@@ -77,27 +82,33 @@ const App = () => {
   const location = useLocation();
 
 
-  const showLayout = location.pathname !== '/Admin' && location.pathname !== '/sale';
+ 
+  const showLayout = ![ '/Sale', '/home','/Item'].includes(location.pathname);
 
   return (
     <div>
-    
-
       {isLoggedIn ? (
-        showLayout ? (
-          <Layout className="h-screen">
-            <Drawer activeMenu={activeMenu} setActiveMenu={setActiveMenu} collapsed={collapsed} />
-            <Layout className="site-layout">
-              <Navbar collapsed={collapsed} setCollapsed={setCollapsed} />
-              <Content style={{ minHeight: 280, height: "100%" }}>
-                <AuthRoutes />
-              </Content>
+        !['/bill'].includes(location.pathname) ? (
+          showLayout ? (
+            <Layout className="h-screen">
+              <Drawer activeMenu={activeMenu} setActiveMenu={setActiveMenu} collapsed={collapsed} />
+              <Layout className="site-layout">
+                <Navbar collapsed={collapsed} setCollapsed={setCollapsed} />
+                <Content style={{ minHeight: 280, height: "100%" }}>
+                  <AuthRoutes />
+                </Content>
+              </Layout>
             </Layout>
-          </Layout>
+          ) : (
+            <Routes>
+              <Route path="/Sale" element={<Odersale />} />
+              <Route path="/home" element={<FullWrapp />} />
+              <Route path="/Item" element={<Item />} />
+            </Routes>
+          )
         ) : (
           <Routes>
-            <Route path="/Admin" element={<Wrapp />} />
-            <Route path="/sale" element={<Odersale />} />
+            <Route path="/bill" element={<Print />} />
           </Routes>
         )
       ) : (
@@ -107,23 +118,20 @@ const App = () => {
   );
 };
 
-
 const NonAuthRoutes = () => {
   return (
     <Routes>
-     
       <Route path={drawerMenuLabels.home.path} exact element={<Login />} />
       <Route path={drawerMenuLabels.kds.path} exact element={<KDS />} />
       <Route path={drawerMenuLabels.home.path} exact element={<Home />} />
-    </Routes>   
+    </Routes>
   );
 };
-
 
 const AuthRoutes = () => {
   return (
     <Routes>
-     
+      <Route path="/bill" exact element={<Print />} />
       <Route path={drawerMenuLabels.home.path} exact element={<Home />} />
       <Route path={drawerMenuLabels.kds.path} exact element={<KDS />} />
       <Route
@@ -135,20 +143,18 @@ const AuthRoutes = () => {
       <Route path={drawerMenuLabels.orders.path} exact element={<Orders />} />
       <Route path={drawerMenuLabels.reports.path} exact element={<Reports />} />
       <Route path={drawerMenuLabels.cash.path} exact element={<Cash />} />
-     
       <Route
         path={drawerMenuLabels.settings.path}
         exact
         element={<Settings />}
       />
-        <Route
+      <Route
         path={'on-hold'}
         exact
         element={<HoldOrder />}
       />
-        
     </Routes>
-    
   );
 };
+
 export default App;

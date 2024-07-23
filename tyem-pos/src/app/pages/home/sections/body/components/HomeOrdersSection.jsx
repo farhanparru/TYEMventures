@@ -386,7 +386,7 @@ const HomeOrdersSection = () => {
       clearInterval(interval);
     }, 300000); // 5 minutes
   };
-  playNotificationSoundForFiveMinutes()
+  // playNotificationSoundForFiveMinutes()
 
   return (
     <div>

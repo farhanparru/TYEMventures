@@ -68,21 +68,20 @@ const HomeItemsSection = (props) => {
           onInputChange={(e) => onSearch(e.target.value)}
           trailingTitle="⌘ k"
         />
-        <button
+        {/* <button
           onClick={showModal}
           className="px-7 py-3 w-1/2 bg-gray-200 rounded-md text-xs border border-gray-500 shadow-2xl cursor-pointer transition-all ease-in hover:shadow-sm hover:bg-blue-500 hover:text-white hover:scale-95"
         >
           + Add Item
-        </button>
+        </button> */}
 
         <div className="flex items-center justify-end mr-[25px] text-blue-500 w-[40%] font-semibold">
-
-          <div
+         {/* <div
             className="ml-[10px] px-7 py-3 bg-gray-200 rounded-md text-xs border  w-[250px]  shadow-2xl cursor-pointer transition-all ease-in hover:shadow-sm hover:bg-blue-500 hover:text-white hover:scale-95 flex items-center justify-center"
             onClick={showCatModal}
           >
             <h6>+ Add Category</h6>
-          </div>
+          </div>  */}
         </div>
       </div>
       <div className="flex p-2 w-full h-full overflow-auto flex-row ">

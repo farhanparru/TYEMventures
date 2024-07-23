@@ -4,8 +4,8 @@ const OnlineOrder = require('../Model/onlineOrdermodel')
 const validateOrderData = (data) => {
   const { status, orderDetails, location, itemDetails, method, total, discount, type }=data;
 
-
-  const validStatuses = ["pending", "paid", "cancelled"];
+     
+  const validStatuses = ["PENDING", "COMPLETED"];
   const validMethods = ["cash", "card","Split","Talabat","other"];
   const validTypes = ["SALE", "PURCHASE"];
   const validDiscountTypes = ["fixed", "percentage"];
@@ -42,9 +42,9 @@ const validateOrderData = (data) => {
     throw new Error("Total must be a number");
   }
 
-  if (!validTypes.includes(type)) {
-    throw new Error("Invalid order type");
-  }
+  // if (!validTypes.includes(type)) {
+  //   throw new Error("Invalid order type");
+  // }
 };
 
 module.exports = {
@@ -62,11 +62,11 @@ module.exports = {
       });
     } catch (error) {
       console.error("Error creating order:", error.message);
-
+    
       if (
         error.message.startsWith("Invalid") ||
         error.message.includes("required") ||
-        error.message.includes("incomplete")
+        error.message.includes("incomplete")     
       ) {
         return res.status(400).json({ message: error.message });
       }
@@ -75,6 +75,24 @@ module.exports = {
   },
 
 
+
+  // sles report data get
+
+  getOrders:async(req,res)=>{
+
+  try {
+    
+    const orders = await orderData.find({});
+    return res.status(200).json(orders);
+
+  } catch (error) {
+    console.error("Error retrieving orders:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+
+
+  },
+ 
 
   onlineOrder:async (req, res) => {
     try {
@@ -119,6 +137,14 @@ module.exports = {
       console.error('Error saving order:', error);
       res.status(500).send('Error saving order');
     }
-  }
+  },
+
+
+  // Add Item
+
+
+
+   
+ 
 
 };

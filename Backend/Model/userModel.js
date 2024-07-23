@@ -4,7 +4,7 @@ const salesData = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ["pending", "paid", "cancelled"],
+    enum: ["PENDING", "COMPLETED"],
   },
   orderDetails: {
     orderNumber: {
@@ -30,7 +30,7 @@ const salesData = new mongoose.Schema({
       required: true,
     },
     itemName: {
-      type: [String], 
+      type: [String],
       required: true,
     },
     quantity: {
@@ -41,7 +41,7 @@ const salesData = new mongoose.Schema({
   method: {
     type: String,
     required: true,
-    enum: ["cash", "card", "Split", "Talabat", "other"], // Adjusted to match case
+    enum: ["cash", "card", "Split", "Talabat", "other"],
   },
   total: {
     type: Number,
@@ -56,7 +56,7 @@ const salesData = new mongoose.Schema({
     value: {
       type: Number,
       required: true,
-    }
+    },
   },
   createdDate: {
     type: Date,

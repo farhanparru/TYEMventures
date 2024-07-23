@@ -22,7 +22,7 @@ import { getStoreUserData } from "../../store/storeUser/storeUserSlice";
 import { getBookedTablesForToday, getFloorsTables } from "./store/tableSlice";
 import { getOrders } from "./store/orderSlice";
 import { getStoreCustomers } from "./store/customerSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import EditCart from "./sections/editCart";
 
 const Home = () => {
