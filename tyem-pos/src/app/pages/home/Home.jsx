@@ -24,6 +24,7 @@ import { getOrders } from "./store/orderSlice";
 import { getStoreCustomers } from "./store/customerSlice";
 import { useNavigate } from 'react-router-dom';
 import EditCart from "./sections/editCart";
+import ChatBot from "../../layout/navbar/ChatBotComponent"; // Import the ChatBot component
 
 const Home = () => {
   const selectedCategory = useSelector(getSelectedCategory);
@@ -33,8 +34,9 @@ const Home = () => {
   const store_user = useSelector(getStoreUserData);
   const [isLoggedIn, setisLoggedIn] = useState(false);
   const editOrder = useSelector((state) => state.order.editOrder);
+  const [isChatOpen, setIsChatOpen] = useState(false); // State to manage ChatBot visibility
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     if (store_user && store_user?.accessToken) {
       const kdsRoles = store_user.roles.filter(role => role.name.toUpperCase().startsWith("KDS"));
@@ -81,28 +83,45 @@ const Home = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  return (
-    <div className="flex items-stretch h-full  bg-white">
-      <div className="w-full h-full">
-        <div className="flex flex-col  h-full w-full">
-          {/* <HomeTopBar selectedTab={selectedTab} /> */}
-          <div className="w-full h-full flex  overflow-hidden ">
-            <HomeBodySection />
-            {selectedBodySection !== "orders" && selectedBodySection !== "online-orders" && selectedBodySection !== "scheduled-orders" &&  selectedBodySection !== "tables" ?
-              <>
+  // Function to handle the support button click
+  const handleChatSupport = () => {
+    setIsChatOpen(!isChatOpen);
+  };
 
+  return (
+    <div className="flex items-stretch h-full bg-white">
+      <div className="w-full h-full">
+        <div className="flex flex-col h-full w-full">
+          {/* HomeTopBar Component */}
+          <div className="w-full h-full flex overflow-hidden">
+            <HomeBodySection />
+            {selectedBodySection !== "orders" &&
+             selectedBodySection !== "online-orders" &&
+             selectedBodySection !== "scheduled-orders" &&
+             selectedBodySection !== "tables" ?
+              <>
                 <HomeCartSection />
               </>
               : null}
 
-            {editOrder && selectedBodySection === "orders" || selectedBodySection === "online-orders" || selectedBodySection === "scheduled-orders"  || selectedBodySection === "tables" ?
+            {editOrder && (selectedBodySection === "orders" ||
+             selectedBodySection === "online-orders" ||
+             selectedBodySection === "scheduled-orders" ||
+             selectedBodySection === "tables") ?
               <>
                 <EditCart />
               </>
               : null}
           </div>
+          {/* <button
+            className="fixed bottom-4 right-4 bg-blue-500 text-white rounded-full p-4 shadow-lg"
+            onClick={handleChatSupport}
+          >
+            Contact Support
+          </button> */}
         </div>
       </div>
+      {/* <ChatBot isOpen={isChatOpen} onClose={handleChatSupport} /> */}
     </div>
   );
 };

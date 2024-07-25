@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import Header from './Headr'; // Import your Header component
 import Sidebar from './Sidebar'; // Import your Sidebar component
 import Modal from 'react-modal';
 import AddCategory from './AddCategory'; // Import the AddCategory component
+import axios from 'axios';
 
 Modal.setAppElement('#root');
 
 const Item = () => {
+  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState('');
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [itemModalIsOpen, setItemModalIsOpen] = useState(false);
   const [categoryModalIsOpen, setCategoryModalIsOpen] = useState(false);
@@ -51,6 +54,22 @@ const Item = () => {
       height: '80%' // Adjust the height as needed
     }
   };
+
+  
+  // get Categrioes
+
+  useEffect(()=>{
+    if(itemModalIsOpen){
+       axios.get('http://localhost:8000/api/user/getCategory')
+       .then(response =>{
+        setCategories(response.data.categories);
+       })
+       .catch(error =>{
+        console.error('There was an error fetching the categories!', error);
+       })
+    }
+  },[itemModalIsOpen])
+  
 
   return (
     <div className="p-4 flex flex-col h-screen">
@@ -117,13 +136,24 @@ const Item = () => {
             <label className="block text-gray-700">Name *</label>
             <input type="text" className="p-2 border rounded w-full" placeholder="Item Name" />
           </div>
+
           <div className="mb-4">
-            <label className="block text-gray-700">Category *</label>
-            <select className="p-2 border rounded w-full">
-              <option>Select Category</option>
-              {/* Add categories here */}
-            </select>
-          </div>
+          <label className="block text-gray-700">Category *</label>
+          <select
+            className="p-2 border rounded w-full"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
+
           <div className="mb-4">
             <label className="block text-gray-700">Alternate Name</label>
             <input type="text" className="p-2 border rounded w-full" placeholder="Alternate Name" />

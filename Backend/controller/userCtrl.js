@@ -1,18 +1,27 @@
 const orderData = require("../Model/userModel");
-const OnlineOrder = require('../Model/onlineOrdermodel')
+const OnlineOrder = require("../Model/onlineOrdermodel");
+const Category = require("../Model/Categorymodel");
 
 const validateOrderData = (data) => {
-  const { status, orderDetails, location, itemDetails, method, total, discount, type }=data;
+  const {
+    status,
+    orderDetails,
+    location,
+    itemDetails,
+    method,
+    total,
+    discount,
+    type,
+  } = data;
 
-     
   const validStatuses = ["PENDING", "COMPLETED"];
-  const validMethods = ["cash", "card","Split","Talabat","other"];
+  const validMethods = ["cash", "card", "Split", "Talabat", "other"];
   const validTypes = ["SALE", "PURCHASE"];
   const validDiscountTypes = ["fixed", "percentage"];
-         
-  if (!validStatuses.includes(status)) {  
-    throw new Error("Invalid status value");    
-  }    
+
+  if (!validStatuses.includes(status)) {
+    throw new Error("Invalid status value");
+  }
   if (
     !orderDetails ||
     !orderDetails.orderNumber ||
@@ -62,11 +71,11 @@ module.exports = {
       });
     } catch (error) {
       console.error("Error creating order:", error.message);
-    
+
       if (
         error.message.startsWith("Invalid") ||
         error.message.includes("required") ||
-        error.message.includes("incomplete")     
+        error.message.includes("incomplete")
       ) {
         return res.status(400).json({ message: error.message });
       }
@@ -74,35 +83,43 @@ module.exports = {
     }
   },
 
-
-
   // sles report data get
 
-  getOrders:async(req,res)=>{
-
-  try {
-    
-    const orders = await orderData.find({});
-    return res.status(200).json(orders);
-
-  } catch (error) {
-    console.error("Error retrieving orders:", error.message);
-    res.status(500).json({ message: "Internal server error" });
-  }
-
-
+  getOrders: async (req, res) => {
+    try {
+      const orders = await orderData.find({});
+      return res.status(200).json(orders);
+    } catch (error) {
+      console.error("Error retrieving orders:", error.message);
+      res.status(500).json({ message: "Internal server error" });
+    }
   },
- 
 
-  onlineOrder:async (req, res) => {
+  onlineOrder: async (req, res) => {
     try {
       // Validate request body
-      const { order_id, catalog_id, payment_method, cart_total, ordered_at, customer_name, customer_phone_number } = req.body;
-  
-      if (!order_id || !catalog_id || !payment_method || !cart_total || !ordered_at || !customer_name || !customer_phone_number) {
-        return res.status(400).send('Missing required order details');
+      const {
+        order_id,
+        catalog_id,
+        payment_method,
+        cart_total,
+        ordered_at,
+        customer_name,
+        customer_phone_number,
+      } = req.body;
+
+      if (
+        !order_id ||
+        !catalog_id ||
+        !payment_method ||
+        !cart_total ||
+        !ordered_at ||
+        !customer_name ||
+        !customer_phone_number
+      ) {
+        return res.status(400).send("Missing required order details");
       }
-  
+
       // Construct order data
       const orderData = {
         orderDetails: {
@@ -118,33 +135,74 @@ module.exports = {
           phone: customer_phone_number,
         },
       };
-  
+
       // Save order to database
       const order = new OnlineOrder(orderData);
       await order.save();
 
-          // Broadcast the new order to all WebSocket clients
-    const wss = req.app.get('wss');
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(orderData));
-      }
-    });
-  
+      // Broadcast the new order to all WebSocket clients
+      const wss = req.app.get("wss");
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(orderData));
+        }
+      });
+
       // Respond to client
-      res.status(201).json({ message: 'Order saved successfully', orderId: order._id });
+      res
+        .status(201)
+        .json({ message: "Order saved successfully", orderId: order._id });
     } catch (error) {
-      console.error('Error saving order:', error);
-      res.status(500).send('Error saving order');
+      console.error("Error saving order:", error);
+      res.status(500).send("Error saving order");
     }
   },
 
+  // Add category
 
-  // Add Item
+  category: async (req, res) => {
+    const {
+      categoryName,
+      arabicName,
+      description,
+      arabicDescription,
+      enterPosition,
+    } = req.body;
+    try {
+      // Create a new category instance
 
+      const newCategory = new Category({
+        categoryName,
+        arabicName,
+        description,
+        arabicDescription,
+        enterPosition,
+      });
 
+      const savedCategory = await newCategory.save();
 
-   
- 
+      res.status(201).json({
+        success: true,
+        data: savedCategory,
+        message: "Category created successfully",
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
+
+  // get Category
+
+  getCategory:async(req,res)=>{
+    try {
+      const categories = await Category.find();
+      res.status(200).json({categories})
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+  }
 
 };

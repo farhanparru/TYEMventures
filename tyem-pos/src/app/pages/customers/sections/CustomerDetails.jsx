@@ -1,39 +1,24 @@
-import React from 'react'
+import React from 'react';
 
-const CustomerDetails = ({selectedCustomer}) => {
-
-    const getDetailTiles = ()=>{
-         const tiles = [];
-        const keys = Object.keys(selectedCustomer);
-        keys.map((key,index)=>{
-             const bgClass = index%2===0 ? "bg-gray-100" : "bg-transperent"
-            tiles.push(<CustomerDetailTile bgClass={bgClass} keyName={key} value={selectedCustomer[key]} key={key} />)
-        })
-       
-        return tiles;
-    }
-
+const CustomerDetails = ({ selectedCustomer }) => {
   return (
-    <div className={`flex flex-col gap-3 bg-white p-3 rounded-xl overflow-y-scroll w-full':'w-[40%]'}`}>
-        <h2 className="text-2xl font-bold mb-8">Customer Details</h2>
-        {selectedCustomer && getDetailTiles()}
+    <div>
+      <h2>Customer Details</h2>
+      <p><strong>First Name:</strong> {selectedCustomer.firstName}</p>
+      <p><strong>Last Name:</strong> {selectedCustomer.lastName}</p>
+      <p><strong>Mobile Number:</strong> {selectedCustomer.phone}</p>
+      <p><strong>Email:</strong> {selectedCustomer.email}</p>
+      <p><strong>Company Name:</strong> {selectedCustomer.companyName}</p>
+      <p><strong>TRN:</strong> {selectedCustomer.trn}</p>
+      <p><strong>Group:</strong> {selectedCustomer.group}</p>
+      <p><strong>Address:</strong> {selectedCustomer.address}</p>
+      <p><strong>Loyalty Points:</strong> {selectedCustomer.loyaltyPoints}</p>
+      <p><strong>Credit Limit:</strong> {selectedCustomer.creditLimit}</p>
+      <p><strong>Credits Given:</strong> {selectedCustomer.creditsGiven}</p>
+      <p><strong>Payment Received:</strong> {selectedCustomer.paymentReceived}</p>
+      <p><strong>Credits Outstanding:</strong> {selectedCustomer.creditsOutstanding}</p>
     </div>
-  )
+  );
+};
 
-  }
-export default CustomerDetails
-
-
-
-const CustomerDetailTile = ({keyName,value,bgClass}) => {
-  
-    return (
-        <div  className={`flex gap-5 w-full items-center p-5 rounded-xl transition-all ${bgClass??"bg-gray-100"} `}>
-                    <div className="flex-1">
-                        <h2 className={`text-lg font-bold `}>{keyName}</h2>
-                        <p className={`text-sm font-medium  text-gray-500`}>{value}</p>
-
-                        </div>
-                        </div>
-    )
-}
+export default CustomerDetails;

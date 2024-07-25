@@ -1,10 +1,8 @@
 import React from "react";
 import { AiOutlineShoppingCart } from 'react-icons/ai';
-
 import { Layout } from "antd";
 import {
   UilEstate,
-  UilRestaurant,
   UilUsersAlt,
   UilArrowGrowth,
   UilBox,
@@ -14,31 +12,23 @@ import {
 } from "@iconscout/react-unicons";
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
-import logo from '../../../assets/logo.png'
+import logo from '../../../assets/logo.png';
+
 const { Sider } = Layout;
 
 const DrawerMenuItem = ({ Icon, label, active, onClick, path }) => {
-  const iconClass = ` font-thin  text-xl ${active ? "text-ch-headers-500" : "text-gray-500"
-    }`;
+  const iconClass = `font-thin text-xl ${active ? "text-white" : "text-gray-500"}`;
   return (
     <Link to={path}>
       <div
         onClick={onClick}
-        className={`w-full p-2 h-16 min-w-[65px] max-w-[65px] flex  items-center rounded-xl 
-             gap-1 flex-col justify-center
-              ${active
-            ? " shadow-md  bg-ch-headers-100 text-ch-headers-500"
-            : `
-              hover:border hover:border-chicket-300 hover:scale-105 hover:shadow-md  text-ch-headers-500`
-          }
-              transition-all duration-300 ease-in-out
-               `}
+        className={`w-full p-2 h-16 flex items-center rounded-lg 
+          gap-1 flex-col justify-center
+          ${active ? "bg-gray-800 text-white" : "hover:bg-gray-700 text-gray-500"}
+          transition-all duration-300 ease-in-out`}
       >
         <Icon className={iconClass} />
-        <p
-          className={`text-[10px]  text-white font-medium  ${active ? `font-bold text-ch-headers-500` : `text-gray-500`
-            }`}
-        >
+        <p className={`text-[10px] font-medium ${active ? "text-white" : "text-gray-500"}`}>
           {label}
         </p>
       </div>
@@ -56,14 +46,6 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       },
       path: drawerMenuLabels.home.path,
     },
-    // {
-    //   label: drawerMenuLabels.kds.label,
-    //   icon: UilRestaurant,
-    //   onClick: () => {
-    //     setActiveMenu(drawerMenuLabels.kds.label);
-    //   },
-    //   path: drawerMenuLabels.kds.path,
-    // },
     {
       label: drawerMenuLabels.customers.label,
       icon: UilUsersAlt,
@@ -88,12 +70,6 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       onClick: () => setActiveMenu(drawerMenuLabels.reports.label),
       path: drawerMenuLabels.reports.path,
     },
-    // {
-    //   label: drawerMenuLabels.cash.label,
-    //   icon: UilWallet,
-    //   onClick: () => setActiveMenu(drawerMenuLabels.cash.label),
-    //   path: drawerMenuLabels.cash.path,
-    // },
     {
       label: drawerMenuLabels.settings.label,
       icon: UilSetting,
@@ -104,28 +80,31 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
 
   return (
     <Sider
-      theme="light"
+      theme="dark"
       trigger={null}
       collapsible
       width={120}
-      prefixCls=""
-      defaultCollapsed
-      className={` ${collapsed ? " border-r-2 shadow-r-xl shadow-black" : "hidden"}`}
+      collapsed={!collapsed}
+      className="bg-gray-900"
     >
-      <div className="flex  flex-col gap-5 px-2 py-3  items-center">
-        <img src={logo} alt="logo" className="w-12" />
-
-        {menuItems.map((item, index) => (
+      <div className="flex flex-col items-center py-4">
+        <img src={logo} alt="logo" className="w-12 mb-4" />
+        {menuItems.map((item) => (
           <DrawerMenuItem
             Icon={item.icon}
             label={item.label}
             active={activeMenu === item.label}
-            collapsed={collapsed}
             onClick={item.onClick}
             path={item.path}
             key={item.path}
           />
         ))}
+      </div>
+      <div className="mt-auto mb-4">
+        <div className="flex items-center justify-center text-gray-500">
+          <span className="text-xs">Online</span>
+          <div className="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
+        </div>
       </div>
     </Sider>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import axios from 'axios';
 
 Modal.setAppElement('#root');
 
@@ -9,16 +10,53 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
   const [arabicName, setArabicName] = useState('');
   const [arabicDescription, setArabicDescription] = useState('');
   const [position, setPosition] = useState('');
+  const [category, setCategory] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle the form submission logic here
-    console.log("Category Name:", categoryName);
-    console.log("Category Description:", categoryDescription);
-    console.log("Arabic Name:", arabicName);
-    console.log("Arabic Description:", arabicDescription);
-    console.log("Position:", position);
-    closeModal();
+    
+    const newCategory = {
+      categoryName,
+      description: categoryDescription,
+      arabicName,
+      arabicDescription,
+      enterPosition: position
+    };
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/user/createCategory', newCategory);
+      
+      if (response.status === 201) {
+        setCategory([...category, response.data.data]);
+        // Optionally, you can clear the form fields here
+        setCategoryName('');
+        setCategoryDescription('');
+        setArabicName('');
+        setArabicDescription('');
+        setPosition('');
+        closeModal();
+      }
+    } catch (error) {
+      console.error('There was an error creating the category!', error);
+    }
+  };
+
+  const handleTranslate = async () => {
+    const apiKey = '';
+    const apiUrl = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+
+    try {
+      const response = await axios.post(apiUrl, {
+        q: categoryName,
+        target: 'ar' // Arabic language code
+      });
+
+      if (response.data && response.data.data && response.data.data.translations) {
+        setArabicName(response.data.data.translations[0].translatedText);
+      }
+    } catch (error) {
+      console.error('There was an error translating the text!', error);
+    }
   };
 
   const customStyles = {
@@ -56,6 +94,7 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
             placeholder="Category Description"
             value={categoryDescription}
             onChange={(e) => setCategoryDescription(e.target.value)}
+            required
           />
         </div>
         <div className="mb-4">
@@ -66,7 +105,9 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
             placeholder="Arabic Name"
             value={arabicName}
             onChange={(e) => setArabicName(e.target.value)}
+            required
           />
+          <button type="button" onClick={handleTranslate} className="p-2 bg-purple-500 text-white rounded mt-2">Translate</button>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Arabic Description</label>
@@ -75,16 +116,18 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
             placeholder="Arabic Description"
             value={arabicDescription}
             onChange={(e) => setArabicDescription(e.target.value)}
+            required
           />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Enter Position</label>
           <input
-            type="text"
+            type="number"
             className="p-2 border rounded w-full"
             placeholder="Position"
             value={position}
             onChange={(e) => setPosition(e.target.value)}
+            required
           />
         </div>
         <button type="button" onClick={closeModal} className="p-2 bg-purple-500 text-white rounded mr-2">Cancel</button>
