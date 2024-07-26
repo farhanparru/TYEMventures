@@ -1,6 +1,7 @@
 const orderData = require("../Model/userModel");
 const OnlineOrder = require("../Model/onlineOrdermodel");
 const Category = require("../Model/Categorymodel");
+const WebSocket = require('ws')
 
 const validateOrderData = (data) => {
   const {
@@ -95,68 +96,67 @@ module.exports = {
     }
   },
 
+  // Whatsapp Online Oders
   onlineOrder: async (req, res) => {
     try {
-      // Validate request body
-      const {
-        order_id,
-        catalog_id,
-        payment_method,
-        cart_total,
-        ordered_at,
-        customer_name,
-        customer_phone_number,
-      } = req.body;
+        const {
+            order_id,
+            catalog_id,
+            payment_method,
+            cart_total,
+            ordered_at,
+            customer_name,
+            customer_email,
+            customer_phone_number,
+        } = req.body;
 
-      if (
-        !order_id ||
-        !catalog_id ||
-        !payment_method ||
-        !cart_total ||
-        !ordered_at ||
-        !customer_name ||
-        !customer_phone_number
-      ) {
-        return res.status(400).send("Missing required order details");
-      }
-
-      // Construct order data
-      const orderData = {
-        orderDetails: {
-          posOrderId: order_id,
-          orderType: catalog_id,
-          paymentMethod: payment_method,
-          paymentTendered: cart_total,
-          orderDate: new Date(ordered_at),
-        },
-        customer: {
-          name: customer_name,
-          email: "", // Update this if email is available in req.body
-          phone: customer_phone_number,
-        },
-      };
-
-      // Save order to database
-      const order = new OnlineOrder(orderData);
-      await order.save();
-
-      // Broadcast the new order to all WebSocket clients
-      const wss = req.app.get("wss");
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(orderData));
+        if (
+            !order_id ||
+            !catalog_id ||
+            !payment_method ||
+            !cart_total ||
+            !ordered_at ||
+            !customer_name ||
+            !customer_phone_number
+        ) {
+            return res.status(400).send("Missing required order details");
         }
-      });
 
-      // Respond to client
-      res
-        .status(201)
-        .json({ message: "Order saved successfully", orderId: order._id });
+        // Construct order data
+        const orderData = {
+            orderDetails: {
+                posOrderId: order_id,
+                orderType: catalog_id,
+                paymentMethod: payment_method,
+                paymentTendered: cart_total,
+                orderDate: new Date(ordered_at),
+            },
+            customer: {
+                name: customer_name,
+                email:customer_email, 
+                phone: customer_phone_number,
+            },
+        };
+
+        // Save order to database
+        const order = new OnlineOrder(orderData);
+        await order.save();
+
+        // Broadcast the new order to all WebSocket clients
+        const wss = req.app.get('wss');
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(orderData));
+            }
+        });
+
+        res.status(200).send('Order received');
     } catch (error) {
-      console.error("Error saving order:", error);
-      res.status(500).send("Error saving order");
+        console.error('Error processing order:', error);
+        res.status(500).send('Internal Server Error');
     }
-  },
+},
+
 
   // Add category
 

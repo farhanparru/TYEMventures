@@ -11,7 +11,7 @@ const {Server} = require('ws')
    
 
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://ventrues.word-network.site"], // Frontend deployed URL
     methods: "GET,POST,PUT,DELETE",
     credentials: true
   }));
@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 // Use the userRouter for handling routes
 app.use('/api/user', userRouter);
-app.use('/api/tyem', userRouter);
+app.use('/api/tyem', userRouter);  // Use webhookRouter for handling webhook routes
 
    
 
@@ -32,13 +32,16 @@ const server = app.listen(PORT,()=>{
 })
 
 // WebSocket setup
-
-const wss = new Server({server})
+const wss = new Server({ server });
 
 wss.on('connection', ws => {
     console.log('Client connected');
+
+    ws.on('message', message => {
+        console.log('Received:', message);
+    });
+
     ws.on('close', () => console.log('Client disconnected'));
-  });
-  
-  // Store the WebSocket server in the app object
-  app.set('wss', wss);       
+});
+
+app.set('wss', wss);
