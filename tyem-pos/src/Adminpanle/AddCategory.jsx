@@ -11,21 +11,36 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
   const [arabicDescription, setArabicDescription] = useState('');
   const [position, setPosition] = useState('');
   const [category, setCategory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [translations, setTranslations] = useState({});
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+
+  const languages = [
+    { code: 'ar', name: 'Arabic' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'de', name: 'German' },
+    { code: 'it', name: 'Italian' },
+    // Add other languages as needed
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const newCategory = {
       categoryName,
       description: categoryDescription,
       arabicName,
       arabicDescription,
-      enterPosition: position
+      enterPosition: position,
+      translations
     };
 
     try {
       const response = await axios.post('http://localhost:8000/api/user/createCategory', newCategory);
-      
+
       if (response.status === 201) {
         setCategory([...category, response.data.data]);
         // Optionally, you can clear the form fields here
@@ -34,6 +49,8 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
         setArabicName('');
         setArabicDescription('');
         setPosition('');
+        setTranslations({});
+        setSelectedLanguage('');
         closeModal();
       }
     } catch (error) {
@@ -42,20 +59,31 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
   };
 
   const handleTranslate = async () => {
-    const apiKey = '';
-    const apiUrl = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+    if (!categoryName.trim()) {
+      alert('Please enter a valid category name for translation.');
+      return;
+    }
+
+    if (!selectedLanguage) {
+      alert('Please select a language for translation.');
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const response = await axios.post(apiUrl, {
+      const response = await axios.post('https://libretranslate.com/translate', {
         q: categoryName,
-        target: 'ar' // Arabic language code
+        source: 'en',
+        target: selectedLanguage
       });
-
-      if (response.data && response.data.data && response.data.data.translations) {
-        setArabicName(response.data.data.translations[0].translatedText);
-      }
+      setArabicName(response.data.translatedText);
+      setTranslations({ [selectedLanguage]: response.data.translatedText });
     } catch (error) {
-      console.error('There was an error translating the text!', error);
+      console.error('Error translating the text!', error);
+      setTranslations({ [selectedLanguage]: 'Translation error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,6 +126,21 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
           />
         </div>
         <div className="mb-4">
+          <label className="block text-gray-700">Select Language for Translation</label>
+          <select
+            className="p-2 border rounded w-full"
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            required
+          >
+            <option value="">Select Language</option>
+            {languages.map((lang) => (
+              <option key={lang.code} value={lang.code}>{lang.name}</option>
+            ))}
+          </select>
+          <button type="button" onClick={handleTranslate} className="p-2 bg-blue-500 text-white rounded mt-2">Translate</button>
+        </div>
+        <div className="mb-4">
           <label className="block text-gray-700">Arabic Name</label>
           <input
             type="text"
@@ -107,7 +150,6 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
             onChange={(e) => setArabicName(e.target.value)}
             required
           />
-          <button type="button" onClick={handleTranslate} className="p-2 bg-purple-500 text-white rounded mt-2">Translate</button>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Arabic Description</label>
@@ -131,8 +173,21 @@ const AddCategory = ({ modalIsOpen, closeModal }) => {
           />
         </div>
         <button type="button" onClick={closeModal} className="p-2 bg-purple-500 text-white rounded mr-2">Cancel</button>
-        <button type="submit" className="p-2 bg-purple-500 text-white rounded">Save</button>
+        <button type="submit" className="p-2 bg-purple-500 text-white rounded" disabled={loading}>Save</button>
       </form>
+      {loading && <p>Translating...</p>}
+      {Object.keys(translations).length > 0 && (
+        <div>
+          <h3>Translations:</h3>
+          <ul>
+            {Object.entries(translations).map(([lang, translation]) => (
+              <li key={lang}>
+                {lang}: {translation}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </Modal>
   );
 };
