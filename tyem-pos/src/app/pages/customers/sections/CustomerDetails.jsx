@@ -1,22 +1,57 @@
 import React from 'react';
 
-const CustomerDetails = ({ selectedCustomer }) => {
+const CustomerDetails = ({ customer }) => {
   return (
-    <div>
-      <h2>Customer Details</h2>
-      <p><strong>First Name:</strong> {selectedCustomer.firstName}</p>
-      <p><strong>Last Name:</strong> {selectedCustomer.lastName}</p>
-      <p><strong>Mobile Number:</strong> {selectedCustomer.phone}</p>
-      <p><strong>Email:</strong> {selectedCustomer.email}</p>
-      <p><strong>Company Name:</strong> {selectedCustomer.companyName}</p>
-      <p><strong>TRN:</strong> {selectedCustomer.trn}</p>
-      <p><strong>Group:</strong> {selectedCustomer.group}</p>
-      <p><strong>Address:</strong> {selectedCustomer.address}</p>
-      <p><strong>Loyalty Points:</strong> {selectedCustomer.loyaltyPoints}</p>
-      <p><strong>Credit Limit:</strong> {selectedCustomer.creditLimit}</p>
-      <p><strong>Credits Given:</strong> {selectedCustomer.creditsGiven}</p>
-      <p><strong>Payment Received:</strong> {selectedCustomer.paymentReceived}</p>
-      <p><strong>Credits Outstanding:</strong> {selectedCustomer.creditsOutstanding}</p>
+    <div className="bg-white shadow-md rounded p-4 w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-bold text-lg">Customer Details</h2>
+      
+      </div>
+      <div className="mb-4">
+        <input type="checkbox" className="mr-2" id="default-customer" />
+        <label htmlFor="default-customer">use as default customer on checkout</label>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="border-b py-2">
+          <span className="font-bold">First Name:</span> {customer.firstName}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Last Name:</span> {customer.lastName}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Mobile Number:</span> {customer.mobileNumber}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">E-Mail:</span> {customer.email}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Company Name:</span> {customer.companyName}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">TRN:</span> {customer.trn}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Group:</span> {customer.group}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Address:</span> {customer.address}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Loyalty Points:</span> {customer.loyaltyPoints}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Credit Limit:</span> ₹{customer.creditLimit}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold text-red-500">Credits Given:</span> ₹{customer.creditsGiven}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold text-green-500">Payment Received:</span> ₹{customer.paymentReceived}
+        </div>
+        <div className="border-b py-2">
+          <span className="font-bold">Credit Outstanding:</span> ₹{customer.creditOutstanding}
+        </div>
+      </div>
     </div>
   );
 };

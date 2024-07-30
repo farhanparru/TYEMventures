@@ -4,11 +4,15 @@ import { UilAngleDown } from "@iconscout/react-unicons";
 import { useDispatch, useSelector } from "react-redux";
 import { uniqueId } from "lodash";
 import OrderItemCard from "./OrderItemCard";
-import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
 import { Empty } from "antd";
 import Bill from "./printbill";
-import io from 'socket.io-client'
-import { fetchOrders } from "../../../../../../services/apiService";
+import OrderNotification from "../components/OrderNotification";
+import {
+  fetchOrders,
+  connectWebSocket,
+} from "../../../../../../services/apiService";
+import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
+
 import { getStoreUserData } from "../../../../../store/storeUser/storeUserSlice";
 import {
   addOrder,
@@ -30,17 +34,21 @@ import {
 } from "../../../store/homeSlice";
 
 const HomeOrdersSection = () => {
-  const [orders, setOrders] = useState([]);
-  const [ordersToDisplay, setOrdersToDisplay] = useState([]);
+  const [orders, setOrders] = useState([]); //
+  const [ordersToDisplay, setOrdersToDisplay] = useState([]); //
+  const [soundPlaying, setSoundPlaying] = useState(false);
+  
+  console.log(ordersToDisplay, "jj");
+
   const { ordersList } = useSelector((state) => state.order);
-  const { filteredOrders } = useSelector((state) => state.order);
-  const [selectedOrder, setSelectedOrder] = React.useState(null);
+  const { filteredOrders } = useSelector((state) => state.order); //
+  const [selectedOrder, setSelectedOrder] = React.useState(null);//
   const [printState, setPrintState] = React.useState(false);
   const [showSyncButton, setShowSyncButton] = React.useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //
   const store_user = useSelector(getStoreUserData);
   const [notificationApi, contextHolder] = notification.useNotification();
-  const selectedTab = useSelector(getSelectedBodySection);
+  const selectedTab = useSelector(getSelectedBodySection);//
   const actionBtnClass = `w-full text-[0.6rem] py-2 font-medium rounded-md text-white  transition-all ease-in-out hover:scale-95 `;
   const dispatch = useDispatch();
   const [searching, setSearching] = useState(false);
@@ -225,32 +233,55 @@ const HomeOrdersSection = () => {
     ipcRenderer.send("print", JSON.stringify(data));
   };
 
- 
 
 
-   // Initialize the audio object
-   const audio = new Audio(notificationSound);
+  const playNotificationSound = () => {
+    const audio = new Audio(notificationSound);
+    audio.play();
+  };
 
-   // Function to play the notification sound
-   const playNotificationSound = () => {
-     audio.play();
-   };
+  // Fetch initial orders and setup WebSocket connection
 
-
-
-   useEffect(() => {
+  useEffect(() => {
     const fetchAndSetOrders = async () => {
       try {
         const data = await fetchOrders();
-        setOrders(data);
-        setLoading(false);
+        setOrders(data); // Set the fetched orders to state
+        setLoading(false);  // Stop loading indicator
       } catch (error) {
-        setLoading(false);
+        setLoading(false); // Stop loading indicator
+        console.error("Error fetching initial orders:", error);
       }
     };
 
     fetchAndSetOrders();
+
+    const socket = connectWebSocket((newOrder) => {
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+       setSoundPlaying(true); // Play sound when a new order is received
+    });
+
+    return () => {
+      socket.close();
+    };
   }, []);
+
+
+  useEffect(() => {
+    let timeout;
+    if (soundPlaying) {
+      playNotificationSound();
+      timeout = setTimeout(() => {
+        setSoundPlaying(false); // Stop playing sound after 5 minutes
+      }, 5 * 60 * 1000); // 5 minutes in milliseconds
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [soundPlaying]);
 
 
 
@@ -280,24 +311,9 @@ const HomeOrdersSection = () => {
     }
   };
 
-  // Update ordersToDisplay whenever dependencies change
   useEffect(() => {
     setOrdersToDisplay(getOrdersToDisplay());
   }, [orders, searching, filteredOrders, selectedTab, orderFilterType]);
-
-
-  useEffect(() => {
-    const socket = io('http://tyem.word-network.site'); // Replace with your WebSocket URL
-
-    socket.on('newOrder', (newOrder) => {
-      setOrders(prevOrders => [newOrder, ...prevOrders]);
-      playNotificationSound(); // Play sound when a new order is received
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   // Convert time to 12-hour format
   // const getScheduleTime = (inputTime) => {
@@ -310,11 +326,25 @@ const HomeOrdersSection = () => {
   //   });
   //   return time12hr;
   // };
+ 
 
-  
+  const handleSyncOrder = (order) => {
+    syncSingleOrder(order)
+      .then(() => {
+        toast.success('Order synced successfully');
+      })
+      .catch((error) => {
+        toast.error('Failed to sync order');
+        console.error('Error syncing order:', error);
+      });
+  };
+
+
+
 
   return (
     <div>
+      <OrderNotification setOrders={setOrders} />
       <HomeTopBar selectedTab="Orders" />
       <div className="flex flex-col gap-2 h-full w-full overflow-x-scroll">
         {loading ? (
@@ -325,13 +355,12 @@ const HomeOrdersSection = () => {
               <SearchInput
                 className="flex-1"
                 placeholder="Search Order Number"
-                onInputChange={(value) => handleSearch(value.target.value)}
+                onInputChange={(e) => handleSearch(e.target.value)}
               />
-              {['All', 'Draft', 'Received', 'Final'].map(item => (
-                <DropButton key={item} title={item} />
+              {['All', 'Draft', 'Received', 'Final'].map((item) => (
+                <DropButton key={item} title={item} onClick={() => setOrderFilterType(item)} />
               ))}
             </div>
-
             <div
               className={`flex flex-1 h-full ${
                 ordersToDisplay.length === 0 ? 'items-center justify-center' : ''
@@ -346,78 +375,26 @@ const HomeOrdersSection = () => {
                       <p className="text-md font-bold">{ordersToDisplay.length} Orders</p>
                     </div>
                     <div className="p-3 gap-2 overflow-y-scroll h-100">
-                      {ordersToDisplay.map(order => (
+                      {ordersToDisplay.map((order) => (
                         <OrderItemCard
                           order={order}
                           key={order.id}
-                          onClick={setSelectedOrder}
+                          onClick={() => setSelectedOrder(order)}
                         />
                       ))}
                       <div style={{ height: '500px' }}></div>
                     </div>
                   </div>
                   {selectedOrder ? (
-                    <div className="flex flex-col gap-3 p-3 w-[70%] h-100 overflow-y-scroll">
-                      <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
-                        <p className="text-xl font-bold">Order Details</p>
-                      </div>
-                      <div className="flex bg-chicket-item rounded-lg flex-col gap-2 p-3 mt-4 border-b border-slate-200 pb-2">
-                        <div className="flex justify-between items-center text-black mt-3">
-                          <p className="text-lg">Order ID</p>
-                          <p className="text-lg font-normal">
-                            {selectedOrder.is_synced === 1
-                              ? selectedOrder.orderDetails.posOrderId
-                              : selectedOrder.id}
-                          </p>
-                        </div>
-                        {selectedOrder.customer ? (
-                          <div className="flex justify-between items-center text-black mt-3">
-                            <p className="text-lg">Customer</p>
-                            <p className="text-lg font-normal">
-                              {selectedOrder.customer.name}
-                            </p>
-                            <p className="text-lg font-normal">
-                              {selectedOrder.customer.email}
-                            </p>
-                            <p className="text-lg font-normal">
-                              {selectedOrder.customer.phone}
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="flex justify-between items-center text-black mt-3">
-                            <p className="text-lg">Customer</p>
-                            <p className="text-lg font-normal">No Customer Selected</p>
-                          </div>
-                        )}
-                        {/* Other details */}
-                      </div>
-                      <button
-                        className="bg-orange-500 hover:bg-orange-600 p-2 flex gap-2 justify-center"
-                        onClick={() => {
-                          // Implement print functionality
-                        }}
-                      >
-                        <p className="text-sm font-semibold mt-[0.2rem] text-white">
-                          Print Bill
-                        </p>
-                      </button>
-                      {selectedOrder.is_synced === 1 ? (
-                        <button className="w-full bg-green-600 text-white font-bold py-2 rounded-md">
-                          Order Successfully Synced
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => syncSingleOrder(selectedOrder)}
-                          className="w-full bg-red-600 text-white font-bold py-2 rounded-md"
-                        >
-                          Order Not Synced. Click here to sync
-                        </button>
-                      )}
-                    </div>
+                    <OrderDetails
+                      order={selectedOrder}
+                      onPrint={() => {
+                        // Implement print functionality
+                      }}
+                      onSync={() => handleSyncOrder(selectedOrder)}
+                    />
                   ) : (
-                    <div className="flex flex-col gap-3 p-3 w-[70%] h-100 overflow-y-scroll">
-                      No Orders Selected
-                    </div>
+                    <Empty description="Please select an order to see details" />
                   )}
                 </>
               )}
@@ -428,5 +405,70 @@ const HomeOrdersSection = () => {
     </div>
   );
 };
+
+const OrderDetails = ({ order, onPrint, onSync }) => (
+  <div className="flex flex-col gap-3 p-3 w-[70%] h-100 overflow-y-scroll">
+    <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
+      <p className="text-xl font-bold">Order Details</p>
+    </div>
+    <div className="flex bg-chicket-item rounded-lg flex-col gap-2 p-3 mt-4 border-b border-slate-200 pb-2">
+      <div className="flex justify-between items-center text-black mt-3">
+        <p className="text-lg">Order ID</p>
+        <p className="text-lg font-normal">
+          {order.is_synced === 1 ? order.orderDetails.posOrderId : order.id}
+        </p>
+      </div>
+      {order.customer ? (
+        <div className="flex justify-between items-center text-black mt-3">
+          <p className="text-lg">Customer Details</p>
+          <p className="text-lg font-normal">{order.customer.name}</p>
+          <p className="text-lg font-normal">{order.customer.email}</p>
+          <p className="text-lg font-normal">{order.customer.phone}</p>
+        </div>
+      ) : (
+        <div className="flex justify-between items-center text-black mt-3">
+          <p className="text-lg">Customer</p>
+          <p className="text-lg font-normal">No Customer Selected</p>
+        </div>
+      )}
+      <div className="flex justify-between items-center text-black mt-3">
+        <p className="text-lg">Order Type</p>
+        <p className="text-lg font-normal">{order.orderDetails.orderType}</p>
+      </div>
+      <div className="flex justify-between items-center text-black mt-3">
+        <p className="text-lg">Payment Method</p>
+        <p className="text-lg font-normal">{order.orderDetails.paymentMethod}</p>
+      </div>
+      <div className="flex justify-between items-center text-black mt-3">
+        <p className="text-lg">Payment Tendered</p>
+        <p className="text-lg font-normal">${order.orderDetails.paymentTendered.toFixed(2)}</p>
+      </div>
+      <div className="flex justify-between items-center text-black mt-3">
+        <p className="text-lg">Order Date</p>
+        <p className="text-lg font-normal">
+          {new Date(order.orderDetails.orderDate).toLocaleDateString()}
+        </p>
+      </div>
+    </div>
+    <button
+      className="bg-orange-500 hover:bg-orange-600 p-2 flex gap-2 justify-center"
+      onClick={onPrint}
+    >
+      <p className="text-sm font-semibold mt-[0.2rem] text-white">Print Bill</p>
+    </button>
+    {order.is_synced === 1 ? (
+      <button className="w-full bg-green-600 text-white font-bold py-2 rounded-md">
+        Order Successfully Synced
+      </button>
+    ) : (
+      <button
+        onClick={onSync}
+        className="w-full bg-red-600 text-white font-bold py-2 rounded-md"
+      >
+        Sync Order
+      </button>
+    )}
+  </div>
+);
 
 export default HomeOrdersSection;

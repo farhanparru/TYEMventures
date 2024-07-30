@@ -1,49 +1,117 @@
 import React from "react";
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { Layout } from "antd";
+import styled, { keyframes } from "styled-components";
 import {
   UilEstate,
   UilUsersAlt,
-  UilArrowGrowth,
   UilBox,
   UilFileGraph,
-  UilWallet,
   UilSetting,
+  UilTag, // Sales icon
+ 
 } from "@iconscout/react-unicons";
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
-import logo from '../../../assets/logo.png';
+import logo from '../../../assets/Logo.png';
 
 const { Sider } = Layout;
 
-const DrawerMenuItem = ({ Icon, label, active, onClick, path }) => {
-  const iconClass = `font-thin text-xl ${active ? "text-white" : "text-gray-500"}`;
+const pulse = keyframes`
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+`;
+
+const shake = keyframes`
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+`;
+
+const Badge = styled.span`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(2);
+  transition: transform 0.3s, background-color 0.9s;
+  animation: ${pulse} 1.16s infinite;
+
+  &:hover {
+    animation: ${shake} 0.5s;
+  }
+`;
+
+const DrawerMenuItemContainer = styled.div`
+  width: 100%;
+  padding: 0.5rem;
+  height: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border-radius: 0.5rem;
+  background-color: ${(props) => (props.active ? "gray" : "transparent")};
+  color: ${(props) => (props.active ? "white" : "gray")};
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: gray;
+    color: white;
+  }
+`;
+
+const IconContainer = styled.div`
+  position: relative;
+`;
+
+const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge }) => {
   return (
     <Link to={path}>
-      <div
-        onClick={onClick}
-        className={`w-full p-2 h-16 flex items-center rounded-lg 
-          gap-1 flex-col justify-center
-          ${active ? "bg-gray-800 text-white" : "hover:bg-gray-700 text-gray-500"}
-          transition-all duration-300 ease-in-out`}
-      >
-        <Icon className={iconClass} />
-        <p className={`text-[10px] font-medium ${active ? "text-white" : "text-gray-500"}`}>
-          {label}
-        </p>
-      </div>
+      <DrawerMenuItemContainer onClick={onClick} active={active}>
+        <IconContainer>
+          <Icon className="text-xl" />
+          {badge && <Badge>{badge}</Badge>}
+        </IconContainer>
+        <p className="text-xs font-medium">{label}</p>
+      </DrawerMenuItemContainer>
     </Link>
   );
 };
+
+
 
 const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
   const menuItems = [
     {
       label: drawerMenuLabels.home.label,
       icon: UilEstate,
-      onClick: () => {
-        setActiveMenu(drawerMenuLabels.home.label);
-      },
+      onClick: () => setActiveMenu(drawerMenuLabels.home.label),
       path: drawerMenuLabels.home.path,
     },
     {
@@ -53,10 +121,11 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       path: drawerMenuLabels.customers.path,
     },
     {
-      label: drawerMenuLabels.sales.label,
-      icon: AiOutlineShoppingCart, // Updated to online orders icon
-      onClick: () => setActiveMenu(drawerMenuLabels.sales.label),
-      path: drawerMenuLabels.sales.path,
+      label: drawerMenuLabels.online.label,
+      icon: AiOutlineShoppingCart,
+      onClick: () => setActiveMenu(drawerMenuLabels.online.label),
+      path: drawerMenuLabels.online.path,
+      badge: 10, // Add badge count here// Add badge count here
     },
     {
       label: drawerMenuLabels.orders.label,
@@ -76,6 +145,18 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       onClick: () => setActiveMenu(drawerMenuLabels.settings.label),
       path: drawerMenuLabels.settings.path,
     },
+    {
+      label: drawerMenuLabels.sales.label,
+      icon: UilTag, // Sales icon
+      onClick: () => setActiveMenu(drawerMenuLabels.sales.label),
+      path: drawerMenuLabels.sales.path,
+    },
+    {
+      label: drawerMenuLabels.scheduledOrders.label,
+      icon: AiOutlineShoppingCart, // Scheduled Orders icon
+      onClick: () => setActiveMenu(drawerMenuLabels.scheduledOrders.label),
+      path: drawerMenuLabels.scheduledOrders.path,
+    }
   ];
 
   return (
@@ -97,6 +178,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
             onClick={item.onClick}
             path={item.path}
             key={item.path}
+            badge={item.badge} // Pass badge prop here
           />
         ))}
       </div>

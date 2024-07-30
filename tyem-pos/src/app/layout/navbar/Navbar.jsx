@@ -23,6 +23,9 @@ import { Link } from "react-router-dom";
 import { getPrintersList } from "../../pages/home/store/homeSlice";
 
 const Navbar = ({ collapsed, setCollapsed }) => {
+  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+
+
   const store_user = useSelector(getStoreUserData);
   const printers = useSelector(getPrintersList);
 
@@ -132,198 +135,177 @@ const Navbar = ({ collapsed, setCollapsed }) => {
     },
   };
 
+  const handleLogoutClick = () => {
+    setLogoutModalOpen(true);
+  };
+
+  const handleLogoutOk = () => {
+    dispatch(logoutVendor());
+    setLogoutModalOpen(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setLogoutModalOpen(false);
+  };
+
+
 
   return (
-    <Detector
-      render={({ online }) => (
-        <nav className="flex  justify-between items-center  bg-white  p-2  shadow-md border-b">
-          <div className="nav__left flex items-center">
-            {/* {React.createElement(
-              collapsed ? MenuFoldOutlined : MenuUnfoldOutlined,
-              {
-                className: "trigger mx-4 text-black font-bold text-xl mb-1 ",
-                onClick: () => setCollapsed(!collapsed),
-              }
-            )} */}
-
-
-            <div className=" gap-1 items-center hidden md:flex">
-              <UilStore size="25" className="ml-4 text-black font-bold" />
-              <p className="text-xs text-black font-bold">
-                {store_user?.business?.name}
-              </p>
-            </div>
-            {/* <div className=" gap-1 items-center hidden md:flex">
-              <UilMapMarker size="25" className="ml-4 text-black font-bold" />
-              <p className="text-xs text-black font-bold">
-                {store_user?.data?.store?.city?.name}
-              </p>
-            </div> */}
-          </div>
-          <div className="nav__right border-l-[1px] flex items-center gap-4 ">
-            <div className="ml-10" onClick={() => dispatch(logoutVendor())}>
-              <CtaBlueBtn>
-                <UilPower className="mx-4 text-xl text-chicket-500" />
-              </CtaBlueBtn>
-            </div>
-            <div onClick={showModal}>
-              <CtaBlueBtn>
-                <SettingOutlined className="mx-4 text-xl text-black" />
-              </CtaBlueBtn>
-            </div>
-
-            <CtaBlueBtn>
-              <div>
-                <div>
-                  <Online>
-                    <OnlineComponent network={online} />
-                  </Online>
-                </div>
-                <Offline>
-                  <OfflineComponent network={online} />
-                </Offline>
+    <>
+      <Detector
+        render={({ online }) => (
+          <nav className="flex justify-between items-center bg-white p-2 shadow-md border-b">
+            <div className="nav__left flex items-center">
+              <div className="gap-1 items-center hidden md:flex">
+                <UilStore size="25" className="ml-4 text-black font-bold" />
+                <p className="text-xs text-black font-bold">
+                  {store_user?.business?.name}
+                </p>
               </div>
-            </CtaBlueBtn>
-
-            {/* <Dropdown
-              menu={{
-                items,
-                selectable: true,
-                selectedKeys: [selectedLanguage],
-              }}
-              trigger={["click"]}
-            >
-              <div> */}
-
-            {/* <Link to={'/kds'}>
+            </div>
+            <div className="nav__right border-l-[1px] flex items-center gap-4">
+              <div className="ml-10" onClick={handleLogoutClick}>
                 <CtaBlueBtn>
-                  <p className="mx-3 uppercase text-sm font-bold text-black">
-                    KDS
-                  </p>
+                  <UilPower className="mx-4 text-xl text-chicket-500" />
                 </CtaBlueBtn>
-                </Link> */}
-            {/* </div>
-            </Dropdown> */}
+              </div>
+              <div onClick={showModal}>
+                <CtaBlueBtn>
+                  <SettingOutlined className="mx-4 text-xl text-black" />
+                </CtaBlueBtn>
+              </div>
 
-            <NavAvatar
-              name={store_user?.username}
-              role="Vendor"
-              email={store_user?.email}
-            />
-          </div>
-          <Modal
-            title="Printer Connection Settings"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
-            footer={[
-              <Button key="back" onClick={handleCancel}>
-                Cancel
-              </Button>,
-              <Button key="submit" type="primary" style={{ backgroundColor: 'green' }} onClick={handleOk}>
-                Save
-              </Button>,
-            ]}
-          >
-            <Form
-              formItemLayout={{
-                labelCol: {
-                  span: 4,
-                },
-                wrapperCol: {
-                  span: 14,
-                },
-              }}
-              layout={{
-                wrapperCol: {
-                  span: 14,
-                  offset: 4,
-                },
-              }}
-              form={form}
-              initialValues={{
-                layout: {
-                  wrapperCol: {
-                    span: 14,
-                    offset: 4,
-                  },
-                },
-              }}
-              style={{
-                maxWidth: 600,
-              }}
+              <CtaBlueBtn>
+                <div>
+                  <div>
+                    <Online>
+                      <OnlineComponent network={online} />
+                    </Online>
+                  </div>
+                  <Offline>
+                    <OfflineComponent network={online} />
+                  </Offline>
+                </div>
+              </CtaBlueBtn>
+
+              <NavAvatar
+                name={store_user?.username}
+                role="Vendor"
+                email={store_user?.email}
+              />
+            </div>
+
+            {/* Logout Modal */}
+            <Modal
+              title="Logout"
+              open={isLogoutModalOpen}
+              onOk={handleLogoutOk}
+              onCancel={handleLogoutCancel}
+              footer={[
+                <Button key="back" onClick={handleLogoutCancel}>
+                  Cancel
+                </Button>,
+                <Button key="submit" type="primary" onClick={handleLogoutOk}>
+                  Confirm Logout
+                </Button>,
+              ]}
             >
-              <Form.Item label="Main Printer" name="main">
-                {/* <Input
-                  placeholder="Enter device name"
-                  value={localStorage.getItem("main_printer")}
-                /> */}
-
-
-
-              <Select >
-                  {printers?.length !== 0 && printers?.map(printer => (
-                    <Option key={printer.name} value={printer.name}>{printer.name}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item label="KOT Printer Name" name="kot">
-                  <Select >
-                  {printers?.length !== 0 && printers?.map(printer2 => (
-                    <Option key={printer2.name} value={printer2.name}>{printer2.name}</Option>
-                  ))}
-
-                </Select>
-              </Form.Item>
-              <Form.Item label="Print Width" name="width">
-                <Select >
-
-                  <Option value={'80mm'}>80mm</Option>
-                  <Option value={'78mm'}>78mm</Option>
-                  <Option value={'76mm'}>76mm</Option>
-                  <Option value={'58mm'}>58mm</Option>
-                  <Option value={'57mm'}>57mm</Option>
-                  <Option value={'44mm'}>44mm</Option>
-                </Select>
-              </Form.Item>
-
-
-            </Form>
-          </Modal>
-        </nav>
-      )}
-    />
+              <Form
+                layout="vertical"
+                style={{ maxWidth: 600 }}
+              >
+                <Form.Item label="Sales" name="sales">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="UPI Cash" name="upi_cash">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Google Pay" name="google_pay">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Total Counter Cash" name="total_counter">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Cash Description" name="cash_description">
+                  <Input.TextArea />
+                </Form.Item>
+              </Form>
+            </Modal>
+          </nav>
+        )}
+      />
+      
+      {/* Existing Modal */}
+      <Modal
+        title="Printer Connection Settings"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" style={{ backgroundColor: 'green' }} onClick={handleOk}>
+            Save
+          </Button>,
+        ]}
+      >
+        <Form
+          formItemLayout={{
+            labelCol: {
+              span: 4,
+            },
+            wrapperCol: {
+              span: 14,
+            },
+          }}
+          layout={{
+            wrapperCol: {
+              span: 14,
+              offset: 4,
+            },
+          }}
+          form={form}
+          initialValues={{
+            layout: {
+              wrapperCol: {
+                span: 14,
+                offset: 4,
+              },
+            },
+          }}
+          style={{
+            maxWidth: 600,
+          }}
+        >
+          <Form.Item label="Main Printer" name="main">
+            <Select>
+              {printers?.length !== 0 && printers?.map(printer => (
+                <Option key={printer.name} value={printer.name}>{printer.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="KOT Printer Name" name="kot">
+            <Select>
+              {printers?.length !== 0 && printers?.map(printer2 => (
+                <Option key={printer2.name} value={printer2.name}>{printer2.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Print Width" name="width">
+            <Select>
+              <Option value={'80mm'}>80mm</Option>
+              <Option value={'78mm'}>78mm</Option>
+              <Option value={'76mm'}>76mm</Option>
+              <Option value={'58mm'}>58mm</Option>
+              <Option value={'57mm'}>57mm</Option>
+              <Option value={'44mm'}>44mm</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
   );
 };
+
 export default Navbar;
-
-{
-  /* 
-<Navbar
-  fluid={false}
-  rounded={true}
-  border={true}
->
-  <Navbar.Brand href="https://flowbite.com/">
-    <img
-      src="https://flowbite.com/docs/images/logo.svg"
-      className="mr-3 h-6 sm:h-9"
-      alt="Flowbite Logo"
-    />
-    <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-black">
-      Flowbite
-    </span>
-    <div className='flex gap-1 items-center'>
-    <UilStore className="ml-4 text-gray-500"/>
-    <p className='text-xs text-gray-500'>{businessName}</p>
-    </div>
-    <div className='flex gap-1 items-center'>
-    <UilMapMarker className="ml-4 text-gray-500"/>
-    <p className='text-xs text-gray-500'>{location}</p>
-    </div>
-
-  </Navbar.Brand>
-    
-</Navbar>
- */
-}

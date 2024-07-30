@@ -84,7 +84,7 @@ const HomeCartSection = () => {
 
   return (
     <div className="w-[35%] relative h-full bg-white text-white border-l-[3px] border-chicket-border flex flex-col">
-      <div className="home__cart-top flex gap-3 ml-3 mr-3 mt-2 w-full overflow-x-scroll">
+       {/* <div className="home__cart-top flex gap-3 ml-3 mr-3 mt-2 w-full overflow-x-scroll">
         {homePriceCategories.map((item, index) => {
           const isSelected = item.id === selectedTab.id;
           return (
@@ -107,7 +107,7 @@ const HomeCartSection = () => {
             </div>
           );
         })}
-      </div>
+      </div>  */}
       <div className="search__section w-full flex gap-4 items-center mb-2 p-3">
         <h3 className="text-black font-bold text-base text-center">
           Customer

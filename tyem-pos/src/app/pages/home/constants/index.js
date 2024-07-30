@@ -178,6 +178,7 @@ export const homeBodySection = [
     section: HomeOrdersSection,
     name: "History"
   },
+
   {
     slug: "online-orders",
     icon: UilServer,
@@ -199,16 +200,7 @@ export const homeBodySection = [
     name: "Tables"
 
   },
-  // {
-  //   slug: "customers",
-  //   icon: UilUser,
-  //   section: Customers,
-  // },
-  // {
-  //   slug: "discounts",
-  //   icon: UilPercentage,
-  //   section: HomeDiscountSection,
-  // },
+ 
   {
     slug: "hold-carts",
     icon: UilPauseCircle,
@@ -216,6 +208,8 @@ export const homeBodySection = [
     name:"On Hold"
   },
 ];
+
+
 
 export const tablesList = [
   {

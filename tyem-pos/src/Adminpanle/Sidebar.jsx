@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaChartBar, FaClipboardList, FaUsers, FaBoxes, FaUtensils, FaCog } from 'react-icons/fa';
+import { FaHome, FaChartBar, FaClipboardList, FaUsers, FaBoxes, FaUtensils, FaCog ,FaWallet} from 'react-icons/fa';
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   return (
@@ -32,7 +32,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <FaBoxes className="mr-3" />
           Items
         </Link>
-        <Link to="/customers" className="flex items-center py-2 px-6 text-sm text-white hover:bg-purple-700">
+        <Link to="/Users" className="flex items-center py-2 px-6 text-sm text-white hover:bg-purple-700">
           <FaUsers className="mr-3" />
           Customers
         </Link>
@@ -48,6 +48,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <FaUtensils className="mr-3" />
           Restaurant Management
         </Link>
+        <Link to="/Expense" className="flex items-center py-2 px-6 text-sm text-white hover:bg-purple-700">
+        <FaWallet className="mr-3" />
+  Expense
+</Link>
+
       </nav>
     </aside>
   );

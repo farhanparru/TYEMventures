@@ -4,6 +4,7 @@ import { useReactToPrint } from "react-to-print";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice";
 import axios from "axios";
+import HoldSaleModal from "./HoldSaleModal";
 import {
   getSelectedTab,
   getTaxTypeList,
@@ -58,11 +59,8 @@ import { Toaster, toast } from "sonner";
 import CustomModal from "../../../../../components/CustomModal";
 import CartNumpad from "../../../components/CartNumpad";
 
-
 const FooterActions = () => {
-
- const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   function generateInvoiceNumber() {
     const prefix = "INV";
@@ -125,8 +123,6 @@ const FooterActions = () => {
       );
       console.log("API response:", response); // Log the API response
       if (response.status === 201) {
-        
-
         toast.success("Order created successfully!");
       } else {
         toast.error("Failed to create order.");
@@ -149,7 +145,6 @@ const FooterActions = () => {
   const selectedTab = useSelector(getSelectedTab);
   const [showModal, setShowModal] = useState(false);
   const [showPlaceModal, setShowPlaceModal] = useState(false);
-  const [holdCartModal, setHoldCartModal] = useState(false);
   const [isScheduled, setIsScheduled] = useState(false);
   const [schedule_date, setschedule_date] = useState(null);
   const [schedule_time, setschedule_time] = useState(null);
@@ -162,11 +157,10 @@ const FooterActions = () => {
   const finalItems = useSelector((state) => state.finalItems);
   // console.log(finalItems,"kkk");
 
-  const date = new Date(); 
+  const date = new Date();
   const odCount = useSelector((state) => state.odCount);
 
-// console.log(odCount,"jjj");
-
+  // console.log(odCount,"jjj");
 
   const selectedCustomer = useSelector(
     (state) => state.customer.selectedCustomer
@@ -519,8 +513,6 @@ const FooterActions = () => {
     },
   };
   const onFinish = (values) => {
-    // console.log(values);
-
     setschedule_date(values?.schedule_date);
     setschedule_time(values?.schedule_time);
   };
@@ -544,7 +536,6 @@ const FooterActions = () => {
   }
 
   // print data
-
 
   const kotdata = [
     {
@@ -683,20 +674,20 @@ const FooterActions = () => {
     },
   ];
 
-
- 
-
+  const handleConfirm = () => {
+    // Add your hold sale logic here
+    setHoldCartModal(false);
+  };
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
 
-
   const handleSave = () => {
-    navigate("/bill")
+    navigate("/bill");
   };
-
+  const [holdCartModal, setHoldCartModal] = useState(false);
 
   return (
     <div className=" flex flex-col gap-3">
@@ -729,15 +720,23 @@ const FooterActions = () => {
               Schedule
             </p>
           </button>
-          <button
-            className={`${actionBtnClass}  bg-orange-500  text-white hover:bg-orange-300 p-2 flex gap-2 justify-center`}
-            onClick={() => {
-              setHoldCartModal(true);
-            }}
-          >
-            <UilPauseCircle color="#fff" />
-            <p className="text-sm font-semibold mt-[0.2rem] text-white">Hold</p>
-          </button>
+
+         
+            <button
+              className={`${actionBtnClass} bg-orange-500 text-white hover:bg-orange-300 p-2 flex items-center gap-2 justify-center`}
+              onClick={() => setHoldCartModal(true)}
+            >
+              <UilPauseCircle color="#fff" />
+              <p className="text-sm font-semibold text-white">Hold</p>
+            </button>
+
+            <HoldSaleModal
+              visible={holdCartModal}
+              onClose={() => setHoldCartModal(false)}
+              onConfirm={handleConfirm}
+            />
+          
+
           {editOrder?.orderitems && editOrder?.orderitems?.length !== 0 ? (
             <>
               <button
@@ -1245,75 +1244,19 @@ const FooterActions = () => {
         </CustomModal>
       )}
 
-      {holdCartModal && (
-        <CustomModal
-          onClose={() => {
-            setShowModal(false);
-            dispatch(clearCart());
-            setHoldCartModal(false);
-          }}
-        >
-          <div className="flex flex-col gap-4 p-4 rounded-lg border shadow-2xl w-[500px]">
-            <h2 className="text-md font-bold">Hold Cart</h2>
-            <div className="flex gap-2 w-full">
-              <Form layout="vertical" style={{ width: "100%" }}>
-                <Form.Item label="Cart Note">
-                  <Input
-                    onChange={(e) => setCartNote(e.target.value)}
-                    defaultValue={""}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <div className="flex justify-end gap-3">
-              <button
-                className="px-10 py-2 text-orange-500 border-2 border-orange-500 rounded-lg cursor-pointer transition-all hover:scale-90"
-                onClick={() => setHoldCartModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  dispatch(
-                    addHoldCart({
-                      ...cartState,
-                      customer: selectedCustomer,
-                      cartNote: cartNote,
-                      orderType: selectedOrderType,
-                      time: new Date().toLocaleString(),
-                    })
-                  );
-                  dispatch(clearSelectedCustomer());
-                  dispatch(clearCart());
-                  setHoldCartModal(false);
-                }}
-                className="px-10 py-2 border-2 border-orange-500 bg-orange-500 text-white rounded-lg cursor-pointer transition-all hover:scale-90"
-              >
-                Proceed
-              </button>
-            </div>
+      {saveModal && (
+        <CustomModal onClose={() => setSaveModal(false)}>
+          <div className="p-10 flex flex-col items-center">
+            <button
+              onClick={handlePrint}
+              className="bg-blue-500 w-[100px] text-white rounded-lg hover:bg-blue-400 p-2 mb-4"
+            >
+              Print
+            </button>
+            <div ref={componentRef} className="w-full"></div>
           </div>
         </CustomModal>
       )}
-
-
-      {saveModal && (
-        <CustomModal onClose={() => setSaveModal(false)}>
-      <div className="p-10 flex flex-col items-center">
-        <button
-          onClick={handlePrint}
-          className="bg-blue-500 w-[100px] text-white rounded-lg hover:bg-blue-400 p-2 mb-4"
-        >
-          Print
-        </button>
-        <div ref={componentRef} className="w-full">
-     
-        </div>
-      </div>
-    </CustomModal>
-      )}
-
-
     </div>
   );
 };

@@ -8,10 +8,10 @@ const userRouter = require('../Backend/router/userRouter')
 require('../Backend/Db/Database')
 const {Server} = require('ws')
 
-   
+       
 
 app.use(cors({
-    origin: ["http://ventrues.word-network.site"], // Frontend deployed URL
+    origin: ["http://ventrues.invenro.site"], // Frontend deployed URL
     methods: "GET,POST,PUT,DELETE",
     credentials: true
   }));
@@ -32,6 +32,7 @@ const server = app.listen(PORT,()=>{
 })
 
 // WebSocket setup
+
 const wss = new Server({ server });
 
 wss.on('connection', ws => {

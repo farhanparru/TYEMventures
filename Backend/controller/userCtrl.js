@@ -1,7 +1,12 @@
 const orderData = require("../Model/userModel");
 const OnlineOrder = require("../Model/onlineOrdermodel");
 const Category = require("../Model/Categorymodel");
-const WebSocket = require('ws')
+const expenseSchema = require("../Model/expensemodel");
+const Customer = require("../Model/Customermodel");
+const WebSocket = require("ws");
+const axios = require('axios');
+const {sendWhatsAppMessage} = require("../utlis/xpressBotService");
+require("dotenv").config();
 
 const validateOrderData = (data) => {
   const {
@@ -96,66 +101,71 @@ module.exports = {
     }
   },
 
-  // Whatsapp Online Oders
+
+// Webhook endpoint to handle incoming orders
   onlineOrder: async (req, res) => {
     try {
-        const {
-            order_id,
-            catalog_id,
-            payment_method,
-            cart_total,
-            ordered_at,
-            customer_name,
-            customer_email,
-            customer_phone_number,
-        } = req.body;
+      const {
+        order_id,
+        catalog_id,
+        payment_method,
+        cart_total,
+        ordered_at,
+        customer_name,
+        customer_email,
+        customer_phone_number,
+      } = req.body;
 
-        if (
-            !order_id ||
-            !catalog_id ||
-            !payment_method ||
-            !cart_total ||
-            !ordered_at ||
-            !customer_name ||
-            !customer_phone_number
-        ) {
-            return res.status(400).send("Missing required order details");
-        }
+     
 
-        // Construct order data
-        const orderData = {
-            orderDetails: {
-                posOrderId: order_id,
-                orderType: catalog_id,
-                paymentMethod: payment_method,
-                paymentTendered: cart_total,
-                orderDate: new Date(ordered_at),
-            },
-            customer: {
-                name: customer_name,
-                email:customer_email, 
-                phone: customer_phone_number,
-            },
-        };
+      // Construct order data
+      const orderData = {
+        orderDetails: {
+          posOrderId: order_id,
+          orderType: catalog_id,
+          paymentMethod: payment_method,
+          paymentTendered: cart_total,
+          orderDate: new Date(ordered_at),
+        },
+        customer: {
+          name: customer_name,
+          email: customer_email,
+          phone: customer_phone_number,
+        },
+      };
 
-        // Save order to database
-        const order = new OnlineOrder(orderData);
-        await order.save();
+      // Save order to database
+      const order = new OnlineOrder(orderData);
+      await order.save();
 
-        // Broadcast the new order to all WebSocket clients
-        const wss = req.app.get('wss');
-        wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(orderData));
-            }
-        });
+     // Broadcast the new order to all WebSocket clients
+     const wss = req.app.get('wss');
+     wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(orderData));
+      }
+    });
 
-        res.status(200).send('Order received');
+     res.status(200).send('Order received');
     } catch (error) {
-        console.error('Error processing order:', error);
-        res.status(500).send('Internal Server Error');
+      console.error("Error processing order:", error);
+      res.status(500).send("Internal Server Error");
     }
-},
+  },
+
+
+
+  // Fetch Orders Endpoint
+
+   fetchOnlineOrder:async(req,res)=>{  
+    try {
+      const orders = await OnlineOrder.find()
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching orders', error });
+    }
+   },
+
 
 
   // Add category
@@ -196,13 +206,104 @@ module.exports = {
 
   // get Category
 
-  getCategory:async(req,res)=>{
+  getCategory: async (req, res) => {
     try {
       const categories = await Category.find();
-      res.status(200).json({categories})
+      res.status(200).json({ categories });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch categories' });
+      res.status(500).json({ error: "Failed to fetch categories" });
+    }
+  },
+
+  // Whatsapp Through expense
+  expense: async (req, res) => {
+    const { Amount, Description } = req.body;
+
+    try {
+      const newExpense = new expenseSchema({
+        Amount,
+        Description,
+      });
+
+      // Emit new expense to all connected WebSocket clients
+      wss.clients.forEach((client) => {
+        if (client.readyState === 1) {
+          // 1 indicates the connection is open
+          client.send(JSON.stringify(newExpense));
+        }
+      });
+
+      await newExpense.save();
+      res.status(200).json({ message: "Expense data saved successfully." });
+    } catch (error) {
+      res.status(500).json({ message: "Error saving expense data.", error });
+    }
+  },
+
+  // Add Customer
+
+  addCustomer:async (req, res) => {
+    const { fullName, Email, phoneNo, TaxNo, Address, language } = req.body;
+  
+    try {
+      const newCustomer = new Customer({
+        fullName,
+        Email,
+        phoneNo,
+        TaxNo,
+        Address,
+        language
+      });
+  
+      await newCustomer.save();
+  
+      // Send a WhatsApp message
+      try {
+        await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
+        newCustomer.messageSent = true;
+        await newCustomer.save();
+        res.status(201).json({ message: 'Customer added and message sent successfully' });
+      } catch (error) {
+       console.log(error);
+        res.status(500).json({ error: 'Customer added but failed to send WhatsApp message' });
+      }
+  
+    } catch (error) {
+      console.error('Error adding customer:', error.message);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+
+  // send message
+
+  sendMessage: async (req, res) => {
+    const { phone_number, message } = req.body;
+  
+    if (!phone_number || !message) {
+      return res.status(400).send('phone_number and message are required');
+    }
+  
+    try {
+      const response = await axios.post(
+        'https://app.xpressbot.org/api/v1/whatsapp/send',
+        null,
+        {
+          params: {
+            apiToken: process.env.XPRESSBOT_ACCESS_TOKEN,
+            phone_number_id: process.env.SENDER_PHONE_NUMBER,
+            phone_number,
+            message,
+          },
+        }
+      );
+  
+      res.send(response.data);
+    } catch (error) {
+      console.error('Error sending message:', error.response ? error.response.data : error.message);
+      res.status(500).send('Failed to send message');
     }
   }
+  
+  }
 
-};

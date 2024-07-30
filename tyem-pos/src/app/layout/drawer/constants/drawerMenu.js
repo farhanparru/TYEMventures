@@ -5,8 +5,9 @@
 
     customers:{label:"Customers",path:"/customers"},
 
-    sales:{label:"ONLINE ORDERS",path:"/"},
-
+    online:{label:"ONLINE ORDERS",path:"/online"},
+    sales: { label: "Sales", path: "/sales" }, // New entry
+    scheduledOrders: { label: "Scheduled Orders", path: "/scheduled-orders" }, // New entry
     orders:{label:"Items",path:"/orders"},
 
     reports:{label:"Reports",path:"/reports"},

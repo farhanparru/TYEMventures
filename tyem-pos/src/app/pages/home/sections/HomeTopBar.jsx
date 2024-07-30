@@ -51,16 +51,16 @@ const HomeTopBar = ({ selectedTab }) => {
             }}
           >
             {item.name}
-            {item.slug == "orders" &&
+            {item.slug == "" &&
 
               "(" + allOrdersCount + ")"
             }
 
-            {item.slug == "online-orders" &&
+            {item.slug == "" &&
 
               "(" + onlineOrdersCount + ")"
             }
-            {item.slug == "scheduled-orders" &&
+            {item.slug == "" &&
 
               "(" + scheduledOrdersCount + ")"
             }

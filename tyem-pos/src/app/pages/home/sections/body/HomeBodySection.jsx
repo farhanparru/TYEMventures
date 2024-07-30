@@ -15,6 +15,7 @@ const HomeBodySection = () => {
         if (item.slug == selectedBodySection) {
           return (
             <Suspense key={index} fallback={<div>loading</div>}>
+           
               <item.section />
             </Suspense>
           );

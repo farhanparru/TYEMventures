@@ -2,7 +2,7 @@ import { useState } from "react";
 import { loginFields } from "./formField";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
-import Input from "./Input";
+import Input from "./input";
 import axios from "axios";
 import { WEBSITE_URL,WEBSITE_API_URL } from "../../config";
 import { useDispatch } from "react-redux";

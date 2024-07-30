@@ -1,91 +1,120 @@
-import React, { useState, useEffect } from "react";
-import { UilPlus } from "@iconscout/react-unicons";
-import SearchInput from "../../../components/SearchInput";
-import AddCustomerModal from "../components/AddCustomerModal";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getIsCartOpen,
-  getSeachedCustomerList,
-  searchCustomer,
-  setSelectedCustomer,
-} from "../../home/store/customerSlice";
-import { Drawer } from "antd";
-import CustomerDetails from "./CustomerDetails";
-import CustomerListTile from "./CustomerListTile";
+import React, { useState } from 'react';
+import CustomerDetails from './CustomerDetails';
+import AddCustomerModal from '../components/AddCustomerModal';
+import { Drawer } from 'antd'; 
+import SearchBar from './SearchBar';
+const customers = [
 
-const CustomerList = ({ selectedCustomer, isCart }) => {
-  const dispatch = useDispatch();
-  const [searchValue, setSearchValue] = useState("");
-  const [open, setOpen] = useState(false);
+  
+  {
+    firstName: 'Ashi',
+    lastName: '',
+    mobileNumber: 'xxxxxx9402',
+    email: '',
+    companyName: '',
+    trn: '',
+    group: '',
+    address: '',
+    loyaltyPoints: 0,
+    creditLimit: 0,
+    creditsGiven: 664,
+    paymentReceived: 52,
+    creditOutstanding: 612,
+  },
+  {
+    firstName: 'Ashixx',
+    lastName: '',
+    mobileNumber: 'xxxxxx9402',
+    email: '',
+    companyName: '',
+    trn: '',
+    group: '',
+    address: '',
+    loyaltyPoints: 0,
+    creditLimit: 0,
+    creditsGiven: 664,
+    paymentReceived: 52,
+    creditOutstanding: 612,
+  },
+  {
+    firstName: 'Ashi',
+    lastName: '',
+    mobileNumber: 'xxxxxx9402',
+    email: '',
+    companyName: '',
+    trn: '',
+    group: '',
+    address: '',
+    loyaltyPoints: 0,
+    creditLimit: 0,
+    creditsGiven: 664,
+    paymentReceived: 52,
+    creditOutstanding: 612,
+  },
+  
+];
+
+const CustomerList = () => {
+  const [selectedCustomer, setSelectedCustomer] = useState(customers[0]);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const isCartOpen = useSelector(getIsCartOpen);
-  const customerList = useSelector(getSeachedCustomerList);
-  const breakpoint = 900;
-  const [isSmallDevice, setIsSmallDevice] = useState(window.innerWidth < breakpoint);
+  const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    window.addEventListener("resize", () => setIsSmallDevice(window.innerWidth < breakpoint));
-  }, []);
-
-  useEffect(() => {
-    dispatch(searchCustomer(""));
-  }, [dispatch]);
-
-  const showModal = () => setOpen(true);
-
-  const onSearch = (value) => {
-    setSearchValue(value);
-    dispatch(searchCustomer(value));
+  const handleCustomerClick = (customer) => {
+    setSelectedCustomer(customer);
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-5 h-full">
-      <div className="customer__header flex">
-        <h2 className="text-2xl font-bold">Customers</h2>
-        <div className="flex-1 flex justify-end">
-          <button
-            onClick={showModal}
-            className="flex gap-2 items-center bg-blue-600 text-white px-5 py-2 rounded-md transition-all hover:scale-90"
-          >
-            <UilPlus />
-            <h2 className="text-xs font-bold">Add Customer</h2>
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center">
+         <SearchBar/>
+         <button className="ml-2 bg-gray-200 p-2 rounded flex items-center justify-center h-full">
+            Alt + S
           </button>
         </div>
-      </div>
-      <div className="flex-1 flex flex-col bg-white p-3 h-[90%] gap-4 rounded-lg">
-        <SearchInput
-          placeholder="Search by phone no.."
-          onInputChange={(e) => onSearch(e.target.value)}
-        />
-        <h2 className="text-xl font-bold">Recent Customers</h2>
-        <div className="flex-1 flex flex-col gap-5 overflow-y-scroll">
-          {customerList?.map((customer, index) => {
-            const isSelected = selectedCustomer?.id === customer.id;
-            const bgClass = index % 2 === 0 ? "bg-gray-100" : "bg-transparent";
-            return (
-              <CustomerListTile
-                isSelected={isSelected}
-                bgClass={bgClass}
-                customer={customer}
-                key={index}
-                setDrawerVisible={setDrawerVisible}
-              />
-            );
-          })}
+        <div className="flex items-center">
+        <button
+            className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+            onClick={() => setOpen(true)} // Set open to true to open the modal
+          >
+            Add Customer
+          </button>
+          <button className="bg-green-500 text-white px-4 py-2 rounded mr-2">Print</button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded">Pay Outstanding</button>
         </div>
       </div>
-      <AddCustomerModal isOpen={open} setOpen={setOpen} />
-      {selectedCustomer && !isCartOpen && drawerVisible ? (
+      <div className="flex justify-between mb-2">
+        <span>Showing {customers.length} / {customers.length} customers</span>
+        <a href="#" className="text-blue-500">Export</a>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-gray-100 p-4 rounded">
+          {customers.map((customer, index) => (
+            <div
+              key={index}
+              className={`p-2 border-b border-gray-300 cursor-pointer hover:bg-gray-200 ${selectedCustomer === customer ? 'bg-blue-500' : ''}`}
+              onClick={() => handleCustomerClick(customer)}
+            >
+              <p className="font-bold">{customer.firstName}</p>
+              <p>{customer.mobileNumber}</p>
+              <p className="text-blue-500">₹{customer.creditOutstanding}</p>
+            </div>
+          ))}
+        </div>
+        <AddCustomerModal isOpen={open} setOpen={setOpen} />
+      {selectedCustomer && (
         <Drawer
-          width={isSmallDevice ? "70%" : "30%"}
+          width="30%"
           placement="right"
           closable
           onClose={() => setDrawerVisible(false)}
           open={drawerVisible}
         >
-          <CustomerDetails selectedCustomer={selectedCustomer} />
+        
         </Drawer>
-      ) : null}
+      )}
+      <CustomerDetails customer={selectedCustomer} />
+    </div>
     </div>
   );
 };
