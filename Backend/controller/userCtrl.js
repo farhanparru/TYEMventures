@@ -101,66 +101,62 @@ module.exports = {
     }
   },
 
-
 // Webhook endpoint to handle incoming orders
-  onlineOrder: async (req, res) => {
-    try {
-      const {
-        order_id,
-        catalog_id,
-        payment_method,
-        cart_total,
-        ordered_at,
-        customer_name,
-        customer_email,
-        customer_phone_number,
-        products, // Array of products, each with name and quantity
-      } = req.body;
+onlineOrder:async (req, res) => {
+  try {
+    const {
+      order_id,
+      catalog_id,
+      payment_method,
+      cart_total,
+      ordered_at,
+      customer_name,
+      customer_email,
+      customer_phone_number,
+      products, // Array of products, each with name and quantity
+    } = req.body;
 
-        // Construct products array
+    // Construct products array
     const productsArray = products.map(product => ({
       product_name: product.name,
       product_quantity: product.quantity,
     }));
 
+    // Construct order data
+    const orderData = {
+      orderDetails: {
+        posOrderId: order_id,
+        orderType: catalog_id,
+        paymentMethod: payment_method,
+        paymentTendered: cart_total,
+        orderDate: new Date(ordered_at),
+        products: productsArray,
+      },
+      customer: {
+        name: customer_name,
+        email: customer_email,
+        phone: customer_phone_number,
+      },
+    };
 
-      // Construct order data
-      const orderData = {
-        orderDetails: {
-          posOrderId: order_id,
-          orderType: catalog_id,
-          paymentMethod: payment_method,
-          paymentTendered: cart_total,
-          orderDate: new Date(ordered_at),
-          products: productsArray,
-        },
-        customer: {
-          name: customer_name,
-          email: customer_email,
-          phone: customer_phone_number,
-        },
-      };
+    // Save order to database
+    const order = new Order(orderData);
+    await order.save();
 
-      // Save order to database
-      const order = new OnlineOrder(orderData);
-      await order.save();
-
-     // Broadcast the new order to all WebSocket clients
-     const wss = req.app.get('wss');
-     wss.clients.forEach((client) => {
+    // Broadcast the new order to all WebSocket clients
+    const wss = req.app.get('wss'); // Ensure WebSocket server is available
+    wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(orderData));
       }
     });
 
-     res.status(200).send('Order received');
-    } catch (error) {
-      console.error("Error processing order:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  },
-
-
+    res.status(200).send('Order received');
+  } catch (error) {
+    console.error("Error processing order:", error);
+    res.status(500).send("Internal Server Error");
+  }
+},
 
   // Fetch Orders Endpoint
 
