@@ -114,9 +114,15 @@ module.exports = {
         customer_name,
         customer_email,
         customer_phone_number,
+        products, // Array of products, each with name and quantity
       } = req.body;
 
-     
+        // Construct products array
+    const productsArray = products.map(product => ({
+      product_name: product.name,
+      product_quantity: product.quantity,
+    }));
+
 
       // Construct order data
       const orderData = {
@@ -126,6 +132,7 @@ module.exports = {
           paymentMethod: payment_method,
           paymentTendered: cart_total,
           orderDate: new Date(ordered_at),
+          products: productsArray,
         },
         customer: {
           name: customer_name,
@@ -161,7 +168,9 @@ module.exports = {
     try {
       const orders = await OnlineOrder.find()
       res.json(orders);
+      console.log(orders);
     } catch (error) {
+      console.error('Error fetching orders:', error);
       res.status(500).json({ message: 'Error fetching orders', error });
     }
    },

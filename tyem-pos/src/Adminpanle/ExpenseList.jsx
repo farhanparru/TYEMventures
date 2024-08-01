@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import Header from './Headr';
 import Sidebar from './Sidebar';
 
-const socket = io('http://34.121.105.3:8000'); // WebSocket server URL
+const socket = io(''); // WebSocket server URL
 
 const ExpenseList = () => {
   const [expenses, setExpenses] = useState([]);
@@ -16,7 +16,7 @@ const ExpenseList = () => {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get('http://34.121.105.3:8000/api/user/Expense');
+      const response = await axios.get('');
       setExpenses(response.data);
     } catch (error) {
       console.error('Error fetching expenses', error);

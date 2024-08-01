@@ -1,474 +1,227 @@
-import React, { useEffect, useState } from "react";
-import SearchInput from "../../../../../components/SearchInput";
-import { UilAngleDown } from "@iconscout/react-unicons";
-import { useDispatch, useSelector } from "react-redux";
-import { uniqueId } from "lodash";
-import OrderItemCard from "./OrderItemCard";
-import { Empty } from "antd";
-import Bill from "./printbill";
-import OrderNotification from "../components/OrderNotification";
-import {
-  fetchOrders,
-  connectWebSocket,
-} from "../../../../../../services/apiService";
-import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
-
-import { getStoreUserData } from "../../../../../store/storeUser/storeUserSlice";
-import {
-  addOrder,
-  getOrders,
-  syncOrder,
-  searchOrder,
-  sell,
-  setEditOrder,
-} from "../../../store/orderSlice";
-import { Detector } from "react-detect-offline";
-import LoadingScreen from "../../../../../components/Loading";
-import { Dropdown, notification, Popconfirm } from "antd";
-import { clearSelectedTable } from "../../../store/tableSlice";
-import moment from "moment";
-import HomeTopBar from "../../HomeTopBar";
-import {
-  getSelectedBodySection,
-  getSelectedTab,
-} from "../../../store/homeSlice";
-
-const HomeOrdersSection = () => {
-  const [orders, setOrders] = useState([]); //
-  const [ordersToDisplay, setOrdersToDisplay] = useState([]); //
-  const [soundPlaying, setSoundPlaying] = useState(false);
-  
-  console.log(ordersToDisplay, "jj");
-
-  const { ordersList } = useSelector((state) => state.order);
-  const { filteredOrders } = useSelector((state) => state.order); //
-  const [selectedOrder, setSelectedOrder] = React.useState(null);//
-  const [printState, setPrintState] = React.useState(false);
-  const [showSyncButton, setShowSyncButton] = React.useState(false);
-  const [loading, setLoading] = useState(true); //
-  const store_user = useSelector(getStoreUserData);
-  const [notificationApi, contextHolder] = notification.useNotification();
-  const selectedTab = useSelector(getSelectedBodySection);//
-  const actionBtnClass = `w-full text-[0.6rem] py-2 font-medium rounded-md text-white  transition-all ease-in-out hover:scale-95 `;
-  const dispatch = useDispatch();
-  const [searching, setSearching] = useState(false);
-  const [orderFilterType, setOrderFilterType] = useState("All");
-
-  useEffect(() => {
-    if (ordersList?.length > 0) {
-      // setSelectedOrder(ordersList[0]);
-      // dispatch(setEditOrder(ordersList[0]));
-
-      checkForUnsyncedOrders();
-    }
-  }, [ordersList]);
-
-  useEffect(() => {
-    const fetchLatestOrders = () => {
-      dispatch(getOrders(store_user?.accessToken));
-    };
-    fetchLatestOrders();
-    const intervalId = setInterval(fetchLatestOrders, 30000);
-
-    // Clear the interval when the component unmounts to prevent memory leaks
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const handleSearch = (value) => {
-    if (value == "" || value == null || value == undefined) {
-      setSearching(false);
-      dispatch(searchOrder(value));
-      setSelectedOrder(ordersList[0]);
-      // dispatch(setEditOrder(ordersList[0]));
-    } else {
-      setSearching(true);
-      dispatch(searchOrder(value));
-      if (filteredOrders.length > 0) {
-        setSelectedOrder(filteredOrders[0]);
-        // dispatch(setEditOrder(filteredOrders[0]));
-      }
-    }
-  };
-
-  const DropButton = ({ title }) => {
-    return (
-      <div
-        onClick={() => setOrderFilterType(title)}
-        key={title}
-        className={`${
-          title == orderFilterType ? "bg-ch-headers-500 " : "bg-ch-headers-300 "
-        } px-3 flex text-white  items-center rounded-md cursor-pointer transition-all hover:scale-90 `}
-      >
-        <p className="text-sm font-medium ">{title}</p>
-      </div>
-    );
-  };
-
-  const checkForUnsyncedOrders = () => {
-    let found = [];
-    if (ordersList && ordersList.length > 0) {
-      found = ordersList.find((el) => el.is_synced === 0);
-    }
-
-    if (found) {
-      setShowSyncButton(true);
-    } else {
-      setShowSyncButton(false);
-    }
-  };
-
-  const syncAllOrders = () => {
-    setLoading(true);
-    ordersList?.forEach((order) => {
-      if (order.is_synced == 0) {
-        syncSingleOrder(order);
-        setTimeout(() => {
-          dispatch(getOrders(store_user?.accessToken));
-        }, 1000);
-      }
-    });
-    setTimeout(() => {
-      checkForUnsyncedOrders();
-      setLoading(false);
-    }, 2000);
-  };
-
-  const syncSingleOrder = (order) => {
-    dispatch(
-      syncOrder({
-        token: store_user.accessToken,
-        table: order.table ? order.table : 0,
-        cartState: order.cartState,
-        orderitems: order?.cartState?.orderitems,
-        orderStatus: order.orderStatus,
-        id: order.id,
-        time: new Date().getTime(),
-        paymentMethod: order?.cartState?.paymentMethod,
-        paymentStatus: order.paymentStatus,
-        customer: order.customer ? order.customer : 0,
-        store_id: store_user.business.id,
-        type: order.type,
-      })
-    );
-    dispatch(
-      sell({
-        token: store_user.accessToken,
-        table: order.table ? order.table : 0,
-        cartState: order.cartState,
-        orderitems: order?.cartState?.orderitems,
-        orderStatus: order.orderStatus,
-        id: order.id,
-        time: new Date().getTime(),
-        paymentMethod: order?.cartState?.paymentMethod,
-        paymentStatus: order.paymentStatus,
-        customer: order.customer ? order.customer : 0,
-        store_id: store_user.business.id,
-        type: order.type,
-      })
-    );
-
-    notificationApi["success"]({
-      message: "Order Placed Succesfully",
-      description: "Order has been placed successfully ",
-    });
-
-    dispatch(clearSelectedTable());
-  };
-
-  const ipcRenderer = window.ipcRenderer;
-
-  const printThermal = (selectedOrder) => {
-    // console.log(cartState?.orderitems,'jjj');
-    let finalItems = [];
-
-    selectedOrder?.orderitems.forEach(function (item) {
-      const readyToPush = [item.name, item.quantity, item.price];
-      finalItems.push(readyToPush);
-    });
-
-    // console.log(finalItems);
-
-    const data = [
-      {
-        type: "text", // 'text' | 'barCode' | 'qrCode' | 'image' | 'table
-        value: "TM POS",
-        style: { fontWeight: "700", textAlign: "center", fontSize: "24px" },
-      },
-      {
-        type: "text", // 'text' | 'barCode' | 'qrCode' | 'image' | 'table'
-        value: "Online Bill",
-        style: {
-          textDecoration: "underline",
-          fontSize: "10px",
-          textAlign: "center",
-          color: "black",
-        },
-      },
-      {
-        type: "table",
-        // style the table
-        style: { border: "1px solid #ddd" },
-        // list of the columns to be rendered in the table header
-        tableHeader: ["Name", "Qty", "₹"],
-        // multi dimensional array depicting the rows and columns of the table body
-        tableBody: finalItems,
-        // list of columns to be rendered in the table footer
-        tableFooter: ["Name", "Qty", "₹"],
-        // custom style for the table header
-        tableHeaderStyle: { backgroundColor: "#000", color: "white" },
-        // custom style for the table body
-        tableBodyStyle: { border: "0.5px solid #ddd" },
-        // custom style for the table footer
-        tableFooterStyle: { backgroundColor: "#000", color: "white" },
-      },
-      {
-        type: "qrCode",
-        value: "ORDER ID : 1234",
-        height: 200,
-        width: 200,
-        style: { margin: "10 20px 20 20px" },
-      },
-    ];
-
-    ipcRenderer.send("print", JSON.stringify(data));
-  };
+import React, { useState } from 'react';
+import 'tailwindcss/tailwind.css';
+import { Element } from 'react-scroll';
+import { FaCheckCircle, FaRegClock } from 'react-icons/fa';
+import  OrderNotification from '../components/OrderNotification'
 
 
 
-  const playNotificationSound = () => {
-    const audio = new Audio(notificationSound);
-    audio.play();
-  };
-
-  // Fetch initial orders and setup WebSocket connection
-
-  useEffect(() => {
-    const fetchAndSetOrders = async () => {
-      try {
-        const data = await fetchOrders();
-        setOrders(data); // Set the fetched orders to state
-        setLoading(false);  // Stop loading indicator
-      } catch (error) {
-        setLoading(false); // Stop loading indicator
-        console.error("Error fetching initial orders:", error);
-      }
-    };
-
-    fetchAndSetOrders();
-
-    const socket = connectWebSocket((newOrder) => {
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
-       setSoundPlaying(true); // Play sound when a new order is received
-    });
-
-    return () => {
-      socket.close();
-    };
-  }, []);
-
-
-  useEffect(() => {
-    let timeout;
-    if (soundPlaying) {
-      playNotificationSound();
-      timeout = setTimeout(() => {
-        setSoundPlaying(false); // Stop playing sound after 5 minutes
-      }, 5 * 60 * 1000); // 5 minutes in milliseconds
-    }
-
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [soundPlaying]);
-
-
-
-  // Filter and update orders to display
-  const getOrdersToDisplay = () => {
-    let ordersToFilter = searching ? filteredOrders : orders;
-
-    if (selectedTab === "online-orders") {
-      ordersToFilter = ordersToFilter.filter(
-        (order) => order.selling_price_group.toLowerCase() === "online"
-      );
-    } else if (selectedTab === "scheduled-orders") {
-      ordersToFilter = ordersToFilter.filter(
-        (order) => order.is_scheduled === 1
-      );
-    }
-
-    if (orderFilterType === "All") {
-      setSelectedOrder(ordersToFilter[0]);
-      return ordersToFilter;
-    } else {
-      setSelectedOrder(ordersToFilter[0]);
-      return ordersToFilter.filter(
-        (order) =>
-          order.orderStatus.toLowerCase() === orderFilterType.toLowerCase()
-      );
-    }
-  };
-
-  useEffect(() => {
-    setOrdersToDisplay(getOrdersToDisplay());
-  }, [orders, searching, filteredOrders, selectedTab, orderFilterType]);
-
-  // Convert time to 12-hour format
-  // const getScheduleTime = (inputTime) => {
-  //   const date = new Date(`1970-01-01T${inputTime}Z`);
-  //   const time12hr = date.toLocaleTimeString("en-US", {
-  //     hour: "numeric",
-  //     minute: "numeric",
-  //     second: "numeric",
-  //     hour12: true,
-  //   });
-  //   return time12hr;
-  // };
- 
-
-  const handleSyncOrder = (order) => {
-    syncSingleOrder(order)
-      .then(() => {
-        toast.success('Order synced successfully');
-      })
-      .catch((error) => {
-        toast.error('Failed to sync order');
-        console.error('Error syncing order:', error);
-      });
-  };
-
-
-
+// OrderItem component to display individual orders
+const OrderItem = ({ order, onSelect }) => {
+  const totalItems = order.orderDetails.products.reduce((total, product) => total + product.product_quantity, 0);
+  const orderDate = new Date(order.orderDetails.orderDate);
+  const formattedDate = orderDate.toLocaleDateString(); // Format the date
+  const orderTime = orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Format the time
 
   return (
-    <div>
+    <div 
+      className="p-4 mb-4 bg-white rounded-lg shadow-md flex flex-col justify-between border border-gray-200 cursor-pointer hover:bg-gray-100"
+      onClick={() => onSelect(order)}
+    >
       <OrderNotification setOrders={setOrders} />
-      <HomeTopBar selectedTab="Orders" />
-      <div className="flex flex-col gap-2 h-full w-full overflow-x-scroll">
-        {loading ? (
-          <LoadingScreen message="Syncing Orders" />
-        ) : (
-          <>
-            <div className="flex mt-100 w-full gap-2 border-b border-gray-200 p-3">
-              <SearchInput
-                className="flex-1"
-                placeholder="Search Order Number"
-                onInputChange={(e) => handleSearch(e.target.value)}
-              />
-              {['All', 'Draft', 'Received', 'Final'].map((item) => (
-                <DropButton key={item} title={item} onClick={() => setOrderFilterType(item)} />
-              ))}
-            </div>
-            <div
-              className={`flex flex-1 h-full ${
-                ordersToDisplay.length === 0 ? 'items-center justify-center' : ''
-              }`}
-            >
-              {ordersToDisplay.length === 0 ? (
-                <Empty description="Please place orders by selecting table to see order details" />
-              ) : (
-                <>
-                  <div className="flex h-full flex-1 flex-col w-[30%] overflow-y-auto border-r gap-2 border-gray-200">
-                    <div className="flex justify-between items-center mx-2">
-                      <p className="text-md font-bold">{ordersToDisplay.length} Orders</p>
-                    </div>
-                    <div className="p-3 gap-2 overflow-y-scroll h-100">
-                      {ordersToDisplay.map((order) => (
-                        <OrderItemCard
-                          order={order}
-                          key={order.id}
-                          onClick={() => setSelectedOrder(order)}
-                        />
-                      ))}
-                      <div style={{ height: '500px' }}></div>
-                    </div>
-                  </div>
-                  {selectedOrder ? (
-                    <OrderDetails
-                      order={selectedOrder}
-                      onPrint={() => {
-                        // Implement print functionality
-                      }}
-                      onSync={() => handleSyncOrder(selectedOrder)}
-                    />
-                  ) : (
-                    <Empty description="Please select an order to see details" />
-                  )}
-                </>
-              )}
-            </div>
-          </>
-        )}
+      <div>
+        <h3 className="text-lg font-semibold">Order #{order.orderDetails.posOrderId} | INV# {order.orderDetails.orderType}</h3>
+        <p className="text-sm">{totalItems} Item{totalItems > 1 ? 's' : ''} | {order.orderDetails.paymentTendered.toFixed(2)} </p>
+        <div className="flex items-center mt-2">
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.status === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+            {order.orderDetails.paymentStatus}
+          </span>
+          {order.new && <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">New</span>}
+        </div>
+        <div className="mt-2 text-sm text-gray-600">
+          <p><strong>Payment Method:</strong> {order.orderDetails.paymentMethod}</p>
+        </div>
+      </div>
+      <div className="text-sm text-gray-500 mt-2">
+        <p><strong>Order Date:</strong> {formattedDate}</p> {/* Displaying order date */}
+        <p><strong>Order Time:</strong> {orderTime}</p> {/* Displaying order time */}
       </div>
     </div>
   );
 };
 
-const OrderDetails = ({ order, onPrint, onSync }) => (
-  <div className="flex flex-col gap-3 p-3 w-[70%] h-100 overflow-y-scroll">
-    <div className="flex justify-between items-center mx-2 border-b pb-2 border-slate-200">
-      <p className="text-xl font-bold">Order Details</p>
-    </div>
-    <div className="flex bg-chicket-item rounded-lg flex-col gap-2 p-3 mt-4 border-b border-slate-200 pb-2">
-      <div className="flex justify-between items-center text-black mt-3">
-        <p className="text-lg">Order ID</p>
-        <p className="text-lg font-normal">
-          {order.is_synced === 1 ? order.orderDetails.posOrderId : order.id}
-        </p>
-      </div>
-      {order.customer ? (
-        <div className="flex justify-between items-center text-black mt-3">
-          <p className="text-lg">Customer Details</p>
-          <p className="text-lg font-normal">{order.customer.name}</p>
-          <p className="text-lg font-normal">{order.customer.email}</p>
-          <p className="text-lg font-normal">{order.customer.phone}</p>
+const OrderDetails = ({ order }) => {
+  if (!order) {
+    return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view details.</div>;
+  }
+
+  
+ 
+  // Format the order date
+  const orderDate = new Date(order.orderDetails.orderDate);
+  const formattedDate = orderDate.toLocaleDateString(); // e.g., MM/DD/YYYY
+  const orderTime = orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // e.g., HH:MM AM/PM
+
+  return (
+    <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
+      <h3 className="text-xl font-semibold mb-4">Order Details</h3>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <h4 className="font-semibold">Order ID</h4>
+          <p>#{order.orderDetails.posOrderId}</p>
         </div>
-      ) : (
-        <div className="flex justify-between items-center text-black mt-3">
-          <p className="text-lg">Customer</p>
-          <p className="text-lg font-normal">No Customer Selected</p>
+        <div>
+          <h4 className="font-semibold">Invoice ID</h4>
+          <p>{order.orderDetails.orderType}</p>
         </div>
-      )}
-      <div className="flex justify-between items-center text-black mt-3">
-        <p className="text-lg">Order Type</p>
-        <p className="text-lg font-normal">{order.orderDetails.orderType}</p>
+        <div>
+          <h4 className="font-semibold">Ordered At</h4>
+          <p>{formattedDate} {orderTime}</p>
+        </div>
+        <div>
+          <h4 className="font-semibold">Total Amount</h4>
+          <p>{order.orderDetails.paymentTendered.toFixed(2)}</p>
+        </div>
+        <div>
+          <h4 className="font-semibold">Payment Method</h4>
+          <p>{order.orderDetails.paymentMethod}</p>
+        </div>
+        <div>
+          <h4 className="font-semibold">Payment Status</h4>
+          <p>{order.orderDetails.paymentStatus}</p>
+        </div>
       </div>
-      <div className="flex justify-between items-center text-black mt-3">
-        <p className="text-lg">Payment Method</p>
-        <p className="text-lg font-normal">{order.orderDetails.paymentMethod}</p>
+      <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <h4 className="font-semibold">Name</h4>
+          <p>{order.customer.name}</p>
+        </div>
+        <div>
+          <h4 className="font-semibold">Email</h4>
+          <p>{order.customer.email}</p>
+        </div>
+        <div>
+          <h4 className="font-semibold">Phone</h4>
+          <p>{order.customer.phone}</p>
+        </div>
       </div>
-      <div className="flex justify-between items-center text-black mt-3">
-        <p className="text-lg">Payment Tendered</p>
-        <p className="text-lg font-normal">${order.orderDetails.paymentTendered.toFixed(2)}</p>
-      </div>
-      <div className="flex justify-between items-center text-black mt-3">
-        <p className="text-lg">Order Date</p>
-        <p className="text-lg font-normal">
-          {new Date(order.orderDetails.orderDate).toLocaleDateString()}
-        </p>
+      <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
+      <div className="flex items-center">
+        <FaCheckCircle className="w-6 h-6 text-green-500" />
+        <span className="ml-2 text-sm font-semibold">Confirmed</span>
+        <div className="flex-1 mx-4 h-px bg-gray-300"></div>
+        <FaRegClock className="w-6 h-6 text-gray-400" />
+        <span className="ml-2 text-sm text-gray-400">Ready</span>
       </div>
     </div>
-    <button
-      className="bg-orange-500 hover:bg-orange-600 p-2 flex gap-2 justify-center"
-      onClick={onPrint}
-    >
-      <p className="text-sm font-semibold mt-[0.2rem] text-white">Print Bill</p>
-    </button>
-    {order.is_synced === 1 ? (
-      <button className="w-full bg-green-600 text-white font-bold py-2 rounded-md">
-        Order Successfully Synced
-      </button>
-    ) : (
-      <button
-        onClick={onSync}
-        className="w-full bg-red-600 text-white font-bold py-2 rounded-md"
-      >
-        Sync Order
-      </button>
-    )}
-  </div>
-);
+  );
+};
+;
+
+
+// CartSection component to display cart details based on the selected order
+const CartSection = ({ order, onComplete, onCancel }) => {
+  
+  if (!order) {
+    return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
+  }
+
+
+
+  return (
+    <div className="flex flex-col h-full p-5 bg-gray-800 text-white rounded-lg shadow-lg">
+     
+      <div className="flex-grow overflow-y-auto mb-4">
+        {items.length > 0 ? (
+          items.map((item, index) => (
+            <div key={index} className="flex items-center justify-between p-4 bg-gray-700 rounded-md mb-4">
+              <span className="font-semibold">{item.product_name}</span> {/* Product Name */}
+              <span>{item.price?.toFixed(2) || '0.00'} {currency}</span> {/* Price */}
+              <span>×{item.quantity || 0}</span> {/* Quantity */}
+              <span>{(item.price * item.quantity || 0).toFixed(2)} {currency}</span> {/* Total Price */}
+            </div>
+          ))
+        ) : (
+          <div className="p-4 bg-gray-600 rounded-md">No items in the cart.</div>
+        )}
+      </div>
+      
+      {/* Cart Totals Display */}
+      <div className="bg-gray-700 p-4 rounded-lg " style={{marginBottom:"36px"}}>
+        <div className="flex justify-between mb-2">
+          <span className="font-semibold">Subtotal</span>
+          <span>{subtotal.toFixed(2)} {currency}</span>
+        </div>
+        <div className="flex justify-between mb-2">
+          <span className="font-semibold">Discount</span>
+          <span>-{discount.toFixed(2)} {currency}</span>
+        </div>
+        <div className="flex justify-between font-bold text-xl mb-4">
+          <span>Total</span>
+          <span>{total.toFixed(2)} {currency}</span>
+        </div>
+        
+        <div className="flex justify-between items-center gap-2 ">
+          <button
+            className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+            onClick={() => onComplete(order.number)}
+          >
+           Accept
+          </button>
+          <button
+            className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+            onClick={() => onCancel(order.number)}
+          >
+           Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+
+// Main HomeOrdersSection component
+const HomeOrdersSection = () => {
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // Updated orders list with new data
+  const orders = [
+    {
+      number: 71,
+      invoice: 21,
+      items: 1,
+      total: 160.00,
+      currency: 'SAR',
+      type: 'PICK-UP',
+      status: 'Pending',
+      date: '2024/07/07 9:57 am',
+      new: true,
+      paymentMethod: 'CREDIT',
+      agent: 'GOLDEN BAKERY',
+      customer: {
+        name: 'mahroof',
+        address: 'Not Found',
+        phone: '+919895639688',
+      },
+    },
+   
+  ];
+
+  return (
+    <div className="flex h-screen">
+      <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto" style={{marginBlock:"-20px"}}>
+        <Element name="orders-list">
+          {orders.map(order => (
+            <OrderItem key={order.number} order={order} onSelect={setSelectedOrder} />
+          ))}
+        </Element>
+      </div>
+      <div className="w-1/3 h-full p-4 bg-white overflow-auto">
+        {selectedOrder ? (
+          <OrderDetails order={selectedOrder} />
+        ) : (
+          <p className="text-gray-500">Select an order to view details.</p>
+        )}
+      </div>
+      <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white" style={{marginTop:"-20px"}}>
+        <h2 className="text-2xl font-bold mb-4"></h2>
+        <CartSection order={selectedOrder} />
+      </div>
+    </div>
+  );
+};
 
 export default HomeOrdersSection;

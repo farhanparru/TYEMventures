@@ -74,7 +74,6 @@ const SalesSection = () => {
             </li>
           ))}
         </ul>
-        
       </div>
       
       <div className="w-2/4 p-4" style={{ height: '500px', overflowY: 'auto' }}>
@@ -112,7 +111,7 @@ const SalesSection = () => {
       </div>
       <div className="w-1/4 p-4 border-l border-gray-300">
         <h2 className="text-lg font-semibold mb-4">Cart</h2>
-        <div className="border p-4 rounded-md shadow-md bg-gray-900 text-white w-[100%]" style={{ height: '700px',}}>
+        <div className="border p-4 rounded-md shadow-md bg-gray-900 text-white w-full" style={{ height: '700px' }}>
           <div className="flex justify-between items-center mb-60">
             <span className="font-bold">{selectedOrder.items > 0 ? 'CHICKEN SHAWARMA ROLL (NORMAL)' : 'CUCUMBER'}</span>
             <span>₹{selectedOrder.amount}</span>
@@ -140,8 +139,8 @@ const SalesSection = () => {
             <span>1.000</span>
           </div>
           <div className="flex space-x-2 mt-auto">
-            <button className="flex-1 bg-yellow-500 text-white py-2 px-4 rounded-md">Refund</button>
-            <button className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md">Receipt</button>
+            <button className="flex-1 bg-yellow-500 text-white py-2 px-4 rounded-md h-12">Refund</button>
+            <button className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md h-12">Receipt</button>
           </div>
         </div>
       </div>

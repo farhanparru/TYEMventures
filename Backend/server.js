@@ -11,7 +11,7 @@ const {Server} = require('ws')
        
 
 app.use(cors({
-    origin: ["http://ventrues.invenro.site"], // Frontend deployed URL
+    origin: ["https://ventrues.invenro.site"], // Frontend deployed URL
     methods: "GET,POST,PUT,DELETE",
     credentials: true
   }));
