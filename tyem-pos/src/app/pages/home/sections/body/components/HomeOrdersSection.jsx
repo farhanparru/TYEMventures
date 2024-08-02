@@ -7,7 +7,12 @@ import { fetchOrders, connectWebSocket } from '../../../../../../services/apiSer
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
-  const currentTime = new Date().toLocaleTimeString(); // Get current time
+  const currentTime = new Date().toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  })
    // Calculate the total quantity of items in the order
    const totalQuantity = order.orderDetails.reduce((sum, item) => sum + item.product_quantity, 0);
 
@@ -32,7 +37,7 @@ const OrderItem = ({ order, onSelect }) => {
       <div className="text-sm text-gray-500">
         Order Date: {new Date(order.createdAt).toLocaleDateString()} 
         <br />
-        Current Time: {currentTime}
+        {currentTime}
       </div>
     </div>
   );
