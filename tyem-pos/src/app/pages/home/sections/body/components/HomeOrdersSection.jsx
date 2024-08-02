@@ -23,7 +23,10 @@ const OrderItem = ({ order, onSelect }) => {
           {order.new && <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">New</span>}
         </div>
       </div>
-      <div className="text-sm text-gray-500">{new Date(order.createdAt.$date?.$numberLong).toLocaleDateString()}</div>
+      <div className="text-sm text-gray-500">
+  {new Date(order.createdAt).toLocaleDateString()}
+</div>
+
     </div>
   );
 };
