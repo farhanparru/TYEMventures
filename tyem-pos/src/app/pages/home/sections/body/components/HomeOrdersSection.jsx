@@ -1,50 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'tailwindcss/tailwind.css';
 import { Element } from 'react-scroll';
 import { FaCheckCircle, FaRegClock } from 'react-icons/fa';
+import notificationSound from '../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3';
+import { fetchOrders, connectWebSocket } from '../../../../../../services/apiService.js';
 
-// OrderItem component to display individual orders
+// OrderItem component
 const OrderItem = ({ order, onSelect }) => {
   return (
-    <div 
+    <div
       className="p-4 mb-4 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
       <div>
-        <h3 className="text-lg font-semibold">Order #{order.number} | INV# {order.invoice}</h3>
-        <p className="text-sm">{order.items.length} Item{order.items.length > 1 ? 's' : ''} | {order.total} {order.currency} | {order.type}</p>
+        <h3 className="text-lg font-semibold">Order #{order.orderMeta.posOrderId} | INV# {order._id}</h3>
+        <p className="text-sm">{order.orderDetails.length} Item{order.orderDetails.length > 1 ? 's' : ''} | {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}</p>
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.status === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-            {order.status}
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+            {order.orderMeta.paymentStatus}
           </span>
           {order.new && <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">New</span>}
         </div>
       </div>
-      <div className="text-sm text-gray-500">{order.date}</div>
+      <div className="text-sm text-gray-500">{new Date(order.createdAt.$date.$numberLong).toLocaleDateString()}</div>
     </div>
   );
 };
 
-// OrderDetails component to display selected order details
+// OrderDetails component
 const OrderDetails = ({ order }) => {
   return (
     <div className="p-4 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
       <div className="mb-4">
         <h4 className="font-semibold">Order ID</h4>
-        <p>#{order.number}</p>
+        <p>#{order.orderMeta.posOrderId}</p>
       </div>
       <div className="mb-4">
         <h4 className="font-semibold">Invoice Number</h4>
-        <p>{order.invoice}</p>
+        <p>{order._id}</p>
       </div>
       <div className="mb-4">
         <h4 className="font-semibold">Total Items</h4>
-        <p>{order.items.length}</p>
+        <p>{order.orderDetails.length}</p>
       </div>
       <div className="mb-4">
         <h4 className="font-semibold">Total Amount</h4>
-        <p>{order.total} {order.currency}</p>
+        <p>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</p>
       </div>
       <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
       <div className="mb-4">
@@ -52,19 +54,9 @@ const OrderDetails = ({ order }) => {
         <p>{order.customer.name}</p>
       </div>
       <div className="mb-4">
-        <h4 className="font-semibold">Email</h4>
-        <p>{order.customer.email}</p>
-      </div>
-      <div className="mb-4">
         <h4 className="font-semibold">Phone</h4>
         <p>{order.customer.phone}</p>
       </div>
-      {order.customer.address && (
-        <div className="mb-4">
-          <h4 className="font-semibold">Address</h4>
-          <p>{order.customer.address}</p>
-        </div>
-      )}
       <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
       <div className="flex items-center">
         <FaCheckCircle className="w-6 h-6 text-green-500" />
@@ -77,51 +69,42 @@ const OrderDetails = ({ order }) => {
   );
 };
 
-
-const CartSection = ({ order }) => {
+// CartSection component
+const CartSection = ({ order, onComplete, onCancel }) => {
   if (!order) {
     return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
   }
 
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
-      {order.items.map((item, index) => (
+      {order.orderDetails.map((item, index) => (
         <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
-          <span className="font-semibold">{item.name}</span>
-          <span>{item.price.toFixed(2)} {order.currency}</span>
-          <span>×{item.quantity}</span>
-          <span>{(item.price * item.quantity).toFixed(2)} {order.currency}</span>
+          <span className="font-semibold">{item.product_name}</span>
+          <span>{item.product_currency}</span>
+          <span>×{item.product_quantity.$numberInt}</span>
         </div>
       ))}
       <div className="mt-auto p-4 bg-gray-700 text-white">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
-          <span>{order.subtotal.toFixed(2)} {order.currency}</span>
+          <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
         </div>
-        <div className="flex justify-between mb-2">
-          <span className="font-semibold">Tax</span>
-          <span>{order.tax.toFixed(2)} {order.currency}</span>
-        </div>
-        <div className="flex justify-between mb-2">
-          <span className="font-semibold">Discount</span>
-          <span>-{order.discount.toFixed(2)} {order.currency}</span>
-        </div>
-        <div className="flex justify-between items-center gap-2 ">
+        <div className="flex justify-between items-center gap-2">
           <span>Total</span>
-          <span>{order.total.toFixed(2)} {order.currency}</span>
+          <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
         </div>
-        <div className="className= flex justify-between items-center gap-2 ">
-        <button
+        <div className="flex justify-between items-center gap-2">
+          <button
             className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
-            onClick={() => onComplete(order.number)}
+            onClick={() => onComplete(order.orderMeta.posOrderId)}
           >
-           Accept
+            Accept
           </button>
           <button
             className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-            onClick={() => onCancel(order.number)}
+            onClick={() => onCancel(order.orderMeta.posOrderId)}
           >
-           Reject
+            Reject
           </button>
         </div>
       </div>
@@ -131,73 +114,83 @@ const CartSection = ({ order }) => {
 
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
+  const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [soundPlaying, setSoundPlaying] = useState(false);
+  const [audio, setAudio] = useState(null);
 
-  // Sample orders
-  const orders = [
-    {
-      number: '001',
-      invoice: 'INV001',
-      items: [
-        { name: 'Chicken Pop (L)', price: 160, quantity: 1 },
-        { name: 'Burger', price: 50, quantity: 2 }
-      ],
-      subtotal: 260.00,
-      tax: 20.00,
-      discount: 10.00,
-      total: 270.00,
-      currency: 'SAR',
-      type: 'Dine-In',
-      status: 'Accepted',
-      new: true,
-      date: '2024-07-30',
-      customer: {
-        name: 'John Doe',
-        email: 'john@example.com',
-        phone: '+123456789',
-        address: '123 Main St, City, Country'
+  // Play notification sound
+  const playNotificationSound = () => {
+    const newAudio = new Audio(notificationSound);
+    newAudio.loop = true;
+    newAudio.play();
+    setAudio(newAudio);
+
+    setTimeout(() => {
+      newAudio.pause();
+      newAudio.currentTime = 0;
+      setSoundPlaying(false);
+    }, 5 * 60 * 1000); // Stop sound after 5 minutes
+  };
+
+  // Fetch orders and set up WebSocket
+  useEffect(() => {
+    const fetchAndSetOrders = async () => {
+      try {
+        const data = await fetchOrders();
+        setOrders(data); // Set the fetched orders to state
+      } catch (error) {
+        console.error("Error fetching initial orders:", error);
       }
-    },
-    {
-      number: '002',
-      invoice: 'INV002',
-      items: [
-        { name: 'Alfaham (L)', price: 160, quantity: 1 },
-        { name: 'Chicken', price: 50, quantity: 2 }
-      ],
-      subtotal: 260.00,
-      tax: 20.00,
-      discount: 10.00,
-      total: 270.00,
-      currency: 'SAR',
-      type: 'Pick-Up',
-      status: 'Pending',
-      new: false,
-      date: '2024-07-07 09:57 AM',
-      customer: {
-        name: 'Mahroof',
-        email: 'mahroof@example.com',
-        phone: '+919895639688',
-        address: 'Not Found'
+    };
+
+    fetchAndSetOrders();
+
+    const socket = connectWebSocket((newOrder) => {
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      setSoundPlaying(true); // Play sound when a new order is received
+    });
+
+    return () => {
+      socket.close();
+      if (audio) {
+        audio.pause(); // Ensure audio is stopped if the component unmounts
       }
+    };
+  }, [audio]);
+
+  // Handle sound playing state
+  useEffect(() => {
+    if (soundPlaying) {
+      playNotificationSound();
     }
-  ];
+  }, [soundPlaying]);
+
+  // Handle order completion
+  const handleComplete = (orderId) => {
+    console.log(`Order ${orderId} accepted`);
+    // Implement order completion logic
+  };
+
+  // Handle order cancellation
+  const handleCancel = (orderId) => {
+    console.log(`Order ${orderId} rejected`);
+    // Implement order cancellation logic
+  };
 
   return (
     <div className="flex h-screen">
       {/* Orders List */}
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
-        {/* <h2 className="text-2xl font-bold mb-4">Orders List</h2> */}
         <Element name="orders-list">
           {orders.map(order => (
-            <OrderItem key={order.number} order={order} onSelect={setSelectedOrder} />
+            <OrderItem key={order._id} order={order} onSelect={setSelectedOrder} />
           ))}
         </Element>
       </div>
 
       {/* Order Details */}
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
-        {/* <h2 className="text-2xl font-bold mb-4">Order Details</h2> */}
         {selectedOrder ? (
           <OrderDetails order={selectedOrder} />
         ) : (
@@ -206,9 +199,8 @@ const HomeOrdersSection = () => {
       </div>
 
       {/* Cart Section */}
-      <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white" style={{marginTop:"-20px"}}>
-        {/* <h2 className="text-2xl font-bold mb-4">Cart Details</h2> */}
-        <CartSection order={selectedOrder} />
+      <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
+        <CartSection order={selectedOrder} onComplete={handleComplete} onCancel={handleCancel} />
       </div>
     </div>
   );
