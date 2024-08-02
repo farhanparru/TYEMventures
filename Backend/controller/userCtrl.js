@@ -102,7 +102,7 @@ module.exports = {
   },
 
 // Webhook endpoint to handle incoming orders
-onlineOrder:async (req, res) => {
+onlineOrder: async (req, res) => {
   try {
     const {
       order_id,
@@ -112,29 +112,28 @@ onlineOrder:async (req, res) => {
       ordered_at,
       customer_name,
       customer_phone_number,
-      product_quantity,
-      product_name,
       payment_status,
-      product_currency
+      item_lines // Extract item_lines from the request body
     } = req.body;
 
-   
+    // Map item_lines to orderDetails structure
+    const orderDetails = item_lines.map(item => ({
+      product_name: item.product_name,
+      product_quantity: item.product_quantity,
+      product_currency: item.product_currency,
+    }));
 
     // Construct order data
     const orderData = {
-      orderDetails: {
+      orderDetails: orderDetails, // Store all products
+      orderMeta: {
         posOrderId: order_id,
         orderType: catalog_id,
         paymentMethod: payment_method,
-        paymentTendered: cart_total,  
+        paymentTendered: cart_total,
         orderDate: new Date(ordered_at),
         paymentStatus: payment_status,
-        product_name:product_name, 
-        product_quantity: product_quantity,
-        productcurrency:product_currency
-
       },
-
       customer: {
         name: customer_name,
         phone: customer_phone_number,
@@ -144,7 +143,6 @@ onlineOrder:async (req, res) => {
     // Save order to database
     const order = new OnlineOrder(orderData);
     await order.save();
-
     // Broadcast the new order to all WebSocket clients
     const wss = req.app.get('wss'); // Ensure WebSocket server is available
     wss.clients.forEach((client) => {
