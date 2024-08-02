@@ -49,7 +49,8 @@ const OrderItem = ({ order, onSelect }) => {
 
 
 // OrderDetails component
-const OrderDetails = ({ order }) => {
+const OrderDetails = ({ order , orderStatus}) => {
+  const statusClass = orderStatus === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
   return (
     <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
@@ -80,8 +81,8 @@ const OrderDetails = ({ order }) => {
       </div>
       <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
       <div className="flex items-center">
-        <FaCheckCircle className="w-6 h-6 text-green-500" />
-        <span className="ml-2 text-sm font-semibold">Confirmed</span>
+      <FaCheckCircle className={`w-6 h-6 ${statusClass}`} />
+      <span className={`ml-2 text-sm font-semibold ${statusClass}`}>Confirmed</span>
         <div className="flex-1 mx-4 h-px bg-gray-300"></div>
         <FaRegClock className="w-6 h-6 text-gray-400" />
         <span className="ml-2 text-sm text-gray-400">Ready</span>
@@ -91,7 +92,7 @@ const OrderDetails = ({ order }) => {
 };
 
 // CartSection component
-const CartSection = ({ order, onComplete, onCancel }) => {
+const CartSection = ({ order, onComplete, onCancel,orderStatus }) => {
 
   
   if (!order) {
