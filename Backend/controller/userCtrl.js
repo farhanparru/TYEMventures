@@ -112,10 +112,10 @@ onlineOrder:async (req, res) => {
       ordered_at,
       customer_name,
       customer_phone_number,
-      customer_email, // Ensure email is provided
       product_quantity,
       product_name,
       payment_status,
+      product_currency
     } = req.body;
 
    
@@ -128,15 +128,18 @@ onlineOrder:async (req, res) => {
         paymentMethod: payment_method,
         paymentTendered: cart_total,  
         orderDate: new Date(ordered_at),
-        product_name: product_name, // Corrected field names
-        product_quantity: product_quantity,
         paymentStatus: payment_status,
 
       },
 
+      products:{
+        productname:product_name, 
+        productquantity: product_quantity,
+        productcurrency:product_currency
+      },
+
       customer: {
         name: customer_name,
-        email: customer_email, // Add email if necessary
         phone: customer_phone_number,
       },
     };
