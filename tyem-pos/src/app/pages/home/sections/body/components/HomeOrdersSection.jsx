@@ -7,6 +7,10 @@ import { fetchOrders, connectWebSocket } from '../../../../../../services/apiSer
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
+
+
+
+  
   const currentTime = new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
@@ -88,6 +92,8 @@ const OrderDetails = ({ order }) => {
 
 // CartSection component
 const CartSection = ({ order, onComplete, onCancel }) => {
+
+  
   if (!order) {
     return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
   }
@@ -112,16 +118,18 @@ const CartSection = ({ order, onComplete, onCancel }) => {
         </div>
         <div className="flex justify-between items-center gap-2">
           <button
-            className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+            className={`flex-1 py-2 px-4 rounded ${orderStatus === 'Completed' ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
             onClick={() => onComplete(order.orderMeta.posOrderId)}
+            disabled={orderStatus === 'Completed'}
           >
-            Accept
+            {orderStatus === 'Completed' ? 'Completed' : 'Complete'}
           </button>
           <button
-            className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+            className={`flex-1 py-2 px-4 rounded ${orderStatus === 'Cancelled' ? 'bg-gray-500 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
             onClick={() => onCancel(order.orderMeta.posOrderId)}
+            disabled={orderStatus === 'Cancelled'}
           >
-            Reject
+            {orderStatus === 'Cancelled' ? 'Cancelled' : 'Cancel'}
           </button>
         </div>
       </div>
@@ -135,6 +143,7 @@ const HomeOrdersSection = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
+  const [orderStatus, setOrderStatus] = useState(null); // Manage status here
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -186,12 +195,13 @@ const HomeOrdersSection = () => {
   // Handle order completion
   const handleComplete = (orderId) => {
     console.log(`Order ${orderId} accepted`);
+    setOrderStatus('Completed'); // Update status to Completed
     // Implement order completion logic
   };
 
-  // Handle order cancellation
   const handleCancel = (orderId) => {
     console.log(`Order ${orderId} rejected`);
+    setOrderStatus('Cancelled'); // Update status to Cancelled
     // Implement order cancellation logic
   };
 
