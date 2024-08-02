@@ -125,7 +125,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       icon: AiOutlineShoppingCart,
       onClick: () => setActiveMenu(drawerMenuLabels.online.label),
       path: drawerMenuLabels.online.path,
-      badge: 10, // Add badge count here// Add badge count here
+      badge: 9, // Add badge count here// Add badge count here
     },
     {
       label: drawerMenuLabels.orders.label,
