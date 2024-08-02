@@ -9,14 +9,10 @@ const orderSchema = new mongoose.Schema(
       paymentTendered: Number,
       orderDate: Date,
       paymentStatus: String,
-    },
-
-    products: {
       product_name: String,
       product_quantity: Number,
       product_currency:String,
     },
-
     customer: {
       name: String,
       phone: String,
