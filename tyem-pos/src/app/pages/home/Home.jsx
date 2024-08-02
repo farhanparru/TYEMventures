@@ -88,6 +88,11 @@ const Home = () => {
     setIsChatOpen(!isChatOpen);
   };
 
+
+
+
+  
+
   return (
     <div className="flex items-stretch h-full bg-white">
       <div className="w-full h-full">

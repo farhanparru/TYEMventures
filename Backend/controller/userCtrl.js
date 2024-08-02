@@ -111,16 +111,14 @@ onlineOrder:async (req, res) => {
       cart_total,
       ordered_at,
       customer_name,
-      customer_email,
       customer_phone_number,
-      products, // Array of products, each with name and quantity
+      customer_email, // Ensure email is provided
+      product_quantity,
+      product_name,
+      payment_status,
     } = req.body;
 
-    // Construct products array
-    const productsArray = products.map(product => ({
-      product_name: product.name,
-      product_quantity: product.quantity,
-    }));
+   
 
     // Construct order data
     const orderData = {
@@ -128,19 +126,23 @@ onlineOrder:async (req, res) => {
         posOrderId: order_id,
         orderType: catalog_id,
         paymentMethod: payment_method,
-        paymentTendered: cart_total,
+        paymentTendered: cart_total,  
         orderDate: new Date(ordered_at),
-        products: productsArray,
+        product_name: product_name, // Corrected field names
+        product_quantity: product_quantity,
+        paymentStatus: payment_status,
+
       },
+
       customer: {
         name: customer_name,
-        email: customer_email,
+        email: customer_email, // Add email if necessary
         phone: customer_phone_number,
       },
     };
 
     // Save order to database
-    const order = new Order(orderData);
+    const order = new OnlineOrder(orderData);
     await order.save();
 
     // Broadcast the new order to all WebSocket clients

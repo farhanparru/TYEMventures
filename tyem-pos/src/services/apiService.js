@@ -22,6 +22,9 @@ export const fetchOrders = async () => {
 
 export const connectWebSocket = (onMessage) => {
   const socket = new WebSocket(WEBSOCKET_URL);
+  socket.onopen = () => {
+    console.log('WebSocket connection established');
+  };
 
   socket.onmessage = (event) => {
     const newOrder = JSON.parse(event.data);

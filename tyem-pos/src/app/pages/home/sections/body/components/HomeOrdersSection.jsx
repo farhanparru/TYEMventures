@@ -2,100 +2,69 @@ import React, { useState } from 'react';
 import 'tailwindcss/tailwind.css';
 import { Element } from 'react-scroll';
 import { FaCheckCircle, FaRegClock } from 'react-icons/fa';
-import  OrderNotification from '../components/OrderNotification'
-
-
 
 // OrderItem component to display individual orders
 const OrderItem = ({ order, onSelect }) => {
-  const totalItems = order.orderDetails.products.reduce((total, product) => total + product.product_quantity, 0);
-  const orderDate = new Date(order.orderDetails.orderDate);
-  const formattedDate = orderDate.toLocaleDateString(); // Format the date
-  const orderTime = orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Format the time
-
   return (
     <div 
-      className="p-4 mb-4 bg-white rounded-lg shadow-md flex flex-col justify-between border border-gray-200 cursor-pointer hover:bg-gray-100"
+      className="p-4 mb-4 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
-      <OrderNotification setOrders={setOrders} />
       <div>
-        <h3 className="text-lg font-semibold">Order #{order.orderDetails.posOrderId} | INV# {order.orderDetails.orderType}</h3>
-        <p className="text-sm">{totalItems} Item{totalItems > 1 ? 's' : ''} | {order.orderDetails.paymentTendered.toFixed(2)} </p>
+        <h3 className="text-lg font-semibold">Order #{order.number} | INV# {order.invoice}</h3>
+        <p className="text-sm">{order.items.length} Item{order.items.length > 1 ? 's' : ''} | {order.total} {order.currency} | {order.type}</p>
         <div className="flex items-center mt-2">
           <span className={`px-2 py-1 text-xs font-semibold rounded ${order.status === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-            {order.orderDetails.paymentStatus}
+            {order.status}
           </span>
           {order.new && <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">New</span>}
         </div>
-        <div className="mt-2 text-sm text-gray-600">
-          <p><strong>Payment Method:</strong> {order.orderDetails.paymentMethod}</p>
-        </div>
       </div>
-      <div className="text-sm text-gray-500 mt-2">
-        <p><strong>Order Date:</strong> {formattedDate}</p> {/* Displaying order date */}
-        <p><strong>Order Time:</strong> {orderTime}</p> {/* Displaying order time */}
-      </div>
+      <div className="text-sm text-gray-500">{order.date}</div>
     </div>
   );
 };
 
+// OrderDetails component to display selected order details
 const OrderDetails = ({ order }) => {
-  if (!order) {
-    return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view details.</div>;
-  }
-
-  
- 
-  // Format the order date
-  const orderDate = new Date(order.orderDetails.orderDate);
-  const formattedDate = orderDate.toLocaleDateString(); // e.g., MM/DD/YYYY
-  const orderTime = orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // e.g., HH:MM AM/PM
-
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="p-4 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <h4 className="font-semibold">Order ID</h4>
-          <p>#{order.orderDetails.posOrderId}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Invoice ID</h4>
-          <p>{order.orderDetails.orderType}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Ordered At</h4>
-          <p>{formattedDate} {orderTime}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Total Amount</h4>
-          <p>{order.orderDetails.paymentTendered.toFixed(2)}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Payment Method</h4>
-          <p>{order.orderDetails.paymentMethod}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Payment Status</h4>
-          <p>{order.orderDetails.paymentStatus}</p>
-        </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Order ID</h4>
+        <p>#{order.number}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Invoice Number</h4>
+        <p>{order.invoice}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Total Items</h4>
+        <p>{order.items.length}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Total Amount</h4>
+        <p>{order.total} {order.currency}</p>
       </div>
       <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <h4 className="font-semibold">Name</h4>
-          <p>{order.customer.name}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Email</h4>
-          <p>{order.customer.email}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold">Phone</h4>
-          <p>{order.customer.phone}</p>
-        </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Name</h4>
+        <p>{order.customer.name}</p>
       </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Email</h4>
+        <p>{order.customer.email}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Phone</h4>
+        <p>{order.customer.phone}</p>
+      </div>
+      {order.customer.address && (
+        <div className="mb-4">
+          <h4 className="font-semibold">Address</h4>
+          <p>{order.customer.address}</p>
+        </div>
+      )}
       <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
       <div className="flex items-center">
         <FaCheckCircle className="w-6 h-6 text-green-500" />
@@ -107,53 +76,42 @@ const OrderDetails = ({ order }) => {
     </div>
   );
 };
-;
 
 
-// CartSection component to display cart details based on the selected order
-const CartSection = ({ order, onComplete, onCancel }) => {
-  
+const CartSection = ({ order }) => {
   if (!order) {
     return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
   }
 
-
-
   return (
-    <div className="flex flex-col h-full p-5 bg-gray-800 text-white rounded-lg shadow-lg">
-     
-      <div className="flex-grow overflow-y-auto mb-4">
-        {items.length > 0 ? (
-          items.map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-gray-700 rounded-md mb-4">
-              <span className="font-semibold">{item.product_name}</span> {/* Product Name */}
-              <span>{item.price?.toFixed(2) || '0.00'} {currency}</span> {/* Price */}
-              <span>×{item.quantity || 0}</span> {/* Quantity */}
-              <span>{(item.price * item.quantity || 0).toFixed(2)} {currency}</span> {/* Total Price */}
-            </div>
-          ))
-        ) : (
-          <div className="p-4 bg-gray-600 rounded-md">No items in the cart.</div>
-        )}
-      </div>
-      
-      {/* Cart Totals Display */}
-      <div className="bg-gray-700 p-4 rounded-lg " style={{marginBottom:"36px"}}>
+    <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
+      {order.items.map((item, index) => (
+        <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
+          <span className="font-semibold">{item.name}</span>
+          <span>{item.price.toFixed(2)} {order.currency}</span>
+          <span>×{item.quantity}</span>
+          <span>{(item.price * item.quantity).toFixed(2)} {order.currency}</span>
+        </div>
+      ))}
+      <div className="mt-auto p-4 bg-gray-700 text-white">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
-          <span>{subtotal.toFixed(2)} {currency}</span>
+          <span>{order.subtotal.toFixed(2)} {order.currency}</span>
+        </div>
+        <div className="flex justify-between mb-2">
+          <span className="font-semibold">Tax</span>
+          <span>{order.tax.toFixed(2)} {order.currency}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Discount</span>
-          <span>-{discount.toFixed(2)} {currency}</span>
+          <span>-{order.discount.toFixed(2)} {order.currency}</span>
         </div>
-        <div className="flex justify-between font-bold text-xl mb-4">
-          <span>Total</span>
-          <span>{total.toFixed(2)} {currency}</span>
-        </div>
-        
         <div className="flex justify-between items-center gap-2 ">
-          <button
+          <span>Total</span>
+          <span>{order.total.toFixed(2)} {order.currency}</span>
+        </div>
+        <div className="className= flex justify-between items-center gap-2 ">
+        <button
             className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
             onClick={() => onComplete(order.number)}
           >
@@ -171,53 +129,85 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   );
 };
 
-
-
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // Updated orders list with new data
+  // Sample orders
   const orders = [
     {
-      number: 71,
-      invoice: 21,
-      items: 1,
-      total: 160.00,
+      number: '001',
+      invoice: 'INV001',
+      items: [
+        { name: 'Chicken Pop (L)', price: 160, quantity: 1 },
+        { name: 'Burger', price: 50, quantity: 2 }
+      ],
+      subtotal: 260.00,
+      tax: 20.00,
+      discount: 10.00,
+      total: 270.00,
       currency: 'SAR',
-      type: 'PICK-UP',
-      status: 'Pending',
-      date: '2024/07/07 9:57 am',
+      type: 'Dine-In',
+      status: 'Accepted',
       new: true,
-      paymentMethod: 'CREDIT',
-      agent: 'GOLDEN BAKERY',
+      date: '2024-07-30',
       customer: {
-        name: 'mahroof',
-        address: 'Not Found',
-        phone: '+919895639688',
-      },
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '+123456789',
+        address: '123 Main St, City, Country'
+      }
     },
-   
+    {
+      number: '002',
+      invoice: 'INV002',
+      items: [
+        { name: 'Alfaham (L)', price: 160, quantity: 1 },
+        { name: 'Chicken', price: 50, quantity: 2 }
+      ],
+      subtotal: 260.00,
+      tax: 20.00,
+      discount: 10.00,
+      total: 270.00,
+      currency: 'SAR',
+      type: 'Pick-Up',
+      status: 'Pending',
+      new: false,
+      date: '2024-07-07 09:57 AM',
+      customer: {
+        name: 'Mahroof',
+        email: 'mahroof@example.com',
+        phone: '+919895639688',
+        address: 'Not Found'
+      }
+    }
   ];
 
   return (
     <div className="flex h-screen">
-      <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto" style={{marginBlock:"-20px"}}>
+      {/* Orders List */}
+      <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
+        {/* <h2 className="text-2xl font-bold mb-4">Orders List</h2> */}
         <Element name="orders-list">
           {orders.map(order => (
             <OrderItem key={order.number} order={order} onSelect={setSelectedOrder} />
           ))}
         </Element>
       </div>
+
+      {/* Order Details */}
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
+        {/* <h2 className="text-2xl font-bold mb-4">Order Details</h2> */}
         {selectedOrder ? (
           <OrderDetails order={selectedOrder} />
         ) : (
           <p className="text-gray-500">Select an order to view details.</p>
         )}
       </div>
+
+      {/* Cart Section */}
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white" style={{marginTop:"-20px"}}>
-        <h2 className="text-2xl font-bold mb-4"></h2>
+        {/* <h2 className="text-2xl font-bold mb-4">Cart Details</h2> */}
         <CartSection order={selectedOrder} />
       </div>
     </div>
