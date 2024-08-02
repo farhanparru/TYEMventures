@@ -18,7 +18,7 @@ const OrderItem = ({ order, onSelect }) => {
 
    return (
     <div
-      className="p-4 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
+      className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
       <div>
@@ -47,7 +47,7 @@ const OrderItem = ({ order, onSelect }) => {
 // OrderDetails component
 const OrderDetails = ({ order }) => {
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
       <div className="mb-4">
         <h4 className="font-semibold">Order ID</h4>
@@ -93,7 +93,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   }
 
   return (
-    <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
+    <div className="flex flex-col h-full p-3 bg-gray-800 text-white">
       {order.orderDetails.map((item, index) => (
         <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
           <span className="font-semibold">{item.product_name}</span>

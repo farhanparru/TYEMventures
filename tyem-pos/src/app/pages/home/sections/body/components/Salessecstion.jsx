@@ -87,16 +87,19 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   };
 
   return (
-    <div className="w-3/4 flex flex-col h-full p-4 bg-gray-800 text-white">
-      {order.orderDetails.map((item, index) => (
-        <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
-          <span className="font-semibold">{item.product_name}</span>
-          <span>{item.product_currency} {item.product_price.toFixed(2)}</span>
-          <span>× {item.product_quantity}</span>
-          <span>{item.product_currency} {(item.product_price * item.product_quantity).toFixed(2)}</span>
-        </div>
-      ))}
-      <div className="mt-auto p-4 bg-gray-700 text-white">
+    <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
+      <h2 className="text-lg font-semibold mb-4">Cart Items</h2>
+      <div className="flex-grow overflow-y-auto">
+        {order.orderDetails.map((item, index) => (
+          <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
+            <span className="font-semibold">{item.product_name}</span>
+            <span>{item.product_currency} {item.product_price.toFixed(2)}</span>
+            <span>× {item.product_quantity}</span>
+            <span>{item.product_currency} {(item.product_price * item.product_quantity).toFixed(2)}</span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 p-4 bg-gray-700 text-white rounded-md">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
@@ -203,14 +206,14 @@ const App = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="w-1/4 p-4">
+    <div className="flex h-screen p-4 space-x-4">
+      <div className="w-1/4">
         <ShowOrders orders={sampleOrders} onRefresh={handleRefresh} onToggleCompleted={handleToggleCompleted} onSelectOrder={handleSelectOrder} />
       </div>
-      <div className="w-1/4 p-4">
+      <div className="w-1/4">
         <OrderDetails order={selectedOrder} />
       </div>
-      <div className="w-1/2 p-4">
+      <div className="w-1/2">
         <CartSection order={selectedOrder} onComplete={handleComplete} onCancel={handleCancel} />
       </div>
     </div>
