@@ -129,8 +129,8 @@ onlineOrder:async (req, res) => {
         paymentTendered: cart_total,  
         orderDate: new Date(ordered_at),
         paymentStatus: payment_status,
-        productname:product_name, 
-        productquantity: product_quantity,
+        product_name:product_name, 
+        product_quantity: product_quantity,
         productcurrency:product_currency
 
       },
