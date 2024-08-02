@@ -79,7 +79,7 @@ const OrderDetails = ({ order }) => {
 
 const CartSection = ({ order, onComplete, onCancel }) => {
   if (!order) {
-    return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
+    return <div className="flex items-center justify-center h-24 p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
   }
 
   const calculateTotal = () => {
@@ -87,11 +87,11 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   };
 
   return (
-    <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
+    <div className="flex flex-col h-[500px] p-3 bg-gray-800 text-white rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4">Cart Items</h2>
-      <div className="flex-grow overflow-y-auto">
+      <div className="flex-grow overflow-y-auto mb-4">
         {order.orderDetails.map((item, index) => (
-          <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
+          <div key={index} className="flex items-center justify-between p-2 bg-white rounded-md text-black mb-2">
             <span className="font-semibold">{item.product_name}</span>
             <span>{item.product_currency} {item.product_price.toFixed(2)}</span>
             <span>× {item.product_quantity}</span>
@@ -99,7 +99,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           </div>
         ))}
       </div>
-      <div className="mt-4 p-4 bg-gray-700 text-white rounded-md">
+      <div className="p-4 bg-gray-700 text-white rounded-md">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
@@ -112,19 +112,19 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           <span>Discount</span>
           <span>{order.orderMeta.discount} {order.orderDetails[0].product_currency}</span>
         </div>
-        <div className="flex justify-between items-center gap-2">
-          <span>Total</span>
+        <div className="flex justify-between items-center gap-2 mb-4">
+          <span className="font-semibold">Total</span>
           <span>{calculateTotal().toFixed(2)} {order.orderDetails[0].product_currency}</span>
         </div>
-        <div className="flex justify-between items-center gap-2 mt-4">
+        <div className="flex justify-between items-center gap-2">
           <button
-            className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+            className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-200"
             onClick={() => onComplete(order.orderMeta.posOrderId)}
           >
             Accept
           </button>
           <button
-            className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+            className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition duration-200"
             onClick={() => onCancel(order.orderMeta.posOrderId)}
           >
             Reject
@@ -134,6 +134,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
     </div>
   );
 };
+
 
 const App = () => {
   const sampleOrders = [
