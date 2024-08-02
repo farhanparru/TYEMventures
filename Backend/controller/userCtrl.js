@@ -132,7 +132,7 @@ onlineOrder:async (req, res) => {
 
       },
 
-      Products:{
+      products:{
         productname:product_name, 
         productquantity: product_quantity,
         productcurrency:product_currency
