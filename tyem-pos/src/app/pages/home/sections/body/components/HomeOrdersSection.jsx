@@ -18,7 +18,7 @@ const OrderItem = ({ order, onSelect }) => {
 
    return (
     <div
-      className="p-4 mb-4 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
+      className="w-1/4 p-4  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
       <div>
