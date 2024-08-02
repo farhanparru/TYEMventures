@@ -7,15 +7,21 @@ import { fetchOrders, connectWebSocket } from '../../../../../../services/apiSer
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
-  return (
+  const currentTime = new Date().toLocaleTimeString(); // Get current time
+   // Calculate the total quantity of items in the order
+   const totalQuantity = order.orderDetails.reduce((sum, item) => sum + item.product_quantity, 0);
+
+   return (
     <div
       className="p-4 mb-4 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
       <div>
         <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId} | INV# {order._id}</h3>
-        <p className="text-sm">{order.orderDetails.length} Item{order.orderDetails.length > 1 ? 's' : ''} | 
-        {order.orderMeta?.paymentTendered} {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}</p>
+        <p className="text-sm">
+          {totalQuantity} Item{totalQuantity > 1 ? 's' : ''} | 
+          {order.orderMeta?.paymentTendered} {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}
+        </p>
         <div className="flex items-center mt-2">
           <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
             {order.orderMeta.paymentStatus}
@@ -24,12 +30,14 @@ const OrderItem = ({ order, onSelect }) => {
         </div>
       </div>
       <div className="text-sm text-gray-500">
-  {new Date(order.createdAt).toLocaleDateString()}
-</div>
-
+        Order Date: {new Date(order.createdAt).toLocaleDateString()} 
+        <br />
+        Current Time: {currentTime}
+      </div>
     </div>
   );
 };
+
 
 // OrderDetails component
 const OrderDetails = ({ order }) => {
@@ -85,7 +93,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
         <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
           <span className="font-semibold">{item.product_name}</span>
           <span>{item.product_currency}</span>
-          <span>×{item.product_quantity.$numberInt}</span>
+          <span>{item.product_quantity}</span>
         </div>
       ))}
       <div className="mt-auto p-4 bg-gray-700 text-white">
