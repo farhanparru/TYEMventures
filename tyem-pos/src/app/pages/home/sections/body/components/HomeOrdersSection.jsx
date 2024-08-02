@@ -14,7 +14,8 @@ const OrderItem = ({ order, onSelect }) => {
     >
       <div>
         <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId} | INV# {order._id}</h3>
-        <p className="text-sm">{order.orderDetails.length} Item{order.orderDetails.length > 1 ? 's' : ''} | {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}</p>
+        <p className="text-sm">{order.orderDetails.length} Item{order.orderDetails.length > 1 ? 's' : ''} | 
+        {order.orderMeta?.paymentTendered} {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}</p>
         <div className="flex items-center mt-2">
           <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
             {order.orderMeta.paymentStatus}
