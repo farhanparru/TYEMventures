@@ -80,10 +80,16 @@ const Home = () => {
       socket.onmessage = (event) => {
         const newOrder = JSON.parse(event.data);
         console.log("New Order Received:", newOrder);
-        // Play sound when a new order is received
         setSoundPlaying(true);
-        // Optionally, update the orders state with the new order
-        // You can dispatch an action to add the new order or update your Redux state here
+      };
+
+      socket.onopen = () => {
+        console.log('WebSocket connection established');
+      };
+    
+      socket.onmessage = (event) => {
+        const newOrder = JSON.parse(event.data);
+        onMessage(newOrder);
       };
   
       socket.onclose = () => {
