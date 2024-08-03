@@ -158,7 +158,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   };
 
   useEffect(() => {
-    playNotificationSound();
+    // playNotificationSound();
     // Clean up the sound if the component is unmounted or order changes
     return () => {
       stopNotificationSound();
@@ -190,20 +190,20 @@ const CartSection = ({ order, onComplete, onCancel }) => {
 
   return (
     <div className="flex flex-col h-full p-2 bg-gray-800 text-white">
-    {order.orderDetails.map((item, index) => (
-      <div
-        key={index}
-        className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
-      >
-        <span>{order.orderMeta.paymentTendered}</span>
-        <span>{item.product_currency}</span>
-        <span className="font-semibold">{item.product_name}</span>
-        <span>{item.product_quantity}</span>
-      </div>
+      {order.orderDetails.map((item, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+        >
+          <span className="font-semibold">{item.product_name}</span>
+          <span>{item.product_quantity}</span>
+          <span>{order.orderMeta.paymentTendered}</span>
+          <span>{item.product_currency}</span>
+        </div>
       ))}
       <div
         className="mt-auto p-4 bg-gray-700 text-white"
-        style={{ marginTop: "604px" }}
+        style={{ marginTop: "590px" }}
       >
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
