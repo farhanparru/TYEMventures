@@ -130,7 +130,7 @@ onlineOrder: async (req, res) => {
         orderType: catalog_id,
         paymentMethod: payment_method,
         paymentTendered: cart_total,
-        orderDate: new Date().toLocaleString(),
+        orderDate: new Date().toLocaleString(), // Current date and time
         paymentStatus: payment_status,
       },
       
@@ -138,9 +138,10 @@ onlineOrder: async (req, res) => {
         name: customer_name,
         phone: customer_phone_number,
       },
-
+      receivedAt: new Date(), // Explicitly set current date and time
     };
 
+   
     console.log(orderData);
     
 

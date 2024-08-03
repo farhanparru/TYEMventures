@@ -14,13 +14,14 @@ const orderSchema = new mongoose.Schema(
       orderType: String,
       paymentMethod: String,
       paymentTendered: Number,
-      orderDate:String,
+      orderDate: String,
       paymentStatus: String,
     },
     customer: {
       name: String,
       phone: String,
     },
+    receivedAt: { type: Date, default: Date.now } // Automatically set to the current date and time
   },
   { timestamps: true }
 );

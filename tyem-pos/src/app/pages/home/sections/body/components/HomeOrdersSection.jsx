@@ -22,6 +22,14 @@ const OrderItem = ({ order, onSelect }) => {
     0
   );
 
+ // Function to format date and time
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+
+
   return (
     <div
       className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
@@ -58,7 +66,7 @@ const OrderItem = ({ order, onSelect }) => {
       </div>
       <div className="text-sm text-gray-500">
         <br />
-        {order.orderMeta.orderDate}
+        {formatDate(order.receivedAt)} {/* Display formatted date */}
       </div>
     </div>
   );
