@@ -4,6 +4,10 @@ import { Element } from 'react-scroll';
 import { FaCheckCircle, FaRegClock } from 'react-icons/fa';
 import notificationSound from '../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3';
 import { fetchOrders, connectWebSocket } from '../../../../../../services/apiService.js';
+import { useDispatch, useSelector } from 'react-redux';
+import CartNumpad from '../../../../../../app/pages/home/components/CartNumpad.jsx'
+import CustomModal from '../../../../../components/CustomModal.jsx';
+import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
@@ -93,11 +97,17 @@ const OrderDetails = ({ order }) => {
 
 // CartSection component
 const CartSection = ({ order, onComplete, onCancel }) => {
+  const [showPlaceModal, setShowPlaceModal] = useState(false);
+  const dispatch = useDispatch();
+  const cartState = useSelector((state) => state.cart);
+  const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
+  const paymentMethods = ['Cash', 'Card', 'Split', 'Talabat', 'Other'];
 
   const [isAccepted, setIsAccepted] = useState(false);
 
   const handleAccept = () => {
     setIsAccepted(true);
+    setShowPlaceModal(true);
     onComplete(order.number); // Call the onComplete function if needed
   };
 
@@ -165,12 +175,144 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           )}
         </div>
       </div>
+
+      {showPlaceModal && (
+        <CustomModal
+          onClose={() => {
+            setShowPlaceModal(false);
+          }}
+        >
+          <div className="flex flex-col p-10" style={{ width: "1000px" }}>
+            <div className="flex items-center justify-between border-b-2 border-gray-300 pb-5">
+              <div className="flex flex-col w-full">
+                <h3 className="text-lg font-bold">Order ID : #{order.orderId}</h3>
+                <h5 className="text-lg font-bold">{cartState?.orderitems?.length} Items</h5>
+                <h5 className="text-lg font-bold">{selectedCustomer?.name}</h5>
+              </div>
+              <div className="flex flex-col items-center w-full justify-end">
+                <div className="flex items-center w-full justify-end">
+                  <h3 className="text-lg font-medium">Payable Amount :</h3>
+                  <h2 className="text-2xl font-extrabold text-green-500 ml-10">
+                    ₹ {cartState.totalPayableAmount}
+                  </h2>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex text-white items-center border-b-2 border-gray-300 ">
+              <div className="text-black text-lg font-semibold w-full">
+                Select Payment Mode
+              </div>
+              <div className="flex text-white items-center w-full">
+                {paymentMethods.map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => dispatch(setPaymentMethod(item.toLowerCase()))}
+                    className={`
+                      font-bold text-center text-base p-3 cursor-pointer w-full
+                      ${
+                        cartState?.paymentMethod === item.toLowerCase()
+                          ? "bg-ch-headers-500"
+                          : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
+                      }
+                    `}
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex mt-5">
+              <div className="home__cart-items flex flex-col flex-auto gap-1 w-[60%] overflow-y-scroll">
+                <div className="flex items-center justify-between mt-5">
+                  <div className="text-black text-sm font-medium">Subtotal</div>
+                  <div className="text-black text-lg font-bold">₹ {cartState?.totalAmount.toFixed(3)}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-black text-sm font-medium">Discount</div>
+                  <div className="text-black text-lg font-bold">₹ {parseFloat(cartState?.discount)?.toFixed(3)}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-black text-sm font-medium">VAT</div>
+                  <div className="text-black text-lg font-bold">₹ {cartState?.tax.toFixed(3)}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-black text-sm font-medium">Amount to be returned</div>
+                  <div className="text-green-500 text-lg font-bold">₹ {cartState?.amountToBeReturned.toFixed(3)}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-black text-sm font-medium">Balance Due</div>
+                  <div className="text-chicket-500 text-lg font-bold">₹ 0.000</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-black text-lg font-semibold">Grand Total</div>
+                  <div className="text-black text-lg font-bold">₹ {cartState?.totalPayableAmount.toFixed(3)}</div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    className="bg-yellow-500 mt-5 hover:bg-yellow-400 p-2 flex gap-2 justify-center text-white"
+                    onClick={() => {
+                      let table = {
+                        id: 1,
+                        name: "T1",
+                        status: "READYTOBILL",
+                        floor: "BASEMENT",
+                      };
+                      dispatch(setselectedTable(table));
+                      setTimeout(() => placeOrder(2), 200);
+                    }}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="bg-blue-500 mt-5 hover:bg-blue-400 p-2 flex gap-2 justify-center text-white"
+                    onClick={() => {
+                      let table = {
+                        id: 1,
+                        name: "T1",
+                        status: "READYTOBILL",
+                        floor: "BASEMENT",
+                      };
+                      dispatch(setselectedTable(table));
+                      setTimeout(() => placeOrder(2), 200);
+                    }}
+                  >
+                    Receipt
+                  </button>
+                  <button
+                    className="bg-green-500 mt-5 hover:bg-green-400 p-2 flex gap-2 justify-center text-white"
+                    onClick={() => {
+                      let table = {
+                        id: 1,
+                        name: "T1",
+                        status: "READYTOBILL",
+                        floor: "BASEMENT",
+                      };
+                      dispatch(setselectedTable(table));
+                      setTimeout(() => placeOrder(3), 200);
+                    }}
+                  >
+                    KOT & Print
+                  </button>
+                </div>
+              </div>
+
+              <div className="w-[40%]">
+                <CartNumpad totalPayableAmount={cartState?.totalPayableAmount} />
+              </div>
+            </div>
+          </div>
+        </CustomModal>
+      )}
     </div>
   );
 };
 
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
+  
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
