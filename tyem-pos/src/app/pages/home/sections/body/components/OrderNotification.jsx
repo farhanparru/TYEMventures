@@ -5,11 +5,21 @@ import notificationSound from '../../../../../../../src/assets/Moto Notification
 
 
 const OrderNotification = ({ setOrders }) => {
-    const [audio] = useState(new Audio(notificationSound));
+    const [audio, setAudio] = useState(null);
 
     const playNotificationSound = () => {
-        audio.play();
-    };
+        const newAudio = new Audio(notificationSound);
+        newAudio.loop = true;
+        newAudio.play();
+        setAudio(newAudio);
+    
+        setTimeout(() => {
+          newAudio.pause();
+          newAudio.currentTime = 0;
+          setSoundPlaying(false);
+        }, 5 * 60 * 1000); // Stop sound after 5 minutes
+      };
+    
 
     useEffect(() => {
         const socket = new WebSocket('wss://tyem.invenro.site'); // Use your backend's deployed domain
