@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.jsx";
 import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
+import OrderNotification from "./OrderNotification.jsx";
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
@@ -527,7 +528,7 @@ const HomeOrdersSection = () => {
     fetchAndSetOrders();
 
     const socket = connectWebSocket((newOrder) => {
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      setOrders((prevOrders) => [newOrder, ...prevOrders]); // Add new orders to the start of the array
       setSoundPlaying(true); // Play sound when a new order is received
     });
 
@@ -564,17 +565,16 @@ const HomeOrdersSection = () => {
 
   return (
     <div className="flex h-screen">
+      <OrderNotification setOrders={setOrders} />
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
       <Element name="orders-list">
-          {orders
-            .sort((a, b) => (b.new ? 1 : -1) - (a.new ? 1 : -1)) // Sort to show new orders first
-            .map((order) => (
-              <OrderItem
-                key={order._id}
-                order={order}
-                onSelect={setSelectedOrder}
-              />
-            ))}
+          {orders.map((order) => (
+            <OrderItem
+              key={order._id}
+              order={order}
+              onSelect={setSelectedOrder}
+            />
+          ))}
         </Element>
       </div>
 

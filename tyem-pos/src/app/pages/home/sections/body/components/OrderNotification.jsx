@@ -12,13 +12,13 @@ const OrderNotification = ({ setOrders }) => {
     };
 
     useEffect(() => {
-        const socket = new WebSocket('ws://tyem.invenro.site'); // Use your backend's deployed domain
+        const socket = new WebSocket('wss://tyem.invenro.site'); // Use your backend's deployed domain
 
         socket.onmessage = (event) => {
             const newOrder = JSON.parse(event.data);
             playNotificationSound();
 
-            toast.info(`New order received: ${newOrder.orderDetails.posOrderId}`, {
+            toast.info(`New order received: ${newOrder.orderMeta?.posOrderId}`, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 5000
             });
