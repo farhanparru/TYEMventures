@@ -565,8 +565,8 @@ const HomeOrdersSection = () => {
 
   return (
     <div className="flex h-screen">
-    <OrderNotification setOrders={setOrders} />
-   
+    {/* <OrderNotification setOrders={setOrders} />
+    */}
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
       <Element name="orders-list">
           {orders.map((order) => (
