@@ -565,14 +565,16 @@ const HomeOrdersSection = () => {
   return (
     <div className="flex h-screen">
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
-        <Element name="orders-list">
-          {orders.map((order) => (
-            <OrderItem
-              key={order._id}
-              order={order}
-              onSelect={setSelectedOrder}
-            />
-          ))}
+      <Element name="orders-list">
+          {orders
+            .sort((a, b) => (b.new ? 1 : -1) - (a.new ? 1 : -1)) // Sort to show new orders first
+            .map((order) => (
+              <OrderItem
+                key={order._id}
+                order={order}
+                onSelect={setSelectedOrder}
+              />
+            ))}
         </Element>
       </div>
 
