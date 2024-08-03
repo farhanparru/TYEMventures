@@ -151,7 +151,7 @@ const CartSection = ({
       break;
   }
 
-  const [isAccepted, setIsAccepted] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(order?.orderMeta?.paymentStatus === 'Accepted');
 
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
@@ -213,7 +213,7 @@ const CartSection = ({
         </div>
 
         <div className="flex justify-between items-center gap-2 mt-4">
-        {order.orderMeta.paymentStatus === 'Accepted' ? (
+        {isAccepted ? (
             <>
               <button
                 className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
