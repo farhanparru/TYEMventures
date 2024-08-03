@@ -97,30 +97,27 @@ const Home = () => {
  
 
 
-   // Function to play notification sound
-   const playNotificationSound = () => {
-    if (audioRef.current) {
-      audioRef.current.loop = true;
-      audioRef.current.play();
-      setSoundPlaying(true);
-
-      // Stop the sound after 5 minutes
+    // Play notification sound
+    const playNotificationSound = () => {
+      const newAudio = new Audio(notificationSound);
+      newAudio.loop = true;
+      newAudio.play();
+      setAudio(newAudio);
+  
       setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-          setSoundPlaying(false);
-        }
-      }, 5 * 60 * 1000); // 5 minutes
-    }
-  };
+        newAudio.pause();
+        newAudio.currentTime = 0;
+        setSoundPlaying(false);
+      }, 5 * 60 * 1000); // Stop sound after 5 minutes
+    };
+  
 
   // WebSocket connection to receive new orders
   useEffect(() => {
     const socket = connectWebSocket((newOrder) => {
       console.log("New Order Received:", newOrder);
       setOrders((prevOrders) => [newOrder, ...prevOrders]);
-      playNotificationSound(); // Trigger sound playback when a new order is received
+      setSoundPlaying(true); // Play sound when a new order is received
     });
 
     socket.onopen = () => {
@@ -134,10 +131,21 @@ const Home = () => {
 
     // Cleanup
     return () => {
-      socket.close(); // Close WebSocket connection on cleanup
+      socket.close();
+      if (audio) {
+        audio.pause(); // Ensure audio is stopped if the component unmounts
+      }
     };
-  }, [dispatch, store_user?.accessToken]);
+  }, [audio]);
 
+
+    // Handle sound playing state
+    useEffect(() => {
+      if (soundPlaying) {
+        playNotificationSound();
+      }
+    }, [soundPlaying]);
+  
 
 
 
