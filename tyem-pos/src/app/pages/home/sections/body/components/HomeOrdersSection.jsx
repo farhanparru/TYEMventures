@@ -51,7 +51,11 @@ const formatDate = (dateString) => {
             className={`px-2 py-1 text-xs font-semibold rounded ${
               order.orderMeta.paymentStatus === "Accepted"
                 ? "bg-green-100 text-green-800"
-                : "bg-blue-100 text-blue-800"
+                : order.orderMeta.paymentStatus === "Rejected"
+                ? "bg-red-100 text-red-800"
+                : order.orderMeta.paymentStatus === "Completed"
+                ? "bg-blue-100 text-blue-800"
+                : "bg-gray-100 text-gray-800"
             }`}
           >
             {order.orderMeta.paymentStatus}
@@ -123,6 +127,8 @@ const CartSection = ({
   onComplete,
   onCancel,
   pauseNotificationSound,
+  orders,
+  updateOrderStatus
 }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -147,19 +153,23 @@ const CartSection = ({
 
   const [isAccepted, setIsAccepted] = useState(false);
 
-  const handleAccept = () => {
+  const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
+    updateOrderStatus(orderId, 'Accepted');
   };
 
-  const handle = () => {
+  const handleComplete = (orderId) => {
     setShowPlaceModal(true);
+    updateOrderStatus(orderId, 'Completed');
+
   };
 
-  const handleCancel = () => {
+  const handleReject = (orderId) => {
     setIsAccepted(false);
     onCancel(order.number); // Call the onCancel function if needed
+    updateOrderStatus(orderId, 'Rejected');
   };
 
   if (!order) {
@@ -203,17 +213,17 @@ const CartSection = ({
         </div>
 
         <div className="flex justify-between items-center gap-2 mt-4">
-          {isAccepted ? (
+        {order.orderMeta.paymentStatus === 'Accepted' ? (
             <>
               <button
                 className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-                onClick={handle}
+                onClick={() => handleComplete(order._id)}
               >
                 Complete
               </button>
               <button
                 className="flex-1 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
-                onClick={handleCancel}
+                onClick={() => handleReject(order._id)}
               >
                 Cancel
               </button>
@@ -222,13 +232,13 @@ const CartSection = ({
             <>
               <button
                 className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
-                onClick={handleAccept}
+                onClick={() => handleAccept(order._id)}
               >
                 Accept
               </button>
               <button
                 className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-                onClick={handleCancel}
+                onClick={() => handleReject(order._id)}
               >
                 Reject
               </button>
@@ -519,6 +529,12 @@ const HomeOrdersSection = () => {
     }
   };
 
+
+  const updateOrderStatus = (orderId, status) => {
+    setOrders(orders.map(order =>
+      order._id === orderId ? { ...order, orderMeta: { ...order.orderMeta, paymentStatus: status } } : order
+    ));
+  };
   // Fetch orders and set up WebSocket
   useEffect(() => {
     const fetchAndSetOrders = async () => {
@@ -588,6 +604,8 @@ const HomeOrdersSection = () => {
           onComplete={handleComplete}
           onCancel={handleCancel}
           pauseNotificationSound={pauseNotificationSound}
+          orders={orders} 
+          updateOrderStatus={updateOrderStatus}
         />
       </div>
     </div>
