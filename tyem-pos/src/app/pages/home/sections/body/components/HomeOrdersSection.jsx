@@ -140,9 +140,12 @@ const CartSection = ({ order, onComplete, onCancel }) => {
 
   const handleAccept = () => {
     setIsAccepted(true);
-    setShowPlaceModal(true);
     onComplete(order.number); // Call the onComplete function if needed
   };
+
+  const handle = () =>{
+    setShowPlaceModal(true);
+  }
 
   const handleCancel = () => {
     setIsAccepted(false);
@@ -193,7 +196,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
             <>
               <button
                 className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-                onClick={handleAccept}
+                onClick={handle}
               >
                 Complete
               </button>
@@ -365,17 +368,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
               </div>
             </div>
             <div className="flex  mt-5">
-              <div className="home__cart-items flex flex-col  flex-auto gap-1  w-[60%] overflow-y-scroll ">
-                {/* <div className="max-h-[12rem] overflow-auto flex-auto gap-2 ">
-                      {[...cartState?.orderitems]
-                        ?.reverse()
-                        .map((item, index) => {
-                          return (
-                            <CartItem key={item.id} index={index} item={item} />
-                          );
-                        })}
-                    </div> */}
-              </div>
+              <div className="home__cart-items flex flex-col  flex-auto gap-1  w-[60%] overflow-y-scroll "></div>
             </div>
 
             <div className="flex mt-5">
@@ -425,7 +418,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
 
                 <div className="flex items-center gap-3">
                   <button
-                    className="bg-yellow-500 mt-5 hover:bg-yellow-400 p-2 flex gap-2 justify-center text-white"
+                    className="bg-yellow-500 mt-5 hover:bg-yellow-400 p-2 flex gap-2 justify-center items-center text-white w-32 h-10"
                     onClick={() => {
                       let table = {
                         id: 1,
@@ -440,7 +433,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
                     Save
                   </button>
                   <button
-                    className="bg-blue-500 mt-5 hover:bg-blue-400 p-2 flex gap-2 justify-center text-white"
+                    className="bg-blue-500 mt-5 hover:bg-blue-400 p-2 flex gap-2 justify-center items-center text-white w-32 h-10"
                     onClick={() => {
                       let table = {
                         id: 1,
@@ -455,7 +448,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
                     Receipt
                   </button>
                   <button
-                    className="bg-green-500 mt-5 hover:bg-green-400 p-2 flex gap-2 justify-center text-white"
+                    className="bg-green-500 mt-5 hover:bg-green-400 p-2 flex gap-2 justify-center items-center text-white w-32 h-10"
                     onClick={() => {
                       let table = {
                         id: 1,
@@ -531,7 +524,7 @@ const HomeOrdersSection = () => {
         audio.pause(); // Ensure audio is stopped if the component unmounts
       }
     };
-  }, [audio]);
+  }, [setOrders, audio]);
 
   // Handle sound playing state
   useEffect(() => {
@@ -540,22 +533,18 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
-  // Handle order completion
   const handleComplete = (orderId) => {
     console.log(`Order ${orderId} accepted`);
-    setOrderStatus("Completed"); // Update status to Completed
-    // Implement order completion logic
+    setOrderStatus("Completed");
   };
 
   const handleCancel = (orderId) => {
     console.log(`Order ${orderId} rejected`);
-    setOrderStatus("Cancelled"); // Update status to Cancelled
-    // Implement order cancellation logic
+    setOrderStatus("Cancelled");
   };
 
   return (
     <div className="flex h-screen">
-      {/* Orders List */}
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         <Element name="orders-list">
           {orders.map((order) => (
@@ -568,7 +557,6 @@ const HomeOrdersSection = () => {
         </Element>
       </div>
 
-      {/* Order Details */}
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
           <OrderDetails order={selectedOrder} />
@@ -577,7 +565,6 @@ const HomeOrdersSection = () => {
         )}
       </div>
 
-      {/* Cart Section */}
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection
           order={selectedOrder}
