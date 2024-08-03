@@ -109,7 +109,6 @@ onlineOrder: async (req, res) => {
       catalog_id,
       payment_method,
       cart_total,
-      ordered_at,
       customer_name,
       customer_phone_number,
       payment_status,
@@ -131,7 +130,7 @@ onlineOrder: async (req, res) => {
         orderType: catalog_id,
         paymentMethod: payment_method,
         paymentTendered: cart_total,
-        orderDate: new Date(ordered_at),
+        orderDate: new Date().toLocaleString(),
         paymentStatus: payment_status,
       },
       customer: {

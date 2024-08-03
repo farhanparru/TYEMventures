@@ -14,12 +14,8 @@ import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
-  const currentTime = new Date().toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
+ 
+
   // Calculate the total quantity of items in the order
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
@@ -61,9 +57,9 @@ const OrderItem = ({ order, onSelect }) => {
         </div>
       </div>
       <div className="text-sm text-gray-500">
-        Order Date: {new Date(order.createdAt).toLocaleDateString()}
+       
         <br />
-        {currentTime}
+        {order.orderMeta.orderDate}
       </div>
     </div>
   );
@@ -384,7 +380,7 @@ const CartSection = ({ order, onComplete, onCancel ,pauseNotificationSound}) => 
                 <div className="flex items-center justify-between mt-5">
                   <div className="text-black text-sm font-medium">Subtotal</div>
                   <div className="text-black text-lg font-bold">
-                    ₹ {cartState?.totalAmount.toFixed(3)}
+                    ₹ {order.orderMeta.paymentTendered}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
