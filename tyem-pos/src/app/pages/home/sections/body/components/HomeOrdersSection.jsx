@@ -140,33 +140,31 @@ const CartSection = ({ order, onComplete, onCancel }) => {
 
 
   const [isAccepted, setIsAccepted] = useState(false);
-  const [audio, setAudio] = useState(null);
+  const [audio] = useState(new Audio(notificationSound)); // Initialize audio here
 
-  const playNotificationSound = () => {
-    const newAudio = new Audio(notificationSound);
-    newAudio.loop = true;
-    newAudio.play();
-    setAudio(newAudio);
-  };
+ 
 
-  const stopNotificationSound = () => {
+
+  const pauseNotificationSound = () => {
     if (audio) {
       audio.pause();
-      audio.currentTime = 0;
-      setAudio(null);
     }
   };
 
   useEffect(() => {
-    // playNotificationSound();
+    audio.loop = true;
+    audio.play();
+
     // Clean up the sound if the component is unmounted or order changes
     return () => {
-      stopNotificationSound();
+      audio.pause();
+      audio.currentTime = 0;
     };
-  }, []);
+  }, [audio]);
+
 
   const handleAccept = () => {
-    stopNotificationSound();  // Stop the sound when "Accept" is clicked
+    pauseNotificationSound();  // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
   };
@@ -203,7 +201,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
       ))}
       <div
         className="mt-auto p-4 bg-gray-700 text-white"
-        style={{ marginTop: "590px" }}
+        style={{ marginTop: "620px" }}
       >
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
