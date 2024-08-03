@@ -137,7 +137,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   }
 
   return (
-    <div className="flex flex-col h-full p-3 bg-gray-800 text-white">
+    <div className="flex flex-col h-full p-2 bg-gray-800 text-white">
       {order.orderDetails.map((item, index) => (
         <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
           <span className="font-semibold">{item.product_name}</span>
@@ -145,7 +145,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           <span>{item.product_quantity}</span>
         </div>
       ))}
-      <div className="mt-auto p-4 bg-gray-700 text-white" style={{marginTop:"15px"}}>
+      <div className="mt-auto p-4 bg-gray-700 text-white" style={{marginTop:"604px"}}>
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
