@@ -133,11 +133,16 @@ onlineOrder: async (req, res) => {
         orderDate: new Date().toLocaleString(),
         paymentStatus: payment_status,
       },
+      
       customer: {
         name: customer_name,
         phone: customer_phone_number,
       },
+
     };
+
+    console.log(orderData);
+    
 
     // Save order to database
     const order = new OnlineOrder(orderData);
