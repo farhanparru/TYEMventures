@@ -98,6 +98,7 @@ const OrderDetails = ({ order }) => {
 // CartSection component
 const CartSection = ({ order, onComplete, onCancel }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
+  const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
   const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
