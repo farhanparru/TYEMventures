@@ -25,6 +25,8 @@ import { getStoreCustomers } from "./store/customerSlice";
 import { useNavigate } from 'react-router-dom';
 import EditCart from "./sections/editCart";
 import ChatBot from "../../layout/navbar/ChatBotComponent"; // Import the ChatBot component
+import { connectWebSocket,} from "../../../services/apiService.js";
+import notificationSound from '../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3'
 
 const Home = () => {
   const selectedCategory = useSelector(getSelectedCategory);
@@ -34,8 +36,10 @@ const Home = () => {
   const store_user = useSelector(getStoreUserData);
   const [isLoggedIn, setisLoggedIn] = useState(false);
   const editOrder = useSelector((state) => state.order.editOrder);
-  const [isChatOpen, setIsChatOpen] = useState(false); // State to manage ChatBot visibility
   const [soundPlaying, setSoundPlaying] = useState(false); // State to manage sound
+  const [audio, setAudio] = useState(null);
+  const [orders, setOrders] = useState([]); // State to manage orders
+  const audioRef = useRef(null); // Use ref to manage audio object
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -74,49 +78,71 @@ const Home = () => {
     dispatch(getOrders(store_user?.accessToken));
     dispatch(getStoreCustomers(store_user?.accessToken));
 
-      // WebSocket setup for receiving orders
-      const socket = new WebSocket('wss://tyem.invenro.site');
 
-      socket.onmessage = (event) => {
-        const newOrder = JSON.parse(event.data);
-        console.log("New Order Received:", newOrder);
-        setSoundPlaying(true);
-      };
 
-      socket.onopen = () => {
-        console.log('WebSocket connection established');
-      };
-    
-      socket.onmessage = (event) => {
-        const newOrder = JSON.parse(event.data);
-        onMessage(newOrder);
-      };
-  
-      socket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-  
-      socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-  
-      const fetchLatestOrders = () => {
-        dispatch(getOrders(store_user?.accessToken));
-      };
-      fetchLatestOrders();
-      const intervalId = setInterval(fetchLatestOrders, 30000);
-  
+    const fetchLatestOrders = () => {
+      dispatch(getOrders(store_user?.accessToken));
+    };
+    fetchLatestOrders();
+    const intervalId = setInterval(fetchLatestOrders, 30000);
+
+    // Cleanup
       // Cleanup
       return () => {
         clearInterval(intervalId);
-        socket.close();
       };
-    }, [dispatch, store_user?.accessToken]);
+    
+  }, [dispatch, store_user?.accessToken]);
 
-  // Function to handle the support button click
-  const handleChatSupport = () => {
-    setIsChatOpen(!isChatOpen);
+ 
+
+
+   // Function to play notification sound
+   const playNotificationSound = () => {
+    if (audioRef.current) {
+      audioRef.current.loop = true;
+      audioRef.current.play();
+      setSoundPlaying(true);
+
+      // Stop the sound after 5 minutes
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+          setSoundPlaying(false);
+        }
+      }, 5 * 60 * 1000); // 5 minutes
+    }
   };
+
+  // WebSocket connection to receive new orders
+  useEffect(() => {
+    const socket = connectWebSocket((newOrder) => {
+      console.log("New Order Received:", newOrder);
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      playNotificationSound(); // Trigger sound playback when a new order is received
+    });
+
+    socket.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+  
+
+    // Cleanup
+    return () => {
+      socket.close(); // Close WebSocket connection on cleanup
+    };
+  }, [dispatch, store_user?.accessToken]);
+
+
+
+
+   
+
 
 
 
