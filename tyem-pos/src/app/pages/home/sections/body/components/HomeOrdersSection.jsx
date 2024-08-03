@@ -15,8 +15,7 @@ import OrderNotification from "./OrderNotification.jsx";
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
- 
-
+  const [orders, setOrders] = useState([]);
   // Calculate the total quantity of items in the order
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
