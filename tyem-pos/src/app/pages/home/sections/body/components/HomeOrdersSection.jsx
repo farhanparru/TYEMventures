@@ -28,6 +28,7 @@ const OrderItem = ({ order, onSelect }) => {
       className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
+       <OrderNotification setOrders={setOrders} />
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -565,7 +566,8 @@ const HomeOrdersSection = () => {
 
   return (
     <div className="flex h-screen">
-      <OrderNotification setOrders={setOrders} />
+    <OrderNotification setOrders={setOrders} />
+   
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
       <Element name="orders-list">
           {orders.map((order) => (
