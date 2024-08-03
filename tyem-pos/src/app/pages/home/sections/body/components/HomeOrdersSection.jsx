@@ -102,6 +102,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
   const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
+
   let paymentMethod;
 
   switch (cartState.paymentMethod) {
@@ -144,7 +145,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           <span>{item.product_quantity}</span>
         </div>
       ))}
-      <div className="mt-auto p-4 bg-gray-700 text-white">
+      <div className="mt-auto p-4 bg-gray-700 text-white" style={{marginTop:"15px"}}>
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
@@ -218,22 +219,126 @@ const CartSection = ({ order, onComplete, onCancel }) => {
                 Select Payment Mode
               </div>
               <div className="flex text-white items-center w-full">
-                {paymentMethods.map((item, index) => (
-                  <div
-                    key={index}
-                    onClick={() => dispatch(setPaymentMethod(item.toLowerCase()))}
-                    className={`
-                      font-bold text-center text-base p-3 cursor-pointer w-full
-                      ${
-                        cartState?.paymentMethod === item.toLowerCase()
-                          ? "bg-ch-headers-500"
-                          : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
-                      }
-                    `}
-                  >
-                    {item}
-                  </div>
-                ))}
+              {paymentMethods.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => dispatch(setPaymentMethod("cash"))}
+                      className={`
+                        font-bold  text-center
+                        text-base p-3 
+                          cursor-pointer w-full
+                          
+                          ${
+                            cartState?.paymentMethod &&
+                            cartState?.paymentMethod == item
+                              ? "bg-ch-headers-500 "
+                              : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
+                          }
+                          `}
+                    >
+                      item
+                    </div>
+                  );
+                })}
+                <div
+                  onClick={() => dispatch(setPaymentMethod("cash"))}
+                  className={`
+                        font-bold  text-center
+                        text-base p-3 
+                          cursor-pointer w-full
+                          
+                          ${
+                            cartState?.paymentMethod &&
+                            cartState?.paymentMethod == "cash"
+                              ? "bg-ch-headers-500 "
+                              : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
+                          }
+                          `}
+                >
+                  Cash
+                </div>
+                <div
+                  onClick={() => dispatch(setPaymentMethod("card"))}
+                  className={`
+                        font-bold  text-center
+                        text-base p-3 
+                          cursor-pointer w-full border-l-2 border-white
+                          
+                          ${
+                            cartState?.paymentMethod &&
+                            cartState?.paymentMethod == "card"
+                              ? "bg-ch-headers-500 "
+                              : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
+                          }
+                          `}
+                >
+                  CARD
+                </div>
+                <div
+                  onClick={() => dispatch(setPaymentMethod("Split"))}
+                  className={`
+                        font-bold  text-center
+                        text-base p-3 
+                          cursor-pointer w-full border-l-2 border-white
+                          
+                          ${
+                            cartState?.paymentMethod &&
+                            cartState?.paymentMethod == "Split"
+                              ? "bg-ch-headers-500 "
+                              : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
+                          }
+                          `}
+                >
+                  Split
+                </div>
+                <div
+                  onClick={() => dispatch(setPaymentMethod("Talabat"))}
+                  className={`
+                      font-bold  text-center
+                      text-base p-3 
+                        cursor-pointer w-full border-l-2 border-white
+                        
+                        ${
+                          cartState?.paymentMethod &&
+                          cartState?.paymentMethod == "Talabat"
+                            ? "bg-ch-headers-500 "
+                            : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
+                        }
+                        `}
+                >
+                  Talabat
+                </div>
+                <div
+                  onClick={() => dispatch(setPaymentMethod("other"))}
+                  className={`
+                      font-bold  text-center
+                      text-base p-3 
+                        cursor-pointer w-full border-l-2 border-white
+                        
+                        ${
+                          cartState?.paymentMethod &&
+                          cartState?.paymentMethod == "other"
+                            ? "bg-chicket-500 "
+                            : "hover:bg-ch-headers-500 hover:text-white bg-ch-headers-300"
+                        }
+                        `}
+                >
+                  Other
+                </div>
+              </div>
+            </div>
+            <div className="flex  mt-5">
+              <div className="home__cart-items flex flex-col  flex-auto gap-1  w-[60%] overflow-y-scroll ">
+                {/* <div className="max-h-[12rem] overflow-auto flex-auto gap-2 ">
+                      {[...cartState?.orderitems]
+                        ?.reverse()
+                        .map((item, index) => {
+                          return (
+                            <CartItem key={item.id} index={index} item={item} />
+                          );
+                        })}
+                    </div> */}
               </div>
             </div>
 
