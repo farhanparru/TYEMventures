@@ -152,8 +152,8 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   };
 
   useEffect(() => {
-    audio.loop = true;
-    audio.play();
+    // audio.loop = true;
+    // audio.play();
 
     // Clean up the sound if the component is unmounted or order changes
     return () => {
