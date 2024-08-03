@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema(
       orderType: String,
       paymentMethod: String,
       paymentTendered: Number,
-      orderDate: Date,
+      orderDate:String,
       paymentStatus: String,
     },
     customer: {
