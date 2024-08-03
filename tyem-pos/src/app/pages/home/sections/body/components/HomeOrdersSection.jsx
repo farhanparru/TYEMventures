@@ -93,13 +93,8 @@ const OrderDetails = ({ order }) => {
 
 // CartSection component
 const CartSection = ({ order, onComplete, onCancel }) => {
+
   const [isAccepted, setIsAccepted] = useState(false);
-
-  
-  if (!order) {
-    return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
-  }
-
 
   const handleAccept = () => {
     setIsAccepted(true);
@@ -110,6 +105,11 @@ const CartSection = ({ order, onComplete, onCancel }) => {
     setIsAccepted(false);
     onCancel(order.number); // Call the onCancel function if needed
   };
+
+  
+  if (!order) {
+    return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
+  }
 
   return (
     <div className="flex flex-col h-full p-3 bg-gray-800 text-white">
@@ -129,7 +129,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           <span>Total</span>
           <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
         </div>
-        
+
 
         <div className="flex justify-between items-center gap-2 mt-4">
           {isAccepted ? (
@@ -175,7 +175,7 @@ const HomeOrdersSection = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
-  const [status, setStatus] = useState('default'); // Manage status here
+  const [orderStatus, setOrderStatus] = useState(null); // Manage status here
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -224,10 +224,22 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
+  // Handle order completion
+  const handleComplete = (orderId) => {
+    console.log(`Order ${orderId} accepted`);
+    setOrderStatus('Completed'); // Update status to Completed
+    // Implement order completion logic
+  };
 
+  const handleCancel = (orderId) => {
+    console.log(`Order ${orderId} rejected`);
+    setOrderStatus('Cancelled'); // Update status to Cancelled
+    // Implement order cancellation logic
+  };
 
   return (
     <div className="flex h-screen">
+      {/* Orders List */}
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         <Element name="orders-list">
           {orders.map(order => (
@@ -235,6 +247,8 @@ const HomeOrdersSection = () => {
           ))}
         </Element>
       </div>
+
+      {/* Order Details */}
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
           <OrderDetails order={selectedOrder} />
@@ -242,6 +256,8 @@ const HomeOrdersSection = () => {
           <p className="text-gray-500">Select an order to view details.</p>
         )}
       </div>
+
+      {/* Cart Section */}
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection order={selectedOrder} onComplete={handleComplete} onCancel={handleCancel} />
       </div>
