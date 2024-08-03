@@ -115,7 +115,7 @@ const OrderDetails = ({ order }) => {
 };
 
 // CartSection component
-const CartSection = ({ order, onComplete, onCancel }) => {
+const CartSection = ({ order, onComplete, onCancel ,pauseNotificationSound}) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
@@ -140,31 +140,12 @@ const CartSection = ({ order, onComplete, onCancel }) => {
 
 
   const [isAccepted, setIsAccepted] = useState(false);
-  const [audio] = useState(new Audio(notificationSound)); // Initialize audio here
-
  
 
 
-  const pauseNotificationSound = () => {
-    if (audio) {
-      audio.pause();
-    }
-  };
-
-  useEffect(() => {
-    // audio.loop = true;
-    // audio.play();
-
-    // Clean up the sound if the component is unmounted or order changes
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, [audio]);
-
 
   const handleAccept = () => {
-    pauseNotificationSound();  // Stop the sound when "Accept" is clicked
+    pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
   };
@@ -527,6 +508,15 @@ const HomeOrdersSection = () => {
     }, 5 * 60 * 1000); // Stop sound after 5 minutes
   };
 
+
+  const pauseNotificationSound = () => {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+      setSoundPlaying(false);
+    }
+  }
+
   // Fetch orders and set up WebSocket
   useEffect(() => {
     const fetchAndSetOrders = async () => {
@@ -603,6 +593,7 @@ const HomeOrdersSection = () => {
           order={selectedOrder}
           onComplete={handleComplete}
           onCancel={handleCancel}
+          pauseNotificationSound={pauseNotificationSound}
         />
       </div>
     </div>
