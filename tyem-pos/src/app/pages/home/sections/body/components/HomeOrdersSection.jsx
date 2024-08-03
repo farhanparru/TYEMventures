@@ -27,7 +27,7 @@ const OrderItem = ({ order, onSelect }) => {
       className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
-       <OrderNotification setOrders={setOrders} />
+      <OrderNotification setOrders={setOrders} />
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -49,7 +49,6 @@ const OrderItem = ({ order, onSelect }) => {
             {order.orderMeta.paymentStatus}
           </span>
 
-          
           {order.new && (
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
               New
@@ -58,7 +57,6 @@ const OrderItem = ({ order, onSelect }) => {
         </div>
       </div>
       <div className="text-sm text-gray-500">
-       
         <br />
         {order.orderMeta.orderDate}
       </div>
@@ -112,7 +110,12 @@ const OrderDetails = ({ order }) => {
 };
 
 // CartSection component
-const CartSection = ({ order, onComplete, onCancel ,pauseNotificationSound}) => {
+const CartSection = ({
+  order,
+  onComplete,
+  onCancel,
+  pauseNotificationSound,
+}) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
@@ -121,7 +124,6 @@ const CartSection = ({ order, onComplete, onCancel ,pauseNotificationSound}) => 
     (state) => state.customer.selectedCustomer
   );
 
-  
   let paymentMethod;
   switch (cartState.paymentMethod) {
     case "Cash":
@@ -135,11 +137,7 @@ const CartSection = ({ order, onComplete, onCancel ,pauseNotificationSound}) => 
       break;
   }
 
-
   const [isAccepted, setIsAccepted] = useState(false);
- 
-
-
 
   const handleAccept = () => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
@@ -147,9 +145,9 @@ const CartSection = ({ order, onComplete, onCancel ,pauseNotificationSound}) => 
     onComplete(order.number); // Call the onComplete function if needed
   };
 
-  const handle = () =>{
+  const handle = () => {
     setShowPlaceModal(true);
-  }
+  };
 
   const handleCancel = () => {
     setIsAccepted(false);
@@ -505,14 +503,13 @@ const HomeOrdersSection = () => {
     }, 5 * 60 * 1000); // Stop sound after 5 minutes
   };
 
-
   const pauseNotificationSound = () => {
     if (audio) {
       audio.pause();
       audio.currentTime = 0;
       setSoundPlaying(false);
     }
-  }
+  };
 
   // Fetch orders and set up WebSocket
   useEffect(() => {
@@ -532,8 +529,6 @@ const HomeOrdersSection = () => {
       setSoundPlaying(true); // Play sound when a new order is received
     });
 
-
-
     return () => {
       socket.close();
       if (audio) {
@@ -541,10 +536,6 @@ const HomeOrdersSection = () => {
       }
     };
   }, [setOrders, audio]);
-
-
-
-
 
   // Handle sound playing state
   useEffect(() => {
@@ -565,20 +556,16 @@ const HomeOrdersSection = () => {
 
   return (
     <div className="flex h-screen">
-    {/* <OrderNotification setOrders={setOrders} />
-    */}
+      <OrderNotification setOrders={setOrders} />
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
-      <Element name="orders-list">
-          {orders.map((order) => (
-            <OrderItem
-              key={order._id}
-              order={order}
-              onSelect={setSelectedOrder}
-            />
-          ))}
-        </Element>
+        {orders.map((order) => (
+          <OrderItem
+            key={order._id}
+            order={order}
+            onSelect={setSelectedOrder}
+          />
+        ))}
       </div>
-
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
           <OrderDetails order={selectedOrder} />
