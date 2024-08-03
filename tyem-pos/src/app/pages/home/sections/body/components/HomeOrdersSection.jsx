@@ -40,6 +40,7 @@ const OrderItem = ({ order, onSelect }) => {
           {order.orderMeta?.paymentTendered}{" "}
           {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}
         </p>
+
         <div className="flex items-center mt-2">
           <span
             className={`px-2 py-1 text-xs font-semibold rounded ${
@@ -50,6 +51,8 @@ const OrderItem = ({ order, onSelect }) => {
           >
             {order.orderMeta.paymentStatus}
           </span>
+
+          
           {order.new && (
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
               New
@@ -121,7 +124,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
     (state) => state.customer.selectedCustomer
   );
 
-  let paymentMethod;
+   let paymentMethod;
 
   switch (cartState.paymentMethod) {
     case "Cash":
@@ -136,9 +139,28 @@ const CartSection = ({ order, onComplete, onCancel }) => {
       paymentMethod = "cash";
       break;
   }
+
+
   const [isAccepted, setIsAccepted] = useState(false);
+  const [audio, setAudio] = useState(null);
+
+  const playNotificationSound = () => {
+    const newAudio = new Audio(notificationSound);
+    newAudio.loop = true;
+    newAudio.play();
+    setAudio(newAudio);
+  };
+
+  const stopNotificationSound = () => {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+      setAudio(null);
+    }
+  }
 
   const handleAccept = () => {
+    stopNotificationSound()
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
   };
@@ -170,6 +192,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           <span className="font-semibold">{item.product_name}</span>
           <span>{item.product_currency}</span>
           <span>{item.product_quantity}</span>
+          <span>{order.orderMeta.paymentTendered}</span>
         </div>
       ))}
       <div
@@ -518,6 +541,8 @@ const HomeOrdersSection = () => {
       setSoundPlaying(true); // Play sound when a new order is received
     });
 
+
+
     return () => {
       socket.close();
       if (audio) {
@@ -525,6 +550,10 @@ const HomeOrdersSection = () => {
       }
     };
   }, [setOrders, audio]);
+
+
+
+
 
   // Handle sound playing state
   useEffect(() => {
