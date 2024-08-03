@@ -101,8 +101,21 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
   const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
-  const paymentMethods = ['Cash', 'Card', 'Split', 'Talabat', 'Other'];
+  let paymentMethod;
 
+  switch (cartState.paymentMethod) {
+    case "Cash":
+      paymentMethod = "cash";
+      break;
+
+    case "Card":
+      paymentMethod = "card";
+      break;
+
+    default:
+      paymentMethod = "cash";
+      break;
+  }
   const [isAccepted, setIsAccepted] = useState(false);
 
   const handleAccept = () => {
