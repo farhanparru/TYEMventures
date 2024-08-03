@@ -35,6 +35,7 @@ const Home = () => {
   const [isLoggedIn, setisLoggedIn] = useState(false);
   const editOrder = useSelector((state) => state.order.editOrder);
   const [isChatOpen, setIsChatOpen] = useState(false); // State to manage ChatBot visibility
+  const [soundPlaying, setSoundPlaying] = useState(false); // State to manage sound
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -72,16 +73,39 @@ const Home = () => {
 
     dispatch(getOrders(store_user?.accessToken));
     dispatch(getStoreCustomers(store_user?.accessToken));
-    const fetchLatestOrders = () => {
-      dispatch(getOrders(store_user?.accessToken));
 
-    };
-    fetchLatestOrders();
-    const intervalId = setInterval(fetchLatestOrders, 30000);
+      // WebSocket setup for receiving orders
+      const socket = new WebSocket('wss://tyem.invenro.site');
 
-    // Clear the interval when the component unmounts to prevent memory leaks
-    return () => clearInterval(intervalId);
-  }, []);
+      socket.onmessage = (event) => {
+        const newOrder = JSON.parse(event.data);
+        console.log("New Order Received:", newOrder);
+        // Play sound when a new order is received
+        setSoundPlaying(true);
+        // Optionally, update the orders state with the new order
+        // You can dispatch an action to add the new order or update your Redux state here
+      };
+  
+      socket.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+  
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+  
+      const fetchLatestOrders = () => {
+        dispatch(getOrders(store_user?.accessToken));
+      };
+      fetchLatestOrders();
+      const intervalId = setInterval(fetchLatestOrders, 30000);
+  
+      // Cleanup
+      return () => {
+        clearInterval(intervalId);
+        socket.close();
+      };
+    }, [dispatch, store_user?.accessToken]);
 
   // Function to handle the support button click
   const handleChatSupport = () => {

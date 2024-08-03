@@ -1,49 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import 'tailwindcss/tailwind.css';
-import { Element } from 'react-scroll';
-import { FaCheckCircle, FaRegClock } from 'react-icons/fa';
-import notificationSound from '../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3';
-import { fetchOrders, connectWebSocket } from '../../../../../../services/apiService.js';
-import { useDispatch, useSelector } from 'react-redux';
-import CartNumpad from '../../../../../../app/pages/home/components/CartNumpad.jsx'
-import CustomModal from '../../../../../components/CustomModal.jsx';
+import React, { useState, useEffect } from "react";
+import "tailwindcss/tailwind.css";
+import { Element } from "react-scroll";
+import { FaCheckCircle, FaRegClock } from "react-icons/fa";
+import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
+import {
+  fetchOrders,
+  connectWebSocket,
+} from "../../../../../../services/apiService.js";
+import { useDispatch, useSelector } from "react-redux";
+import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.jsx";
+import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
+  const currentTime = new Date().toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+  // Calculate the total quantity of items in the order
+  const totalQuantity = order.orderDetails.reduce(
+    (sum, item) => sum + item.product_quantity,
+    0
+  );
 
-
-
-  
-  const currentTime = new Date().toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true
-  })
-   // Calculate the total quantity of items in the order
-   const totalQuantity = order.orderDetails.reduce((sum, item) => sum + item.product_quantity, 0);
-
-   return (
+  return (
     <div
       className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
       <div>
-        <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId} | INV# {order._id}</h3>
+        <h3 className="text-lg font-semibold">
+          Order #{order.orderMeta?.posOrderId} | INV# {order._id}
+        </h3>
         <p className="text-sm">
-          {totalQuantity} Item{totalQuantity > 1 ? 's' : ''} | 
-          {order.orderMeta?.paymentTendered} {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}
+          {totalQuantity} Item{totalQuantity > 1 ? "s" : ""} |
+          {order.orderMeta?.paymentTendered}{" "}
+          {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}
         </p>
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+          <span
+            className={`px-2 py-1 text-xs font-semibold rounded ${
+              order.orderMeta.paymentStatus === "Accepted"
+                ? "bg-green-100 text-green-800"
+                : "bg-blue-100 text-blue-800"
+            }`}
+          >
             {order.orderMeta.paymentStatus}
           </span>
-          {order.new && <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">New</span>}
+          {order.new && (
+            <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
+              New
+            </span>
+          )}
         </div>
       </div>
       <div className="text-sm text-gray-500">
-        Order Date: {new Date(order.createdAt).toLocaleDateString()} 
+        Order Date: {new Date(order.createdAt).toLocaleDateString()}
         <br />
         {currentTime}
       </div>
@@ -51,10 +66,8 @@ const OrderItem = ({ order, onSelect }) => {
   );
 };
 
-
 // OrderDetails component
 const OrderDetails = ({ order }) => {
-  
   return (
     <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
@@ -72,7 +85,10 @@ const OrderDetails = ({ order }) => {
       </div>
       <div className="mb-4">
         <h4 className="font-semibold">Total Amount</h4>
-        <p>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</p>
+        <p>
+          {order.orderMeta.paymentTendered}{" "}
+          {order.orderDetails[0].product_currency}
+        </p>
       </div>
       <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
       <div className="mb-4">
@@ -85,8 +101,8 @@ const OrderDetails = ({ order }) => {
       </div>
       <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
       <div className="flex items-center">
-      <FaCheckCircle className="w-6 h-6 text-green-500" />
-      <span className="ml-2 text-sm font-semibold">Confirmed</span>
+        <FaCheckCircle className="w-6 h-6 text-green-500" />
+        <span className="ml-2 text-sm font-semibold">Confirmed</span>
         <div className="flex-1 mx-4 h-px bg-gray-300"></div>
         <FaRegClock className="w-6 h-6 text-gray-400" />
         <span className="ml-2 text-sm text-gray-400">Ready</span>
@@ -101,7 +117,9 @@ const CartSection = ({ order, onComplete, onCancel }) => {
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
-  const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
+  const selectedCustomer = useSelector(
+    (state) => state.customer.selectedCustomer
+  );
 
   let paymentMethod;
 
@@ -131,30 +149,44 @@ const CartSection = ({ order, onComplete, onCancel }) => {
     onCancel(order.number); // Call the onCancel function if needed
   };
 
-  
   if (!order) {
-    return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
+    return (
+      <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">
+        Select an order to view cart items.
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col h-full p-2 bg-gray-800 text-white">
       {order.orderDetails.map((item, index) => (
-        <div key={index} className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
+        <div
+          key={index}
+          className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+        >
           <span className="font-semibold">{item.product_name}</span>
           <span>{item.product_currency}</span>
           <span>{item.product_quantity}</span>
         </div>
       ))}
-      <div className="mt-auto p-4 bg-gray-700 text-white" style={{marginTop:"604px"}}>
+      <div
+        className="mt-auto p-4 bg-gray-700 text-white"
+        style={{ marginTop: "604px" }}
+      >
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
-          <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
+          <span>
+            {order.orderMeta.paymentTendered}{" "}
+            {order.orderDetails[0].product_currency}
+          </span>
         </div>
         <div className="flex justify-between items-center gap-2">
           <span>Total</span>
-          <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
+          <span>
+            {order.orderMeta.paymentTendered}{" "}
+            {order.orderDetails[0].product_currency}
+          </span>
         </div>
-
 
         <div className="flex justify-between items-center gap-2 mt-4">
           {isAccepted ? (
@@ -200,8 +232,12 @@ const CartSection = ({ order, onComplete, onCancel }) => {
           <div className="flex flex-col p-10" style={{ width: "1000px" }}>
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-5">
               <div className="flex flex-col w-full">
-                <h3 className="text-lg font-bold">Order ID : #{order.orderId}</h3>
-                <h5 className="text-lg font-bold">{cartState?.orderitems?.length} Items</h5>
+                <h3 className="text-lg font-bold">
+                  Order ID : #{order.orderId}
+                </h3>
+                <h5 className="text-lg font-bold">
+                  {cartState?.orderitems?.length} Items
+                </h5>
                 <h5 className="text-lg font-bold">{selectedCustomer?.name}</h5>
               </div>
               <div className="flex flex-col items-center w-full justify-end">
@@ -219,7 +255,7 @@ const CartSection = ({ order, onComplete, onCancel }) => {
                 Select Payment Mode
               </div>
               <div className="flex text-white items-center w-full">
-              {paymentMethods.map((item, index) => {
+                {paymentMethods.map((item, index) => {
                   return (
                     <div
                       key={index}
@@ -346,27 +382,45 @@ const CartSection = ({ order, onComplete, onCancel }) => {
               <div className="home__cart-items flex flex-col flex-auto gap-1 w-[60%] overflow-y-scroll">
                 <div className="flex items-center justify-between mt-5">
                   <div className="text-black text-sm font-medium">Subtotal</div>
-                  <div className="text-black text-lg font-bold">₹ {cartState?.totalAmount.toFixed(3)}</div>
+                  <div className="text-black text-lg font-bold">
+                    ₹ {cartState?.totalAmount.toFixed(3)}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="text-black text-sm font-medium">Discount</div>
-                  <div className="text-black text-lg font-bold">₹ {parseFloat(cartState?.discount)?.toFixed(3)}</div>
+                  <div className="text-black text-lg font-bold">
+                    ₹ {parseFloat(cartState?.discount)?.toFixed(3)}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="text-black text-sm font-medium">VAT</div>
-                  <div className="text-black text-lg font-bold">₹ {cartState?.tax.toFixed(3)}</div>
+                  <div className="text-black text-lg font-bold">
+                    ₹ {cartState?.tax.toFixed(3)}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="text-black text-sm font-medium">Amount to be returned</div>
-                  <div className="text-green-500 text-lg font-bold">₹ {cartState?.amountToBeReturned.toFixed(3)}</div>
+                  <div className="text-black text-sm font-medium">
+                    Amount to be returned
+                  </div>
+                  <div className="text-green-500 text-lg font-bold">
+                    ₹ {cartState?.amountToBeReturned.toFixed(3)}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="text-black text-sm font-medium">Balance Due</div>
-                  <div className="text-chicket-500 text-lg font-bold">₹ 0.000</div>
+                  <div className="text-black text-sm font-medium">
+                    Balance Due
+                  </div>
+                  <div className="text-chicket-500 text-lg font-bold">
+                    ₹ 0.000
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="text-black text-lg font-semibold">Grand Total</div>
-                  <div className="text-black text-lg font-bold">₹ {cartState?.totalPayableAmount.toFixed(3)}</div>
+                  <div className="text-black text-lg font-semibold">
+                    Grand Total
+                  </div>
+                  <div className="text-black text-lg font-bold">
+                    ₹ {cartState?.totalPayableAmount.toFixed(3)}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -419,7 +473,9 @@ const CartSection = ({ order, onComplete, onCancel }) => {
               </div>
 
               <div className="w-[40%]">
-                <CartNumpad totalPayableAmount={cartState?.totalPayableAmount} />
+                <CartNumpad
+                  totalPayableAmount={cartState?.totalPayableAmount}
+                />
               </div>
             </div>
           </div>
@@ -431,7 +487,6 @@ const CartSection = ({ order, onComplete, onCancel }) => {
 
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
-  
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
@@ -488,13 +543,13 @@ const HomeOrdersSection = () => {
   // Handle order completion
   const handleComplete = (orderId) => {
     console.log(`Order ${orderId} accepted`);
-    setOrderStatus('Completed'); // Update status to Completed
+    setOrderStatus("Completed"); // Update status to Completed
     // Implement order completion logic
   };
 
   const handleCancel = (orderId) => {
     console.log(`Order ${orderId} rejected`);
-    setOrderStatus('Cancelled'); // Update status to Cancelled
+    setOrderStatus("Cancelled"); // Update status to Cancelled
     // Implement order cancellation logic
   };
 
@@ -503,8 +558,12 @@ const HomeOrdersSection = () => {
       {/* Orders List */}
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         <Element name="orders-list">
-          {orders.map(order => (
-            <OrderItem key={order._id} order={order} onSelect={setSelectedOrder} />
+          {orders.map((order) => (
+            <OrderItem
+              key={order._id}
+              order={order}
+              onSelect={setSelectedOrder}
+            />
           ))}
         </Element>
       </div>
@@ -520,7 +579,11 @@ const HomeOrdersSection = () => {
 
       {/* Cart Section */}
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
-        <CartSection order={selectedOrder} onComplete={handleComplete} onCancel={handleCancel} />
+        <CartSection
+          order={selectedOrder}
+          onComplete={handleComplete}
+          onCancel={handleCancel}
+        />
       </div>
     </div>
   );
