@@ -49,8 +49,8 @@ const OrderItem = ({ order, onSelect }) => {
 
 
 // OrderDetails component
-const OrderDetails = ({ order , orderStatus}) => {
-  const statusClass = orderStatus === 'Accepted' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
+const OrderDetails = ({ order }) => {
+  
   return (
     <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
@@ -81,8 +81,8 @@ const OrderDetails = ({ order , orderStatus}) => {
       </div>
       <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
       <div className="flex items-center">
-      <FaCheckCircle className={`w-6 h-6 ${statusClass}`} />
-      <span className={`ml-2 text-sm font-semibold ${statusClass}`}>Confirmed</span>
+      <FaCheckCircle className="w-6 h-6 text-green-500" />
+      <span className="ml-2 text-sm font-semibold">Confirmed</span>
         <div className="flex-1 mx-4 h-px bg-gray-300"></div>
         <FaRegClock className="w-6 h-6 text-gray-400" />
         <span className="ml-2 text-sm text-gray-400">Ready</span>
@@ -92,12 +92,24 @@ const OrderDetails = ({ order , orderStatus}) => {
 };
 
 // CartSection component
-const CartSection = ({ order, onComplete, onCancel,orderStatus }) => {
+const CartSection = ({ order, onComplete, onCancel }) => {
+  const [isAccepted, setIsAccepted] = useState(false);
 
   
   if (!order) {
     return <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">Select an order to view cart items.</div>;
   }
+
+
+  const handleAccept = () => {
+    setIsAccepted(true);
+    onComplete(order.number); // Call the onComplete function if needed
+  };
+
+  const handleCancel = () => {
+    setIsAccepted(false);
+    onCancel(order.number); // Call the onCancel function if needed
+  };
 
   return (
     <div className="flex flex-col h-full p-3 bg-gray-800 text-white">
@@ -117,21 +129,40 @@ const CartSection = ({ order, onComplete, onCancel,orderStatus }) => {
           <span>Total</span>
           <span>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</span>
         </div>
-        <div className="flex justify-between items-center gap-2">
-          <button
-            className={`flex-1 py-2 px-4 rounded ${orderStatus === 'Completed' ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
-            onClick={() => onComplete(order.orderMeta.posOrderId)}
-            disabled={orderStatus === 'Completed'}
-          >
-            {orderStatus === 'Completed' ? 'Completed' : 'Complete'}
-          </button>
-          <button
-            className={`flex-1 py-2 px-4 rounded ${orderStatus === 'Cancelled' ? 'bg-gray-500 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
-            onClick={() => onCancel(order.orderMeta.posOrderId)}
-            disabled={orderStatus === 'Cancelled'}
-          >
-            {orderStatus === 'Cancelled' ? 'Cancelled' : 'Cancel'}
-          </button>
+        
+
+        <div className="flex justify-between items-center gap-2 mt-4">
+          {isAccepted ? (
+            <>
+              <button
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                onClick={handleAccept}
+              >
+                Complete
+              </button>
+              <button
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+                onClick={handleAccept}
+              >
+                Accept
+              </button>
+              <button
+                className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+                onClick={handleCancel}
+              >
+                Reject
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -144,7 +175,7 @@ const HomeOrdersSection = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
-  const [orderStatus, setOrderStatus] = useState(null); // Manage status here
+  const [status, setStatus] = useState('default'); // Manage status here
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -193,22 +224,10 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
-  // Handle order completion
-  const handleComplete = (orderId) => {
-    console.log(`Order ${orderId} accepted`);
-    setOrderStatus('Completed'); // Update status to Completed
-    // Implement order completion logic
-  };
 
-  const handleCancel = (orderId) => {
-    console.log(`Order ${orderId} rejected`);
-    setOrderStatus('Cancelled'); // Update status to Cancelled
-    // Implement order cancellation logic
-  };
 
   return (
     <div className="flex h-screen">
-      {/* Orders List */}
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         <Element name="orders-list">
           {orders.map(order => (
@@ -216,8 +235,6 @@ const HomeOrdersSection = () => {
           ))}
         </Element>
       </div>
-
-      {/* Order Details */}
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
           <OrderDetails order={selectedOrder} />
@@ -225,8 +242,6 @@ const HomeOrdersSection = () => {
           <p className="text-gray-500">Select an order to view details.</p>
         )}
       </div>
-
-      {/* Cart Section */}
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection order={selectedOrder} onComplete={handleComplete} onCancel={handleCancel} />
       </div>
