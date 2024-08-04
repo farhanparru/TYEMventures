@@ -15,13 +15,13 @@ const orderSchema = new mongoose.Schema(
       paymentMethod: String,
       paymentTendered: Number,
       orderDate: String,
-      paymentStatus: String,
+      paymentStatus: { type: String, enum: ['Accepted', 'Rejected', 'Completed'], required: true, default: 'Pending' },
     },
     customer: {
       name: String,
       phone: String,
     },
-    receivedAt: { type: Date, default: Date.now } // Automatically set to the current date and time
+  
   },
   { timestamps: true }
 );

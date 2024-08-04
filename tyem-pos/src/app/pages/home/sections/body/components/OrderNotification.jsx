@@ -25,9 +25,8 @@ const OrderNotification = ({ setOrders }) => {
             });
 
              // Add the new order to the beginning of the orders list
-    setOrders((prevOrders) => 
-        [newOrder, ...prevOrders].sort((a, b) => new Date(b.receivedAt) - new Date(a.receivedAt))
-      );
+             setOrders((prevOrders) => [newOrder, ...prevOrders]);
+
   
         };
 

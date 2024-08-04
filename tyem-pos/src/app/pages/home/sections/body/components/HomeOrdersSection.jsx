@@ -12,29 +12,31 @@ import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.j
 import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
-
+import axios from 'axios';
 // OrderItem component
-const OrderItem = ({ order, onSelect }) => {
-
+const OrderItem = ({ order, onClick }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
   );
 
- // Function to format date and time
-const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-
+  // Function to format date and time
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   return (
     <div
       className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
-      onClick={() => onSelect(order)}
+      onClick={() => onClick(order)}
     >
-    
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -46,19 +48,19 @@ const formatDate = (dateString) => {
         </p>
 
         <div className="flex items-center mt-2">
-          <span
-            className={`px-2 py-1 text-xs font-semibold rounded ${
-              order.orderMeta.paymentStatus === "Accepted"
-                ? "bg-green-100 text-green-800"
-                : order.orderMeta.paymentStatus === "Rejected"
-                ? "bg-red-100 text-red-800"
-                : order.orderMeta.paymentStatus === "Completed"
-                ? "bg-blue-100 text-blue-800"
-                : "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {order.orderMeta.paymentStatus}
-          </span>
+              <span
+                className={`px-2 py-1 text-xs font-semibold rounded ${
+                  order.orderMeta.paymentStatus === 'Accepted'
+                    ? 'bg-green-100 text-green-800'
+                    : order.orderMeta.paymentStatus === 'Rejected'
+                    ? 'bg-red-100 text-red-800'
+                    : order.orderMeta.paymentStatus === 'Completed'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                {order.orderMeta.paymentStatus}
+              </span>
 
           {order.new && (
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
@@ -127,7 +129,8 @@ const CartSection = ({
   onCancel,
   pauseNotificationSound,
   orders,
-  updateOrderStatus
+  updateOrderStatus,
+  onStatusChange
 }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -150,7 +153,20 @@ const CartSection = ({
       break;
   }
 
-  const [isAccepted, setIsAccepted] = useState(order?.orderMeta?.paymentStatus === 'Accepted');
+  const [isAccepted, setIsAccepted] = useState(
+    order?.orderMeta?.paymentStatus === 'Accepted'
+  );
+
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const response = await axios.patch(`https://tyem.invenro.site/api/user/orders/${orderId}`, {
+        paymentStatus: newStatus,
+      });
+      onStatusChange(response.data); // Update the parent component with the new order data
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
 
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
@@ -162,7 +178,6 @@ const CartSection = ({
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
     updateOrderStatus(orderId, 'Completed');
-
   };
 
   const handleReject = (orderId) => {
@@ -179,6 +194,9 @@ const CartSection = ({
     );
   }
 
+
+   
+
   return (
     <div className="flex flex-col h-full p-2 bg-gray-800 text-white">
       {order.orderDetails.map((item, index) => (
@@ -192,8 +210,8 @@ const CartSection = ({
           <span>{item.product_currency}</span>
         </div>
       ))}
-  
-      <div className="mt-auto p-4 bg-gray-700 text-white">
+
+      <div className="mt-19px p-4 bg-gray-700 text-white">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>
@@ -208,7 +226,7 @@ const CartSection = ({
             {order.orderDetails[0].product_currency}
           </span>
         </div>
-  
+
         <div className="flex justify-between items-center gap-2 mt-4">
           {isAccepted ? (
             <>
@@ -526,11 +544,17 @@ const HomeOrdersSection = () => {
     }
   };
 
-
   const updateOrderStatus = (orderId, status) => {
-    setOrders(orders.map(order =>
-      order._id === orderId ? { ...order, orderMeta: { ...order.orderMeta, paymentStatus: status } } : order
-    ));
+    setOrders(
+      orders.map((order) =>
+        order._id === orderId
+          ? {
+              ...order,
+              orderMeta: { ...order.orderMeta, paymentStatus: status },
+            }
+          : order
+      )
+    );
   };
   // Fetch orders and set up WebSocket
   useEffect(() => {
@@ -545,13 +569,11 @@ const HomeOrdersSection = () => {
 
     fetchAndSetOrders();
 
-    const socket = new WebSocket('wss://tyem.invenro.site'); // Replace with your WebSocket URL
+    const socket = new WebSocket("wss://tyem.invenro.site"); // Replace with your WebSocket URL
     socket.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-        // Add the new order to the beginning of the orders list
-    setOrders((prevOrders) => 
-      [newOrder, ...prevOrders].sort((a, b) => new Date(b.receivedAt) - new Date(a.receivedAt))
-    );
+      // Add the new order to the beginning of the orders list
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
 
       setSoundPlaying(true); // Play sound when a new order is received
     };
@@ -581,15 +603,20 @@ const HomeOrdersSection = () => {
     setOrderStatus("Cancelled");
   };
 
+  const handleStatusChange = (updatedOrder) => {
+    setSelectedOrder(updatedOrder); // Update the selected order with new status
+  };
+
+
   return (
     <div className="flex h-screen">
       <OrderNotification setOrders={setOrders} />
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         {orders.map((order) => (
           <OrderItem
-         key={order._id}
-         order={order}
-         onSelect={setSelectedOrder} 
+            order={order}
+            key={order.id}
+            onClick={() => setSelectedOrder(order)}
           />
         ))}
       </div>
@@ -608,6 +635,7 @@ const HomeOrdersSection = () => {
           pauseNotificationSound={pauseNotificationSound}
           orders={orders}
           updateOrderStatus={updateOrderStatus}
+          onStatusChange={handleStatusChange}
         />
       </div>
     </div>

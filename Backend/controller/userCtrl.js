@@ -138,7 +138,7 @@ onlineOrder: async (req, res) => {
         name: customer_name,
         phone: customer_phone_number,
       },
-      receivedAt: new Date(), // Explicitly set current date and time
+    
     };
 
    
@@ -313,7 +313,54 @@ onlineOrder: async (req, res) => {
       console.error('Error sending message:', error.response ? error.response.data : error.message);
       res.status(500).send('Failed to send message');
     }
-  }
+  },
+
+
+  //OrderStatus
+
+
+  updateOrderStatus:async(req,res)=>{
+    const { orderId } = req.params;
+    const { paymentStatus } = req.body;
+  
+    try {
+      const updatedOrder = await OnlineOrder.findByIdAndUpdate(
+        orderId,
+        { 'orderMeta.paymentStatus': paymentStatus },
+        { new: true }
+      );
+
+      if (!updatedOrder) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+
+      res.json(updatedOrder);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
+    }
+  },
+
+  // Get order by ID
+
+  getOrderById:async(req,res)=>{
+    const { orderId } = req.params;
+    try {
+      const order = await OnlineOrder.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.json(order);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
+    }
+  },
+
+  
+
   
   }
 
+
+
+  
+ 
