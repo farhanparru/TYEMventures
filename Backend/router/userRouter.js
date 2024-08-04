@@ -14,8 +14,6 @@ router.get('/getCategory', userCtrl.getCategory)
 router.post('/Expense', userCtrl.expense)
 router.post('/addCustomer', userCtrl.addCustomer)
 router.post('/send-message', userCtrl.sendMessage)
-router.patch('/orders/:orderId', userCtrl.updateOrderStatus)
-router.get('/orders/:orderId',userCtrl.getOrderById)
 
      
 module.exports = router        

@@ -129,7 +129,7 @@ const CartSection = ({
   onCancel,
   pauseNotificationSound,
   orders,
-  onStatusChange
+  updateOrderStatus,
 }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -153,36 +153,25 @@ const CartSection = ({
   }
 
   const [isAccepted, setIsAccepted] = useState(
-    order?.orderMeta?.paymentStatus === 'Accepted'
+    order?.orderMeta?.paymentStatus === "Accepted"
   );
-
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await axios.patch(`https://tyem.invenro.site/api/user/orders/${orderId}`, {
-        paymentStatus: newStatus,
-      });
-      onStatusChange(response.data); // Update the parent component with the new order data
-    } catch (error) {
-      console.error('Error updating order status:', error);
-    }
-  };
 
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
-    updateOrderStatus(orderId, 'Accepted');
+    updateOrderStatus(orderId, "Accepted");
   };
 
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
-    updateOrderStatus(orderId, 'Completed');
+    updateOrderStatus(orderId, "Completed");
   };
 
   const handleReject = (orderId) => {
     setIsAccepted(false);
     onCancel(order.number); // Call the onCancel function if needed
-    updateOrderStatus(orderId, 'Rejected');
+    updateOrderStatus(orderId, "Rejected");
   };
 
   if (!order) {
@@ -210,7 +199,7 @@ const CartSection = ({
         </div>
       ))}
 
-      <div className="mt-5 p-4 bg-gray-700 text-white">
+      <div className="mt-6 p-4 bg-gray-700 text-white">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>
@@ -602,11 +591,6 @@ const HomeOrdersSection = () => {
     setOrderStatus("Cancelled");
   };
 
-  const handleStatusChange = (updatedOrder) => {
-    setSelectedOrder(updatedOrder); // Update the selected order with new status
-  };
-
-
   return (
     <div className="flex h-screen">
       <OrderNotification setOrders={setOrders} />
@@ -634,7 +618,6 @@ const HomeOrdersSection = () => {
           pauseNotificationSound={pauseNotificationSound}
           orders={orders}
           updateOrderStatus={updateOrderStatus}
-          onStatusChange={handleStatusChange}
         />
       </div>
     </div>
