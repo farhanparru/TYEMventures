@@ -210,7 +210,7 @@ const CartSection = ({
         </div>
       ))}
 
-      <div className="mt-19px p-4 bg-gray-700 text-white">
+      <div className="mt-5 p-4 bg-gray-700 text-white">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>
