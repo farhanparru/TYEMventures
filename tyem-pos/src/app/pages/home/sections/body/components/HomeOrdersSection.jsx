@@ -12,7 +12,7 @@ import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.j
 import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
-import axios from 'axios';
+
 // OrderItem component
 const OrderItem = ({ order, onClick }) => {
   const totalQuantity = order.orderDetails.reduce(
@@ -530,10 +530,7 @@ const HomeOrdersSection = () => {
     }
   };
 
-  const updateOrderStatus = (orderId, status) => {
-    setOrders(
-      orders.map((order) =>
-        order._id === orderId
+  const updateOrderStatus = (orderId, status) => { setOrders(orders.map((order) =>order._id === orderId
           ? {
               ...order,
               orderMeta: { ...order.orderMeta, paymentStatus: status },

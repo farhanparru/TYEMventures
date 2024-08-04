@@ -269,8 +269,8 @@ onlineOrder: async (req, res) => {
   
       // Send a WhatsApp message
       try {
-        await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
-        newCustomer.messageSent = true;
+        // await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
+        // newCustomer.messageSent = true;
         await newCustomer.save();
         res.status(201).json({ message: 'Customer added and message sent successfully' });
       } catch (error) {
@@ -285,39 +285,7 @@ onlineOrder: async (req, res) => {
   },
 
 
-  // send message
-
-  sendMessage: async (req, res) => {
-    const { phone_number, message } = req.body;
   
-    if (!phone_number || !message) {
-      return res.status(400).send('phone_number and message are required');
-    }
-  
-    try {
-      const response = await axios.post(
-        'https://app.xpressbot.org/api/v1/whatsapp/send',
-        null,
-        {
-          params: {
-            apiToken: process.env.XPRESSBOT_ACCESS_TOKEN,
-            phone_number_id: process.env.SENDER_PHONE_NUMBER,
-            phone_number,
-            message,
-          },
-        }
-      );
-  
-      res.send(response.data);
-    } catch (error) {
-      console.error('Error sending message:', error.response ? error.response.data : error.message);
-      res.status(500).send('Failed to send message');
-    }
-  },
-
-
-  //OrderStatus
-
 
   
   }
