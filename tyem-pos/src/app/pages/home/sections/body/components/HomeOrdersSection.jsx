@@ -199,7 +199,7 @@ const CartSection = ({
         </div>
       ))}
 
-      <div className="mt-10 p-6 bg-gray-700 text-white rounded-lg">
+      <div style={{ marginTop: '37.5rem' }} className="p-6 bg-gray-700 text-white rounded-lg">
   <div className="flex justify-between mb-4">
     <span className="font-semibold">Subtotal</span>
     <span>
