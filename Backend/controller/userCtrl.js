@@ -267,7 +267,8 @@ onlineOrder: async (req, res) => {
   
       await newCustomer.save();
   
-      // Send a WhatsApp message
+
+      
       try {
         // await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
         // newCustomer.messageSent = true;
