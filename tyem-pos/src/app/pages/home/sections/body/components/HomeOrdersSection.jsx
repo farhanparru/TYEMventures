@@ -548,7 +548,11 @@ const HomeOrdersSection = () => {
     const socket = new WebSocket('wss://tyem.invenro.site'); // Replace with your WebSocket URL
     socket.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+        // Add the new order to the beginning of the orders list
+    setOrders((prevOrders) => 
+      [newOrder, ...prevOrders].sort((a, b) => new Date(b.receivedAt) - new Date(a.receivedAt))
+    );
+
       setSoundPlaying(true); // Play sound when a new order is received
     };
 
@@ -583,9 +587,9 @@ const HomeOrdersSection = () => {
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         {orders.map((order) => (
           <OrderItem
-            key={order._id}
-            order={order}
-            onSelect={setSelectedOrder}
+         key={order._id}
+         order={order}
+         onSelect={setSelectedOrder} 
           />
         ))}
       </div>

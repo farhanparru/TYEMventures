@@ -24,8 +24,11 @@ const OrderNotification = ({ setOrders }) => {
                 autoClose: 5000
             });
 
-            // Update the orders state with the new order first
-            setOrders(prevOrders => [newOrder, ...prevOrders]);
+             // Add the new order to the beginning of the orders list
+    setOrders((prevOrders) => 
+        [newOrder, ...prevOrders].sort((a, b) => new Date(b.receivedAt) - new Date(a.receivedAt))
+      );
+  
         };
 
         return () => {
