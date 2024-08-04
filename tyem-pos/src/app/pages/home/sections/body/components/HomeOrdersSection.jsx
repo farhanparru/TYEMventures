@@ -552,15 +552,7 @@ const HomeOrdersSection = () => {
 
     fetchAndSetOrders();
 
-    const socket = new WebSocket("wss://tyem.invenro.site"); // Replace with your WebSocket URL
-    socket.onmessage = (event) => {
-      const newOrder = JSON.parse(event.data);
-      // Add the new order to the beginning of the orders list
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
-
-      setSoundPlaying(true); // Play sound when a new order is received
-    };
-
+  
     return () => {
       socket.close();
       if (audio) {
