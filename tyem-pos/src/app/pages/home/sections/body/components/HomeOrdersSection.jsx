@@ -553,19 +553,7 @@ const HomeOrdersSection = () => {
     fetchAndSetOrders();
 
    
-    socket.onmessage = (event) => {
-      const newOrder = JSON.parse(event.data);
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
-      setSoundPlaying(true); 
-    };
-
-    return () => {
-      socket.close();
-      if (audio) {
-        audio.pause(); // Ensure audio is stopped if the component unmounts
-      }
-    };
-  }, [setOrders, audio]);
+  }, [setOrders]);
 
   // Handle sound playing state
   useEffect(() => {
