@@ -199,56 +199,54 @@ const CartSection = ({
         </div>
       ))}
 
-      <div className="mt-39.5 p-4 bg-gray-700 text-white">
-        <div className="flex justify-between mb-2">
-          <span className="font-semibold">Subtotal</span>
-          <span>
-            {order.orderMeta.paymentTendered}{" "}
-            {order.orderDetails[0].product_currency}
-          </span>
-        </div>
-        <div className="flex justify-between items-center mb-2">
-          <span className="font-semibold">Total</span>
-          <span>
-            {order.orderMeta.paymentTendered}{" "}
-            {order.orderDetails[0].product_currency}
-          </span>
-        </div>
+      <div className="mt-10 p-6 bg-gray-700 text-white rounded-lg">
+  <div className="flex justify-between mb-4">
+    <span className="font-semibold">Subtotal</span>
+    <span>
+      {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
+    </span>
+  </div>
+  <div className="flex justify-between items-center mb-4">
+    <span className="font-semibold">Total</span>
+    <span>
+      {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
+    </span>
+  </div>
 
-        <div className="flex justify-between items-center gap-2 mt-4">
-          {isAccepted ? (
-            <>
-              <button
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-                onClick={() => handleComplete(order._id)}
-              >
-                Complete
-              </button>
-              <button
-                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
-                onClick={() => handleReject(order._id)}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
-                onClick={() => handleAccept(order._id)}
-              >
-                Accept
-              </button>
-              <button
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-                onClick={() => handleReject(order._id)}
-              >
-                Reject
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+  <div className="flex justify-between items-center gap-4 mt-6">
+    {isAccepted ? (
+      <>
+        <button
+          className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+          onClick={() => handleComplete(order._id)}
+        >
+          Complete
+        </button>
+        <button
+          className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+          onClick={() => handleReject(order._id)}
+        >
+          Cancel
+        </button>
+      </>
+    ) : (
+      <>
+        <button
+          className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+          onClick={() => handleAccept(order._id)}
+        >
+          Accept
+        </button>
+        <button
+          className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+          onClick={() => handleReject(order._id)}
+        >
+          Reject
+        </button>
+      </>
+    )}
+  </div>
+</div>
 
       {showPlaceModal && (
         <CustomModal
