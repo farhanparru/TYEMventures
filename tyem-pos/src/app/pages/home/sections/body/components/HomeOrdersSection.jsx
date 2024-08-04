@@ -552,7 +552,13 @@ const HomeOrdersSection = () => {
 
     fetchAndSetOrders();
 
-  
+   
+    socket.onmessage = (event) => {
+      const newOrder = JSON.parse(event.data);
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      setSoundPlaying(true); 
+    };
+
     return () => {
       socket.close();
       if (audio) {
