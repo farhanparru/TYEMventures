@@ -129,7 +129,6 @@ const CartSection = ({
   onCancel,
   pauseNotificationSound,
   orders,
-  updateOrderStatus,
   onStatusChange
 }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
