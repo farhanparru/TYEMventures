@@ -15,8 +15,7 @@ import OrderNotification from "./OrderNotification.jsx";
 
 // OrderItem component
 const OrderItem = ({ order, onSelect }) => {
-  const [orders, setOrders] = useState([]);
-  // Calculate the total quantity of items in the order
+
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -35,7 +34,7 @@ const formatDate = (dateString) => {
       className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onSelect(order)}
     >
-      <OrderNotification setOrders={setOrders} />
+    
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -193,10 +192,8 @@ const CartSection = ({
           <span>{item.product_currency}</span>
         </div>
       ))}
-      <div
-        className="mt-auto p-4 bg-gray-700 text-white"
-        style={{ marginTop: "620px" }}
-      >
+  
+      <div className="mt-auto p-4 bg-gray-700 text-white">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Subtotal</span>
           <span>
@@ -204,16 +201,16 @@ const CartSection = ({
             {order.orderDetails[0].product_currency}
           </span>
         </div>
-        <div className="flex justify-between items-center gap-2">
-          <span>Total</span>
+        <div className="flex justify-between items-center mb-2">
+          <span className="font-semibold">Total</span>
           <span>
             {order.orderMeta.paymentTendered}{" "}
             {order.orderDetails[0].product_currency}
           </span>
         </div>
-
+  
         <div className="flex justify-between items-center gap-2 mt-4">
-        {isAccepted ? (
+          {isAccepted ? (
             <>
               <button
                 className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
@@ -548,10 +545,12 @@ const HomeOrdersSection = () => {
 
     fetchAndSetOrders();
 
-    const socket = connectWebSocket((newOrder) => {
-      setOrders((prevOrders) => [newOrder, ...prevOrders]); // Add new orders to the start of the array
+    const socket = new WebSocket('wss://tyem.invenro.site'); // Replace with your WebSocket URL
+    socket.onmessage = (event) => {
+      const newOrder = JSON.parse(event.data);
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
       setSoundPlaying(true); // Play sound when a new order is received
-    });
+    };
 
     return () => {
       socket.close();
@@ -597,14 +596,13 @@ const HomeOrdersSection = () => {
           <p className="text-gray-500">Select an order to view details.</p>
         )}
       </div>
-
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection
           order={selectedOrder}
           onComplete={handleComplete}
           onCancel={handleCancel}
           pauseNotificationSound={pauseNotificationSound}
-          orders={orders} 
+          orders={orders}
           updateOrderStatus={updateOrderStatus}
         />
       </div>
