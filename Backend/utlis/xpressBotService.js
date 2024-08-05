@@ -16,7 +16,7 @@ const sendWhatsAppMessage = async (phoneNumber, message) => {
 
   try {
     const response = await axios.post(url, data, { headers });
-    console.log(response,"kkk");
+    console.log(response,"kkk")
     return response.data;
   } catch (error) {
     console.error('Error sending WhatsApp message:', error.response ? error.response.data : error.message);

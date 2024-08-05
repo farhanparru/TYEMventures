@@ -142,7 +142,7 @@ onlineOrder: async (req, res) => {
     };
 
    
-    console.log(orderData);
+    // console.log(orderData);
     
 
     // Save order to database
@@ -268,7 +268,7 @@ onlineOrder: async (req, res) => {
       await newCustomer.save();
   
 
-      
+
       try {
         // await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
         // newCustomer.messageSent = true;
@@ -286,7 +286,47 @@ onlineOrder: async (req, res) => {
   },
 
 
+  // Customer Mobile Number message
+
+
+  sendWhatsAppMessage:async(req,res)=>{
+    const { phone_number, order_number } = req.body;
+
+    const apiToken = process.env.XPRESSBOT_API_TOKEN;
+    const phoneNumberId = process.env.XPRESSBOT_PHONE_NUMBERID;
+    const templateId = process.env.TEMPLATEID;
+    const senderPhoneNumber = process.env.SENDER_NUMBER;
+
+    const message = `Our team works to prepare your meal. Your order number ${order_number}. Your order status is approved. We will notify you when your order is ready for pickup or delivery.`;
   
+
+    try {
+
+      const response = await axios.post('https://app.xpressbot.org/api/v1/whatsapp/send/template', null, {
+        params: {
+          apiToken,
+          phone_number_id: phoneNumberId,
+          template_id: templateId,
+          phone_number: phone_number,
+          sender_phone_number: senderPhoneNumber, // Include the sender's phone number
+          message: message, // Include the message content`
+        },
+      });
+
+      console.log(response);
+      
+
+      if(response.status === 200){
+        res.status(200).send('Message sent');
+      }else{
+        res.status(response.status).send('Failed to send message');
+      }
+      
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  }
 
   
   }

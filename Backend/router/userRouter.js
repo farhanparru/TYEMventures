@@ -13,7 +13,7 @@ router.post('/createCategory', userCtrl.category)
 router.get('/getCategory', userCtrl.getCategory)
 router.post('/Expense', userCtrl.expense)
 router.post('/addCustomer', userCtrl.addCustomer)
-router.post('/send-message', userCtrl.sendMessage)
+router.post('/send-whatsapp-message',userCtrl.sendWhatsAppMessage)
 
      
 module.exports = router        
