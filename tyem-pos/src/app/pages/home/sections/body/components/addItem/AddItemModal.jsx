@@ -101,7 +101,7 @@ const AddItemModal = ({ isOpen, setOpen }) => {
             hover:scale-90
          `}
       >
-        <p className="text-xl font-bold ">{keyValue}</p>
+        <p className="text-x2 font-bold ">{keyValue}</p>
       </div>
     );
   };
