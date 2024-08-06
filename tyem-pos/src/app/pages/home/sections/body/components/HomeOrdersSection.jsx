@@ -34,7 +34,7 @@ const OrderItem = ({ order, onClick }) => {
 
   return (
     <div
-      className="p-3 mb-3  bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
+      className="p-3 mb-3 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onClick(order)}
     >
       <div>
@@ -48,19 +48,19 @@ const OrderItem = ({ order, onClick }) => {
         </p>
 
         <div className="flex items-center mt-2">
-              <span
-                className={`px-2 py-1 text-xs font-semibold rounded ${
-                  order.orderMeta.paymentStatus === 'Accepted'
-                    ? 'bg-green-100 text-green-800'
-                    : order.orderMeta.paymentStatus === 'Rejected'
-                    ? 'bg-red-100 text-red-800'
-                    : order.orderMeta.paymentStatus === 'Completed'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
-              >
-                {order.orderMeta.paymentStatus}
-              </span>
+          <span
+            className={`px-2 py-1 text-xs font-semibold rounded ${
+              order.orderMeta.paymentStatus === 'Accepted'
+                ? 'bg-green-100 text-green-800'
+                : order.orderMeta.paymentStatus === 'Rejected'
+                ? 'bg-red-100 text-red-800'
+                : order.orderMeta.paymentStatus === 'Completed'
+                ? 'bg-blue-100 text-blue-800'
+                : 'bg-gray-100 text-gray-800'
+            }`}
+          >
+            {order.orderMeta.paymentStatus}
+          </span>
 
           {order.new && (
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
@@ -76,6 +76,10 @@ const OrderItem = ({ order, onClick }) => {
     </div>
   );
 };
+
+
+
+
 
 // OrderDetails component
 const OrderDetails = ({ order }) => {
@@ -530,17 +534,19 @@ const HomeOrdersSection = () => {
     }
   };
 
+
+  
+
   const updateOrderStatus = (orderId, status) => { setOrders(orders.map((order) =>order._id === orderId
           ? {
               ...order,
               orderMeta: { ...order.orderMeta, paymentStatus: status },
             }
           : order
-
       )
-      
+        
     );
-    console.log(orders,orderId,"kkk");
+
   };
 
 
@@ -558,10 +564,10 @@ const HomeOrdersSection = () => {
     };
 
     fetchAndSetOrders();
-
+    
     const socket = connectWebSocket((newOrder) => {
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
-       setSoundPlaying(true); // Play sound when a new order is received
+      setOrders((prevOrders) => [newOrder, ...prevOrders]); // Prepend new order
+      setSoundPlaying(true); // Play sound when a new order is received
     });
                                                                  
 
@@ -580,15 +586,8 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
-  const handleComplete = (orderId) => {
-    console.log(`Order ${orderId} accepted`);
-    setOrderStatus("Completed");
-  };
 
-  const handleCancel = (orderId) => {
-    console.log(`Order ${orderId} rejected`);
-    setOrderStatus("Cancelled");
-  };
+ 
 
 
   return (
@@ -596,11 +595,7 @@ const HomeOrdersSection = () => {
       <OrderNotification setOrders={setOrders} />
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         {orders.map((order) => (
-          <OrderItem
-            order={order}
-            key={order.id}
-            onClick={() => setSelectedOrder(order)}
-          />
+          <OrderItem key={order._id} order={order} onClick={handleOrderClick} />
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
