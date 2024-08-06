@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React from "react";
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { Layout } from "antd";
 import styled, { keyframes } from "styled-components";
@@ -14,10 +14,6 @@ import {
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
 import logo from '../../../assets/Logo.png';
-import {
-  fetchOrders,
-  
-} from "../../../services/apiService.js";
 
 const { Sider } = Layout;
 
@@ -95,8 +91,6 @@ const IconContainer = styled.div`
 `;
 
 const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge }) => {
-
- 
   return (
     <Link to={path}>
       <DrawerMenuItemContainer onClick={onClick} active={active}>
@@ -113,10 +107,6 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge }) => {
 
 
 const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
-  
-  const [totalOrders, setTotalOrders] = useState(7); // Initialize with badge count
-
-
   const menuItems = [
     {
       label: drawerMenuLabels.home.label,
@@ -169,23 +159,6 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
     }
   ];
 
-
- 
-  // Fetch orders and update totalOrders in useEffect
-  useEffect(() => {
-    const fetchAndSetOrders = async () => {
-      try {
-        const data = await fetchOrders();
-        setTotalOrders(data.length); // Assuming data is an array of orders
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-
-    fetchAndSetOrders();
-  }, []);
-
-
   return (
     <Sider
       theme="dark"
@@ -202,10 +175,10 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
             Icon={item.icon}
             label={item.label}
             active={activeMenu === item.label}
+            onClick={item.onClick}
             path={item.path}
             key={item.path}
-            onClick={() => setActiveMenu("Online Orders")}
-            badge={totalOrders} // Pass the badge count here
+            badge={item.badge} // Pass badge prop here
           />
         ))}
       </div>
