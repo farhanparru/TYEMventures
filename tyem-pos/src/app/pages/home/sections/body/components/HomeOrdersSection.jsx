@@ -503,7 +503,6 @@ const HomeOrdersSection = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [ordersToDisplay, setOrdersToDisplay] = useState([]);
 
-  const [searching, setSearching] = useState(false);
   const [orderFilterType, setOrderFilterType] = useState("All");
 
   // Play notification sound
@@ -593,8 +592,7 @@ const HomeOrdersSection = () => {
 
   // Function to filter and update orders to display
   const getOrdersToDisplay = () => {
-    let ordersToFilter = searching ? filteredOrders : orders;
-
+   
 
     if (orderFilterType === "All") {
       setSelectedOrder(ordersToFilter[0]);
@@ -610,7 +608,7 @@ const HomeOrdersSection = () => {
 
   useEffect(() => {
     setOrdersToDisplay(getOrdersToDisplay());
-  }, [orders, searching, filteredOrders, selectedTab, orderFilterType]);
+  }, [orders,  filteredOrders, orderFilterType]);
 
   return (
     <div className="flex h-screen">
