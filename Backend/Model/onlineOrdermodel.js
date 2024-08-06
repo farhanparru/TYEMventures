@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema(
       paymentMethod: String,
       paymentTendered: Number,
       orderDate: String,
-      paymentStatus: { type: String, enum: ['Accepted', 'Rejected', 'Completed'], required: true, default: 'Pending' },
+      paymentStatus:String,
     },
     customer: {
       name: String,
