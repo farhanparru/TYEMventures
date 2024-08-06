@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import Header from './Headr';
 import Sidebar from './Sidebar';
 
-const socket = io(''); // WebSocket server URL
+// const socket = io(''); // WebSocket server URL
 
 const ExpenseList = () => {
   const [expenses, setExpenses] = useState([]);

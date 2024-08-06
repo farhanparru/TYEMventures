@@ -141,10 +141,7 @@ onlineOrder: async (req, res) => {
     
     };
 
-   
     // console.log(orderData);
-    
-
     // Save order to database
     const order = new OnlineOrder(orderData);
     await order.save();

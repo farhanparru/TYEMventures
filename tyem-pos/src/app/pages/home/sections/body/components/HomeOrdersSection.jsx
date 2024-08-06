@@ -220,7 +220,7 @@ const CartSection = ({
           className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
           onClick={() => handleComplete(order._id)}
         >
-          Complete
+          Ready
         </button>
         <button
           className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"

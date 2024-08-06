@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import logo from '../../../assets/chicket-logo.png'
+import React from "react";
 export default function Header({
   heading,
   paragraph,
