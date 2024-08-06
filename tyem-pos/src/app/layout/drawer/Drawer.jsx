@@ -113,8 +113,7 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge }) => {
 
 
 const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
-  const [activeMenu, setActiveMenu] = useState('');
-  const [collapsed, setCollapsed] = useState(false);
+  
   const [totalOrders, setTotalOrders] = useState(7); // Initialize with badge count
 
 
