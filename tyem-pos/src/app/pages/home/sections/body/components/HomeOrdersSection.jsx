@@ -71,15 +71,11 @@ const OrderItem = ({ order, onClick }) => {
       </div>
       <div className="text-sm text-gray-500">
         <br />
-        {formatDate(order.receivedAt)} {/* Display formatted date */}
+       <h1>Date Time</h1>
       </div>
     </div>
   );
 };
-
-
-
-
 
 // OrderDetails component
 const OrderDetails = ({ order }) => {
@@ -536,7 +532,7 @@ const HomeOrdersSection = () => {
 
 
   
-
+// Status Update
   const updateOrderStatus = (orderId, status) => { setOrders(orders.map((order) =>order._id === orderId
           ? {
               ...order,
@@ -564,12 +560,12 @@ const HomeOrdersSection = () => {
     };
 
     fetchAndSetOrders();
-    
+
     const socket = connectWebSocket((newOrder) => {
       setOrders((prevOrders) => [newOrder, ...prevOrders]); // Prepend new order
       setSoundPlaying(true); // Play sound when a new order is received
     });
-                                                                 
+
 
     return () => {
       socket.close();
@@ -586,8 +582,16 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
+  
+  const handleComplete = (orderId) => {
+    console.log(`Order ${orderId} accepted`);
+    setOrderStatus("Completed");
+  };
 
- 
+  const handleCancel = (orderId) => {
+    console.log(`Order ${orderId} rejected`);
+    setOrderStatus("Cancelled");
+  };
 
 
   return (
@@ -595,7 +599,11 @@ const HomeOrdersSection = () => {
       <OrderNotification setOrders={setOrders} />
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
         {orders.map((order) => (
-          <OrderItem key={order._id} order={order} onClick={handleOrderClick} />
+          <OrderItem
+            order={order}
+            key={order.id}
+            onClick={() => setSelectedOrder(order)}
+          />
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
