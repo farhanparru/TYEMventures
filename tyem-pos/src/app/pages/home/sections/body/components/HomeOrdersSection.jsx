@@ -15,6 +15,7 @@ import OrderNotification from "./OrderNotification.jsx";
 
 // OrderItem component
 const OrderItem = ({ order, onClick }) => {
+
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -26,6 +27,7 @@ const OrderItem = ({ order, onClick }) => {
       className="p-3 mb-3 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onClick(order)}
     >
+   
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -538,7 +540,8 @@ const HomeOrdersSection = () => {
   
 
   // Fetch orders and set up WebSocket
-  useEffect(() => {
+   // Fetch orders and set up WebSocket
+   useEffect(() => {
     const fetchAndSetOrders = async () => {
       try {
         const data = await fetchOrders();
@@ -551,23 +554,33 @@ const HomeOrdersSection = () => {
     fetchAndSetOrders();
 
     const socket = connectWebSocket((newOrder) => {
-      setOrders((prevOrders) => [newOrder, ...prevOrders]); // Prepend new order
+      setOrders((prevOrders) => {
+        const updatedOrders = [newOrder, ...prevOrders];
+        console.log('Updated Orders List:', updatedOrders);
+        // Scroll to top
+        const orderListElement = document.getElementById('order-list');
+        if (orderListElement) {
+          orderListElement.scrollTop = 0;
+        }
+
+        return updatedOrders;
+      });
+
       setSoundPlaying(true); // Play sound when a new order is received
     });
+
 
 
     return () => {
       socket.close();
       if (audio) {
-      audio.pause(); // Ensure audio is stopped if the component unmounts
+        audio.pause(); // Ensure audio is stopped if the component unmounts
       }
     };
-  }, [setOrders,audio]);
+  }, [setOrders, audio]);
 
-    // Sort orders to ensure new orders are first
-    const sortedOrders = orders.sort((a, b) => {
-      return b.receivedAt - a.receivedAt; // Assuming receivedAt is a Date object or a timestamp
-    });
+
+
 
   // Handle sound playing state
   useEffect(() => {
@@ -591,14 +604,15 @@ const HomeOrdersSection = () => {
   return (
     <div className="flex h-screen">
       <OrderNotification setOrders={setOrders} />
-      <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
-      {sortedOrders.map((order) => (
+      <div id="order-list" className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
+        {orders.map((order) => (
           <OrderItem
             order={order}
-            key={order.id}
+            key={order._id}
             onClick={() => setSelectedOrder(order)}
           />
         ))}
+        
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (

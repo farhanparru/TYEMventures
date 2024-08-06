@@ -28,6 +28,7 @@ export const connectWebSocket = (onMessage) => {
 
   socket.onmessage = (event) => {
     const newOrder = JSON.parse(event.data);
+    console.log('New order received via WebSocket:', newOrder);
     onMessage(newOrder);
   };
 
