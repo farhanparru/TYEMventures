@@ -20,17 +20,6 @@ const OrderItem = ({ order, onClick }) => {
     0
   );
 
-  // Function to format date and time
-  const formatDate = (dateString) => {
-    const options = {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
 
   return (
     <div
@@ -71,7 +60,7 @@ const OrderItem = ({ order, onClick }) => {
       </div>
       <div className="text-sm text-gray-500">
         <br />
-       <h1>Date Time</h1>
+        <h1>Date Time</h1>
       </div>
     </div>
   );
@@ -575,6 +564,11 @@ const HomeOrdersSection = () => {
     };
   }, [setOrders,audio]);
 
+    // Sort orders to ensure new orders are first
+    const sortedOrders = orders.sort((a, b) => {
+      return b.receivedAt - a.receivedAt; // Assuming receivedAt is a Date object or a timestamp
+    });
+
   // Handle sound playing state
   useEffect(() => {
     if (soundPlaying) {
@@ -598,7 +592,7 @@ const HomeOrdersSection = () => {
     <div className="flex h-screen">
       <OrderNotification setOrders={setOrders} />
       <div className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
-        {orders.map((order) => (
+      {sortedOrders.map((order) => (
           <OrderItem
             order={order}
             key={order.id}
