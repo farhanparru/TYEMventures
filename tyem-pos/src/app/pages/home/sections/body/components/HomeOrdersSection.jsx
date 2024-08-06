@@ -539,21 +539,36 @@ const HomeOrdersSection = () => {
       )
     );
   };
+
+  
   // Fetch orders and set up WebSocket
   useEffect(() => {
     const fetchAndSetOrders = async () => {
       try {
         const data = await fetchOrders();
         setOrders(data); // Set the fetched orders to state
+        setLoading(false);  // Stop loading indicator
       } catch (error) {
+        setLoading(false); // Stop loading indicator
         console.error("Error fetching initial orders:", error);
       }
     };
 
     fetchAndSetOrders();
 
-   
-  }, [setOrders]);
+    const socket = connectWebSocket((newOrder) => {
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+       setSoundPlaying(true); // Play sound when a new order is received
+    });
+                                                                 
+
+    return () => {
+      socket.close();
+      if (audio) {
+      audio.pause(); // Ensure audio is stopped if the component unmounts
+      }
+    };
+  }, [setOrders,audio]);
 
   // Handle sound playing state
   useEffect(() => {
