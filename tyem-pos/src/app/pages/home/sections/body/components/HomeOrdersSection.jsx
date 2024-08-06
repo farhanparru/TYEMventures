@@ -12,7 +12,7 @@ import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.j
 import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { format, utcToZonedTime} from 'date-fns-tz'
 
 // OrderItem component
 const OrderItem = ({ order, onClick }) => {
