@@ -130,6 +130,7 @@ const CartSection = ({
   pauseNotificationSound,
   orders,
   updateOrderStatus,
+  onOrderAccept // New prop
 }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -161,6 +162,7 @@ const CartSection = ({
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
     updateOrderStatus(orderId, "Accepted");
+    onOrderAccept(); // Update the badge count
   };
 
   const handleComplete = (orderId) => {
@@ -504,7 +506,14 @@ const CartSection = ({
 
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
+
+  const [totalOrders, setTotalOrders] = useState(7);
+
+  const handleOrderAccept = () => {
+    setTotalOrders(prevCount => prevCount - 1); // Decrease the badge count
+  }
   const [orders, setOrders] = useState([]);
+  
   // console.log(orders, "hhhh");
 
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -636,6 +645,7 @@ const HomeOrdersSection = () => {
           pauseNotificationSound={pauseNotificationSound}
           orders={orders}
           updateOrderStatus={updateOrderStatus}
+          onOrderAccept={handleOrderAccept}
         />
       </div>
     </div>
