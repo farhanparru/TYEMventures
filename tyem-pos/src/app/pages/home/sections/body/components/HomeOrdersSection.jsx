@@ -25,7 +25,7 @@ const OrderItem = ({ order, onClick }) => {
   // Convert UTC to IST
   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: 'utc' });
   const zonedDate = utcDate.setZone('Asia/Kolkata');
-  const formattedDate = zonedDate.toFormat('MMM dd, yyyy HH:mm:ss');
+  const formattedDate = zonedDate.toFormat('MMM dd, yyyy hh:mm:ss a');
 
 
  console.log('Current date and time in Kasaragod, Kerala (IST):', formattedDate);
