@@ -5,6 +5,7 @@ const expenseSchema = require("../Model/expensemodel");
 const Customer = require("../Model/Customermodel");
 const WebSocket = require("ws");
 const axios = require('axios');
+const moment = require('moment-timezone');
 const {sendWhatsAppMessage} = require("../utlis/xpressBotService");
 require("dotenv").config();
 
@@ -122,6 +123,8 @@ onlineOrder: async (req, res) => {
       product_currency: item.product_currency,
     }));
 
+       // Convert current date and time to IST
+       const orderDate = moment().tz('Asia/Kolkata').format();
     // Construct order data
     const orderData = {
       orderDetails: orderDetails, // Store all products
@@ -130,7 +133,7 @@ onlineOrder: async (req, res) => {
         orderType: catalog_id,
         paymentMethod: payment_method,
         paymentTendered: cart_total,
-        orderDate: new Date().toLocaleString(), // Current date and time
+        orderDate: orderDate, // Save in IST
         paymentStatus: payment_status,
       },
       

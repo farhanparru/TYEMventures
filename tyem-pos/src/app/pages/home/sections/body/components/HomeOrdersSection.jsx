@@ -12,6 +12,7 @@ import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.j
 import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
+import { format, utcToZonedTime } from 'date-fns-tz';
 
 // OrderItem component
 const OrderItem = ({ order, onClick }) => {
@@ -20,11 +21,12 @@ const OrderItem = ({ order, onClick }) => {
     0
   );
 
-    // Format the date if available
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleString(); // Adjust date formatting as needed
-    };
+ // Convert UTC to IST
+ const utcDate = new Date(order.orderMeta.orderDate);
+ const timeZone = 'Asia/Kolkata';
+ const zonedDate = utcToZonedTime(utcDate, timeZone);
+ const formattedDate = format(zonedDate, 'MMM dd, yyyy HH:mm:ss', { timeZone });
+
 
 
   return (
@@ -68,11 +70,7 @@ const OrderItem = ({ order, onClick }) => {
       </div>
       <div className="text-sm text-gray-500">
         <br />
-      {order.orderMeta?.dateTime ? (
-          <p>{formatDate(order.orderMeta.dateTime)}</p>
-        ) : (
-          <p>Date and time unavailable</p>
-        )}
+        <h1>{formattedDate}</h1> {/* Display the formatted date */}
       </div>
     </div>
   );
@@ -506,7 +504,7 @@ const CartSection = ({
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
   const [orders, setOrders] = useState([]);
-  console.log(orders, "hhhh");
+  // console.log(orders, "hhhh");
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
@@ -605,7 +603,7 @@ const HomeOrdersSection = () => {
 
   // Sort orders whenever the orders prop changes
   const sortedOrders = sortOrdersByPosOrderId(orders);
-console.log(sortedOrders,"sortedOrders");
+// console.log(sortedOrders,"sortedOrders");
 
   const onOrderClick = (order) => {
     setSelectedOrder(order);

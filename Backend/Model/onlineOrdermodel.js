@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema(
       orderType: String,
       paymentMethod: String,
       paymentTendered: Number,
-      orderDate: String,
+      orderDate: Date, // Store date as UTC
       paymentStatus:String,
     },
     customer: {
