@@ -536,10 +536,15 @@ const HomeOrdersSection = () => {
               orderMeta: { ...order.orderMeta, paymentStatus: status },
             }
           : order
+
       )
+      
     );
+    console.log(orders,orderId,"kkk");
   };
 
+
+  
 
   // Fetch orders and set up WebSocket
   useEffect(() => {
@@ -584,6 +589,7 @@ const HomeOrdersSection = () => {
     console.log(`Order ${orderId} rejected`);
     setOrderStatus("Cancelled");
   };
+
 
   return (
     <div className="flex h-screen">
