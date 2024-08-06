@@ -540,16 +540,14 @@ const HomeOrdersSection = () => {
     );
   };
 
-  
+
   // Fetch orders and set up WebSocket
   useEffect(() => {
     const fetchAndSetOrders = async () => {
       try {
         const data = await fetchOrders();
         setOrders(data); // Set the fetched orders to state
-        setLoading(false);  // Stop loading indicator
       } catch (error) {
-        setLoading(false); // Stop loading indicator
         console.error("Error fetching initial orders:", error);
       }
     };
