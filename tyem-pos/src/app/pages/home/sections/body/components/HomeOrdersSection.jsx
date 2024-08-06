@@ -15,19 +15,16 @@ import OrderNotification from "./OrderNotification.jsx";
 
 // OrderItem component
 const OrderItem = ({ order, onClick }) => {
-
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
   );
-
 
   return (
     <div
       className="p-3 mb-3 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
       onClick={() => onClick(order)}
     >
-   
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -41,13 +38,13 @@ const OrderItem = ({ order, onClick }) => {
         <div className="flex items-center mt-2">
           <span
             className={`px-2 py-1 text-xs font-semibold rounded ${
-              order.orderMeta.paymentStatus === 'Accepted'
-                ? 'bg-green-100 text-green-800'
-                : order.orderMeta.paymentStatus === 'Rejected'
-                ? 'bg-red-100 text-red-800'
-                : order.orderMeta.paymentStatus === 'Completed'
-                ? 'bg-blue-100 text-blue-800'
-                : 'bg-gray-100 text-gray-800'
+              order.orderMeta.paymentStatus === "Accepted"
+                ? "bg-green-100 text-green-800"
+                : order.orderMeta.paymentStatus === "Rejected"
+                ? "bg-red-100 text-red-800"
+                : order.orderMeta.paymentStatus === "Completed"
+                ? "bg-blue-100 text-blue-800"
+                : "bg-gray-100 text-gray-800"
             }`}
           >
             {order.orderMeta.paymentStatus}
@@ -173,9 +170,6 @@ const CartSection = ({
     );
   }
 
-
-   
-
   return (
     <div className="flex flex-col h-full p-2 bg-gray-800 text-white">
       {order.orderDetails.map((item, index) => (
@@ -190,54 +184,59 @@ const CartSection = ({
         </div>
       ))}
 
-      <div style={{ marginTop: '37.5rem' }} className="p-6 bg-gray-700 text-white rounded-lg">
-  <div className="flex justify-between mb-4">
-    <span className="font-semibold">Subtotal</span>
-    <span>
-      {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
-    </span>
-  </div>
-  <div className="flex justify-between items-center mb-4">
-    <span className="font-semibold">Total</span>
-    <span>
-      {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
-    </span>
-  </div>
+      <div
+        style={{ marginTop: "37.5rem" }}
+        className="p-6 bg-gray-700 text-white rounded-lg"
+      >
+        <div className="flex justify-between mb-4">
+          <span className="font-semibold">Subtotal</span>
+          <span>
+            {order.orderMeta.paymentTendered}{" "}
+            {order.orderDetails[0].product_currency}
+          </span>
+        </div>
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-semibold">Total</span>
+          <span>
+            {order.orderMeta.paymentTendered}{" "}
+            {order.orderDetails[0].product_currency}
+          </span>
+        </div>
 
-  <div className="flex justify-between items-center gap-4 mt-6">
-    {isAccepted ? (
-      <>
-        <button
-          className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-          onClick={() => handleComplete(order._id)}
-        >
-          Ready
-        </button>
-        <button
-          className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-          onClick={() => handleReject(order._id)}
-        >
-          Cancel
-        </button>
-      </>
-    ) : (
-      <>
-        <button
-          className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
-          onClick={() => handleAccept(order._id)}
-        >
-          Accept
-        </button>
-        <button
-          className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
-          onClick={() => handleReject(order._id)}
-        >
-          Reject
-        </button>
-      </>
-    )}
-  </div>
-</div>
+        <div className="flex justify-between items-center gap-4 mt-6">
+          {isAccepted ? (
+            <>
+              <button
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                onClick={() => handleComplete(order._id)}
+              >
+                Ready
+              </button>
+              <button
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                onClick={() => handleReject(order._id)}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+                onClick={() => handleAccept(order._id)}
+              >
+                Accept
+              </button>
+              <button
+                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+                onClick={() => handleReject(order._id)}
+              >
+                Reject
+              </button>
+            </>
+          )}
+        </div>
+      </div>
 
       {showPlaceModal && (
         <CustomModal
@@ -494,12 +493,18 @@ const CartSection = ({
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
   const [orders, setOrders] = useState([]);
-  console.log(orders,"hhhh");
-  
+  console.log(orders, "hhhh");
+
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
+
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [ordersToDisplay, setOrdersToDisplay] = useState([]);
+
+  const [searching, setSearching] = useState(false);
+  const [orderFilterType, setOrderFilterType] = useState("All");
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -523,27 +528,23 @@ const HomeOrdersSection = () => {
     }
   };
 
-
-  
-// Status Update
-  const updateOrderStatus = (orderId, status) => { setOrders(orders.map((order) =>order._id === orderId
+  // Status Update
+  const updateOrderStatus = (orderId, status) => {
+    setOrders(
+      orders.map((order) =>
+        order._id === orderId
           ? {
               ...order,
               orderMeta: { ...order.orderMeta, paymentStatus: status },
             }
           : order
       )
-        
     );
-
   };
 
-
-  
-
   // Fetch orders and set up WebSocket
-   // Fetch orders and set up WebSocket
-   useEffect(() => {
+  // Fetch orders and set up WebSocket
+  useEffect(() => {
     const fetchAndSetOrders = async () => {
       try {
         const data = await fetchOrders();
@@ -555,18 +556,15 @@ const HomeOrdersSection = () => {
 
     fetchAndSetOrders();
 
-       const socket = connectWebSocket((newOrder) => {
-       setOrders((prevOrders) => {
+    const socket = connectWebSocket((newOrder) => {
+      setOrders((prevOrders) => {
+        setFilteredOrders(updatedOrders);
         const updatedOrders = [newOrder, ...prevOrders];
-        console.log('Updated Orders List:', updatedOrders);
-        
+        console.log("Updated Orders List:", updatedOrders);
+
         setSoundPlaying(true); // Play sound when a new order is received
       });
-
-   
     });
-
-
 
     return () => {
       socket.close();
@@ -576,9 +574,6 @@ const HomeOrdersSection = () => {
     };
   }, [setOrders, audio]);
 
-
-
-
   // Handle sound playing state
   useEffect(() => {
     if (soundPlaying) {
@@ -586,7 +581,6 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
-  
   const handleComplete = (orderId) => {
     console.log(`Order ${orderId} accepted`);
     setOrderStatus("Completed");
@@ -597,19 +591,50 @@ const HomeOrdersSection = () => {
     setOrderStatus("Cancelled");
   };
 
+  // Function to filter and update orders to display
+  const getOrdersToDisplay = () => {
+    let ordersToFilter = searching ? filteredOrders : orders;
+
+    if (selectedTab === "online-orders") {
+      ordersToFilter = ordersToFilter.filter(
+        (order) => order.selling_price_group.toLowerCase() === "online"
+      );
+    } else if (selectedTab === "scheduled-orders") {
+      ordersToFilter = ordersToFilter.filter(
+        (order) => order.is_scheduled === 1
+      );
+    }
+
+    if (orderFilterType === "All") {
+      setSelectedOrder(ordersToFilter[0]);
+      return ordersToFilter;
+    } else {
+      setSelectedOrder(ordersToFilter[0]);
+      return ordersToFilter.filter(
+        (order) =>
+          order.orderStatus.toLowerCase() === orderFilterType.toLowerCase()
+      );
+    }
+  };
+
+  useEffect(() => {
+    setOrdersToDisplay(getOrdersToDisplay());
+  }, [orders, searching, filteredOrders, selectedTab, orderFilterType]);
 
   return (
     <div className="flex h-screen">
       <OrderNotification setOrders={setOrders} />
-      <div id="order-list" className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
-        {orders?.map((order) => (
+      <div
+        id="order-list"
+        className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
+      >
+        {ordersToDisplay.map((order) => (
           <OrderItem
             order={order}
-            key={order._id}
+            key={order.id}
             onClick={() => setSelectedOrder(order)}
           />
         ))}
-        
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
