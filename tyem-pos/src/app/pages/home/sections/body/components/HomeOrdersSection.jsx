@@ -592,7 +592,7 @@ const HomeOrdersSection = () => {
         id="order-list"
         className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
       >
-        {orders.map((order, index) => (
+        {orders?.map((order, index) => (
           <OrderItem
             order={order}
             key={order._id || `order-${order.orderMeta.posOrderId}-${index}`}
