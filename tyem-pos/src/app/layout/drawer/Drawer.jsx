@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { Layout } from "antd";
 import styled, { keyframes } from "styled-components";
