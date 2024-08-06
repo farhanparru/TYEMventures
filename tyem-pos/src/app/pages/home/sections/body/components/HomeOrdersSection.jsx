@@ -602,7 +602,7 @@ const HomeOrdersSection = () => {
     <div className="flex h-screen">
       <OrderNotification setOrders={setOrders} />
       <div id="order-list" className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto">
-        {orders.map((order) => (
+        {orders?.map((order) => (
           <OrderItem
             order={order}
             key={order._id}
