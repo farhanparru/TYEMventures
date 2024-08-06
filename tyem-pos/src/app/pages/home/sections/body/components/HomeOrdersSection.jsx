@@ -12,7 +12,7 @@ import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.j
 import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
-import { utcToZonedTime, format } from 'date-fns-tz';
+import { DateTime } from 'luxon';
 
 
 // OrderItem component
@@ -22,11 +22,10 @@ const OrderItem = ({ order, onClick }) => {
     0
   );
 
- // Convert UTC to IST
- const utcDate = new Date(order.orderMeta.orderDate);
- const timeZone = 'Asia/Kolkata';
- const zonedDate = utcToZonedTime(utcDate, timeZone);
- const formattedDate = format(zonedDate, 'MMM dd, yyyy HH:mm:ss', { timeZone });
+  // Convert UTC to IST
+  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: 'utc' });
+  const zonedDate = utcDate.setZone('Asia/Kolkata');
+  const formattedDate = zonedDate.toFormat('MMM dd, yyyy HH:mm:ss');
 
 
  console.log('Current date and time in Kasaragod, Kerala (IST):', formattedDate);
