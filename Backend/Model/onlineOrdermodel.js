@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema(
     },
   
   },
-  { timestamps: true }
+ 
 );
 
 const Order = mongoose.model("OnlineOrder", orderSchema);
