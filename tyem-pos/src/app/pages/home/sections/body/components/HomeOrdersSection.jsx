@@ -595,15 +595,6 @@ const HomeOrdersSection = () => {
   const getOrdersToDisplay = () => {
     let ordersToFilter = searching ? filteredOrders : orders;
 
-    if (selectedTab === "online-orders") {
-      ordersToFilter = ordersToFilter.filter(
-        (order) => order.selling_price_group.toLowerCase() === "online"
-      );
-    } else if (selectedTab === "scheduled-orders") {
-      ordersToFilter = ordersToFilter.filter(
-        (order) => order.is_scheduled === 1
-      );
-    }
 
     if (orderFilterType === "All") {
       setSelectedOrder(ordersToFilter[0]);
