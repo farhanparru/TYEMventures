@@ -29,7 +29,15 @@ const OrderNotification = ({ setOrders }) => {
 
   
         };
+        
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
 
+        socket.onclose = (event) => {
+            console.log('WebSocket connection closed:', event.reason);
+        };
+        
         return () => {
             socket.close();
         };
