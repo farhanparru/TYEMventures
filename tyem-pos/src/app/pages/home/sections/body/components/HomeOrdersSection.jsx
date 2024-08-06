@@ -70,7 +70,7 @@ const OrderItem = ({ order, onClick }) => {
       </div>
       <div className="text-sm text-gray-500">
         <br />
-        <h1>{formattedDate}</h1> {/* Display the formatted date */}
+        <h1>{formattedDate}</h1> 
       </div>
     </div>
   );
