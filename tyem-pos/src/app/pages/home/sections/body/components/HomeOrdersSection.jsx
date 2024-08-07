@@ -570,6 +570,7 @@ const HomeOrdersSection = () => {
       setOrders((prevOrders) => {
         const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
         setSoundPlaying(true); // Play sound when a new order is received
+        setTotalOrders(updatedOrders.length); // Update total orders count
         return updatedOrders;
       });
     });
