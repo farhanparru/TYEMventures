@@ -15,7 +15,7 @@ import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
 
 // OrderItem component
-const OrderItem = ({ order, onClick,selected  }) => {
+const OrderItem = ({ order, onClick,lastElement  }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -27,7 +27,7 @@ const OrderItem = ({ order, onClick,selected  }) => {
    const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
-   const lastElement = sortedOrders[sortedOrders.length - 1];
+   const lastElement = orders[orders.length - 1];
    
    return (
     <div
@@ -513,6 +513,8 @@ const HomeOrdersSection = () => {
 
   const [orders, setOrders] = useState([]);
 
+
+ 
   // console.log(orders, "hhhh");
 
   const [selectedOrder, setSelectedOrder] = useState();
@@ -620,7 +622,7 @@ const HomeOrdersSection = () => {
     setSelectedOrder(order);
   };
 
-
+  const lastElement = sortedOrders[sortedOrders.length - 1];
 
   return (
     <div className="flex h-screen">
@@ -635,7 +637,7 @@ const HomeOrdersSection = () => {
           order={order}
           onClick={onOrderClick} 
           selected={selectedOrder?._id === order._id}
-          
+          lastElement={lastElement}
            />
         ))}
       </div>
