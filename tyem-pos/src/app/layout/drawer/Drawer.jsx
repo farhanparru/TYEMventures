@@ -110,7 +110,7 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, }) => {
 
 
 
-const Drawer = ({ activeMenu, setActiveMenu, collapsed ,setTotalOrders}) => {
+const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
 
   const [totalOrders, setTotalOrders] = useState(0);
   const [orders, setOrders] = useState([]);
