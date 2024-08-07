@@ -15,7 +15,7 @@ import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
 
 // OrderItem component
-const OrderItem = ({ order, onClick }) => {
+const OrderItem = ({ order, onClick ,isSelected }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -28,7 +28,8 @@ const OrderItem = ({ order, onClick }) => {
 
   return (
     <div
-      className="p-3 mb-3 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-blue-100 hover:border-blue-400"
+      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
+        ${isSelected ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-300'}`}
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
@@ -66,52 +67,6 @@ const OrderItem = ({ order, onClick }) => {
       </div>
       <div className="text-sm text-gray-500 flex flex-col items-center">
         <h1 className="text-lg font-semibold text-gray-700">{formattedDate}</h1>
-      </div>
-    </div>
-  );
-  
-};
-
-// OrderDetails component
-const OrderDetails = ({ order }) => {
-  return (
-    <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
-      <h3 className="text-xl font-semibold mb-4">Order Details</h3>
-      <div className="mb-4">
-        <h4 className="font-semibold">Order ID</h4>
-        <p>#{order.orderMeta.posOrderId}</p>
-      </div>
-      <div className="mb-4">
-        <h4 className="font-semibold">Invoice Number</h4>
-        <p>{order._id}</p>
-      </div>
-      <div className="mb-4">
-        <h4 className="font-semibold">Total Items</h4>
-        <p>{order.orderDetails.length}</p>
-      </div>
-      <div className="mb-4">
-        <h4 className="font-semibold">Total Amount</h4>
-        <p>
-          {order.orderMeta.paymentTendered}{" "}
-          {order.orderDetails[0].product_currency}
-        </p>
-      </div>
-      <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
-      <div className="mb-4">
-        <h4 className="font-semibold">Name</h4>
-        <p>{order.customer.name}</p>
-      </div>
-      <div className="mb-4">
-        <h4 className="font-semibold">Phone</h4>
-        <p>{order.customer.phone}</p>
-      </div>
-      <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
-      <div className="flex items-center">
-        <FaCheckCircle className="w-6 h-6 text-green-500" />
-        <span className="ml-2 text-sm font-semibold">Confirmed</span>
-        <div className="flex-1 mx-4 h-px bg-gray-300"></div>
-        <FaRegClock className="w-6 h-6 text-gray-400" />
-        <span className="ml-2 text-sm text-gray-400">Ready</span>
       </div>
     </div>
   );
@@ -515,6 +470,7 @@ const HomeOrdersSection = () => {
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -614,6 +570,10 @@ const HomeOrdersSection = () => {
     setSelectedOrder(order);
   };
 
+  const handleOrderClick = (order) => {
+    setSelectedOrderId(order.orderMeta.posOrderId);
+  };
+
   return (
     <div className="flex h-screen">
       <OrderNotification setOrders={setOrders} />
@@ -622,7 +582,7 @@ const HomeOrdersSection = () => {
         className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
       >
         {sortedOrders.map((order) => (
-          <OrderItem key={order._id} order={order} onClick={onOrderClick} />
+          <OrderItem key={order._id} order={order} onClick={onOrderClick}  isSelected={selectedOrderId === order.orderMeta.posOrderId}/>
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
