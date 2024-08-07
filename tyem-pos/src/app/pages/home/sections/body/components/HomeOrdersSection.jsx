@@ -81,28 +81,29 @@ const OrderStatusHistory = ({ statuses }) => {
   return (
     <div>
       <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
-      <div className="space-y-4">
+      <div className="relative">
         {statuses.map((status, index) => (
-          <div key={index} className="flex items-center">
-            {status.completed ? (
-              <FaCheckCircle className="w-6 h-6 text-blue-500" />
-            ) : (
-              <FaRegCheckCircle className="w-6 h-6 text-gray-400" />
-            )}
-            <span className="ml-2 text-sm font-semibold">{status.label}</span>
-            {status.date && (
-              <>
-                <div className="flex-1 mx-4 h-px bg-gray-300"></div>
-                <span className="text-gray-500 text-sm">{status.date}</span>
-              </>
-            )}
+          <div key={index} className="flex items-center mb-4">
+            <div className="flex flex-col items-center">
+              {status.completed ? (
+                <FaCheckCircle className="w-6 h-6 text-blue-500" />
+              ) : (
+                <FaRegCircle className="w-6 h-6 text-gray-400" />
+              )}
+              {index < statuses.length - 1 && (
+                <div className={`h-12 border-l-2 ${status.completed ? 'border-blue-500' : 'border-gray-400'}`}></div>
+              )}
+            </div>
+            <div className="ml-2">
+              <span className="block text-sm font-semibold">{status.label}</span>
+              {status.date && <span className="block text-sm text-gray-500">{status.date}</span>}
+            </div>
           </div>
         ))}
       </div>
     </div>
   );
 };
-
 
 // OrderDetails component
 const OrderDetails = ({ order }) => {
