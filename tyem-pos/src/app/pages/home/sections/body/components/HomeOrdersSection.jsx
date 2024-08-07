@@ -27,10 +27,12 @@ const OrderItem = ({ order, onClick,selected  }) => {
    const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
+   const lastElement = sortedOrders[sortedOrders.length - 1];
+   
    return (
     <div
       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer hover:bg-blue-100 hover:border-blue-200
-        ${selected ? 'bg-blue-400 border-blue-600' : 'bg-white border-gray-200'}`}
+        ${ lastElement ? 'bg-blue-400 border-blue-600' : 'bg-white border-gray-200'}`}
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
@@ -513,10 +515,11 @@ const HomeOrdersSection = () => {
 
   // console.log(orders, "hhhh");
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState();
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
+ 
 
 
   // Play notification sound
@@ -632,6 +635,7 @@ const HomeOrdersSection = () => {
           order={order}
           onClick={onOrderClick} 
           selected={selectedOrder?._id === order._id}
+          
            />
         ))}
       </div>
