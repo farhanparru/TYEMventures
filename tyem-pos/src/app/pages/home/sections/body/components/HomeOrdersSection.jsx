@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "tailwindcss/tailwind.css";
 import { Element } from "react-scroll";
-import { FaCheckCircle, FaRegClock } from "react-icons/fa";
+import { FaCheckCircle, FaRegClock, FaRegCheckCircle } from 'react-icons/fa';
 import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
 import {
   fetchOrders,
@@ -77,8 +77,40 @@ const OrderItem = ({ order, onClick,isMostRecent  }) => {
   );
 };
 
+const OrderStatusHistory = ({ statuses }) => {
+  return (
+    <div>
+      <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
+      <div className="space-y-4">
+        {statuses.map((status, index) => (
+          <div key={index} className="flex items-center">
+            {status.completed ? (
+              <FaCheckCircle className="w-6 h-6 text-blue-500" />
+            ) : (
+              <FaRegCheckCircle className="w-6 h-6 text-gray-400" />
+            )}
+            <span className="ml-2 text-sm font-semibold">{status.label}</span>
+            {status.date && (
+              <>
+                <div className="flex-1 mx-4 h-px bg-gray-300"></div>
+                <span className="text-gray-500 text-sm">{status.date}</span>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
 // OrderDetails component
 const OrderDetails = ({ order }) => {
+  const statuses = [
+    { label: 'Confirmed', completed: true, date: 'Fri, Aug 2, 2024, 7:58 AM' },
+    { label: 'Ready', completed: true, date: 'Mon, Aug 5, 2024, 8:17 AM' },
+    { label: 'Completed', completed: false }
+  ];
   return (
     <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
@@ -110,14 +142,7 @@ const OrderDetails = ({ order }) => {
         <h4 className="font-semibold">Phone</h4>
         <p>{order.customer.phone}</p>
       </div>
-      <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
-      <div className="flex items-center">
-        <FaCheckCircle className="w-6 h-6 text-green-500" />
-        <span className="ml-2 text-sm font-semibold">Confirmed</span>
-        <div className="flex-1 mx-4 h-px bg-gray-300"></div>
-        <FaRegClock className="w-6 h-6 text-gray-400" />
-        <span className="ml-2 text-sm text-gray-400">Ready</span>
-      </div>
+      <OrderStatusHistory statuses={statuses} />
     </div>
   );
 };
@@ -507,7 +532,7 @@ const CartSection = ({
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
 
-  const [totalOrders, setTotalOrders] = useState(0);
+  
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState();
   const [soundPlaying, setSoundPlaying] = useState(false);
@@ -558,7 +583,6 @@ const HomeOrdersSection = () => {
       try {
         const data = await fetchOrders();
         setOrders(data); // Set the fetched orders to state
-        setTotalOrders(data.length); // Set the total number of orders for the badge
       } catch (error) {
         console.error("Error fetching initial orders:", error);
       }
@@ -570,7 +594,6 @@ const HomeOrdersSection = () => {
       setOrders((prevOrders) => {
         const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
         setSoundPlaying(true); // Play sound when a new order is received
-        setTotalOrders(updatedOrders.length); // Update total orders count
         return updatedOrders;
       });
     });
