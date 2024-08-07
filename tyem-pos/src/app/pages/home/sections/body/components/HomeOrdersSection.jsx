@@ -27,7 +27,7 @@ const OrderItem = ({ order, onClick,lastElement  }) => {
    const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
-   const lastElement = orders[orders.length - 1];
+  
    
    return (
     <div
