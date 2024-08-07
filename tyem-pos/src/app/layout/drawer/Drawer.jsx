@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { Layout } from "antd";
 import styled, { keyframes } from "styled-components";
@@ -14,6 +14,10 @@ import {
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
 import logo from '../../../assets/Logo.png';
+import {
+  fetchOrders,
+  connectWebSocket,
+} from "../../../services/apiService.js";
 
 const { Sider } = Layout;
 
@@ -106,7 +110,37 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, }) => {
 
 
 
-const Drawer = ({ activeMenu, setActiveMenu, collapsed ,totalOrders}) => {
+const Drawer = ({ activeMenu, setActiveMenu, collapsed ,setTotalOrders}) => {
+
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [orders, setOrders] = useState([]);
+  
+  useEffect(() => {
+    const fetchAndSetOrders = async () => {
+      try {
+        const data = await fetchOrders();
+        setOrders(data); // Set the fetched orders to state
+        setTotalOrders(data.length); // Set the total number of orders for the badge
+      } catch (error) {
+        console.error("Error fetching initial orders:", error);
+      }
+    };
+
+    fetchAndSetOrders();
+
+    const socket = connectWebSocket((newOrder) => {
+      setOrders((prevOrders) => {
+        const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
+        setTotalOrders(updatedOrders.length); // Update total orders count
+        return updatedOrders;
+      });
+    });
+
+   
+  }, []);
+
+
+
   const menuItems = [
     {
       label: drawerMenuLabels.home.label,

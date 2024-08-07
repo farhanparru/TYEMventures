@@ -506,6 +506,7 @@ const CartSection = ({
 
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
+
   const [totalOrders, setTotalOrders] = useState(0);
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState();
@@ -568,7 +569,6 @@ const HomeOrdersSection = () => {
     const socket = connectWebSocket((newOrder) => {
       setOrders((prevOrders) => {
         const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
-        setTotalOrders(updatedOrders.length); // Update total orders count
         setSoundPlaying(true); // Play sound when a new order is received
         return updatedOrders;
       });
