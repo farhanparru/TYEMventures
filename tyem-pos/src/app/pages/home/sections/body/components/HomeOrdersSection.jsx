@@ -21,12 +21,13 @@ const OrderItem = ({ order, onClick ,isSelected }) => {
     0
   );
 
-  // Convert UTC to IST
-  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
-  const zonedDate = utcDate.setZone("Asia/Kolkata");
-  const formattedDate = zonedDate.toFormat("MMM dd, yyyy hh:mm:ss a");
+   // Convert UTC to IST
+   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
+   const zonedDate = utcDate.setZone("Asia/Kolkata");
+   const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
-  return (
+   return (
     <div
       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
         ${isSelected ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-300'}`}
@@ -65,8 +66,54 @@ const OrderItem = ({ order, onClick ,isSelected }) => {
           )}
         </div>
       </div>
-      <div className="text-sm text-gray-500 flex flex-col items-center">
-        <h1 className="text-lg font-semibold text-gray-700">{formattedDate}</h1>
+      <div className="text-right">
+        <h1 className="text-md font-semibold text-gray-700">{formattedDate}</h1>
+        <h2 className="text-sm text-gray-500">{formattedTime}</h2>
+      </div>
+    </div>
+  );
+};
+
+// OrderDetails component
+const OrderDetails = ({ order }) => {
+  return (
+    <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
+      <h3 className="text-xl font-semibold mb-4">Order Details</h3>
+      <div className="mb-4">
+        <h4 className="font-semibold">Order ID</h4>
+        <p>#{order.orderMeta.posOrderId}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Invoice Number</h4>
+        <p>{order._id}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Total Items</h4>
+        <p>{order.orderDetails.length}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Total Amount</h4>
+        <p>
+          {order.orderMeta.paymentTendered}{" "}
+          {order.orderDetails[0].product_currency}
+        </p>
+      </div>
+      <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
+      <div className="mb-4">
+        <h4 className="font-semibold">Name</h4>
+        <p>{order.customer.name}</p>
+      </div>
+      <div className="mb-4">
+        <h4 className="font-semibold">Phone</h4>
+        <p>{order.customer.phone}</p>
+      </div>
+      <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
+      <div className="flex items-center">
+        <FaCheckCircle className="w-6 h-6 text-green-500" />
+        <span className="ml-2 text-sm font-semibold">Confirmed</span>
+        <div className="flex-1 mx-4 h-px bg-gray-300"></div>
+        <FaRegClock className="w-6 h-6 text-gray-400" />
+        <span className="ml-2 text-sm text-gray-400">Ready</span>
       </div>
     </div>
   );
