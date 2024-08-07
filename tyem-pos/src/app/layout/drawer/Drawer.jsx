@@ -90,7 +90,7 @@ const IconContainer = styled.div`
   position: relative;
 `;
 
-const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge }) => {
+const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, }) => {
   return (
     <Link to={path}>
       <DrawerMenuItemContainer onClick={onClick} active={active}>
@@ -106,7 +106,7 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge }) => {
 
 
 
-const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
+const Drawer = ({ activeMenu, setActiveMenu, collapsed ,totalOrders}) => {
   const menuItems = [
     {
       label: drawerMenuLabels.home.label,
@@ -125,7 +125,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       icon: AiOutlineShoppingCart,
       onClick: () => setActiveMenu(drawerMenuLabels.online.label),
       path: drawerMenuLabels.online.path,
-      badge: 7, // Add badge count here// Add badge count here
+      badge: totalOrders, // Pass the total orders count here
     },
     {
       label: drawerMenuLabels.orders.label,

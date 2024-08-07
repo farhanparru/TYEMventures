@@ -13,6 +13,7 @@ import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
+import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
 
 // OrderItem component
 const OrderItem = ({ order, onClick,isMostRecent  }) => {
@@ -161,7 +162,7 @@ const CartSection = ({
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
     updateOrderStatus(orderId, "Accepted");
-    // onOrderAccept(); // Update the badge count
+    onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
   };
 
   const handleComplete = (orderId) => {
@@ -505,24 +506,13 @@ const CartSection = ({
 
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
-  const [totalOrders, setTotalOrders] = useState(7);
-
-  const handleOrderAccept = () => {
-    setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
-  };
-
+  const [totalOrders, setTotalOrders] = useState(0);
   const [orders, setOrders] = useState([]);
-
-
- 
-  // console.log(orders, "hhhh");
-
   const [selectedOrder, setSelectedOrder] = useState();
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
  
-
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -567,6 +557,7 @@ const HomeOrdersSection = () => {
       try {
         const data = await fetchOrders();
         setOrders(data); // Set the fetched orders to state
+        setTotalOrders(data.length); // Set the total number of orders for the badge
       } catch (error) {
         console.error("Error fetching initial orders:", error);
       }
@@ -577,6 +568,7 @@ const HomeOrdersSection = () => {
     const socket = connectWebSocket((newOrder) => {
       setOrders((prevOrders) => {
         const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
+        setTotalOrders(updatedOrders.length); // Update total orders count
         setSoundPlaying(true); // Play sound when a new order is received
         return updatedOrders;
       });
@@ -622,10 +614,16 @@ const HomeOrdersSection = () => {
     setSelectedOrder(order);
   };
 
-  const lastElement = sortedOrders[sortedOrders.length - 1];
+  const handleOrderAccept = (orderId) => {
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order._id !== orderId)
+    );
+    setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
+  };
 
   return (
     <div className="flex h-screen">
+      <Drawer totalOrders={totalOrders} />
       <OrderNotification setOrders={setOrders} />
       <div
         id="order-list"
