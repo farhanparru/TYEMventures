@@ -12,8 +12,7 @@ import CartNumpad from "../../../../../../app/pages/home/components/CartNumpad.j
 import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
-import { DateTime } from 'luxon';
-
+import { DateTime } from "luxon";
 
 // OrderItem component
 const OrderItem = ({ order, onClick }) => {
@@ -23,20 +22,16 @@ const OrderItem = ({ order, onClick }) => {
   );
 
   // Convert UTC to IST
-  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: 'utc' });
-  const zonedDate = utcDate.setZone('Asia/Kolkata');
-  const formattedDate = zonedDate.toFormat('MMM dd, yyyy hh:mm:ss a');
-
-
- console.log('Current date and time in Kasaragod, Kerala (IST):', formattedDate);
+  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
+  const zonedDate = utcDate.setZone("Asia/Kolkata");
+  const formattedDate = zonedDate.toFormat("MMM dd, yyyy hh:mm:ss a");
 
   return (
     <div
-      className="p-3 mb-3 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-gray-100"
+      className="p-3 mb-3 bg-white rounded-lg shadow-md flex justify-between items-center border border-gray-200 cursor-pointer hover:bg-blue-100 hover:border-blue-400"
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
-
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -46,7 +41,7 @@ const OrderItem = ({ order, onClick }) => {
           {order.orderMeta?.paymentTendered}{" "}
           {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}
         </p>
-
+  
         <div className="flex items-center mt-2">
           <span
             className={`px-2 py-1 text-xs font-semibold rounded ${
@@ -61,7 +56,7 @@ const OrderItem = ({ order, onClick }) => {
           >
             {order.orderMeta.paymentStatus}
           </span>
-
+  
           {order.new && (
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
               New
@@ -69,12 +64,12 @@ const OrderItem = ({ order, onClick }) => {
           )}
         </div>
       </div>
-      <div className="text-sm text-gray-500">
-        <br />
-        <h1>{formattedDate}</h1> 
+      <div className="text-sm text-gray-500 flex flex-col items-center">
+        <h1 className="text-lg font-semibold text-gray-700">{formattedDate}</h1>
       </div>
     </div>
   );
+  
 };
 
 // OrderDetails component
@@ -130,7 +125,7 @@ const CartSection = ({
   pauseNotificationSound,
   orders,
   updateOrderStatus,
-  onOrderAccept // New prop
+  onOrderAccept, // New prop
 }) => {
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -162,7 +157,7 @@ const CartSection = ({
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
     updateOrderStatus(orderId, "Accepted");
-    onOrderAccept(); // Update the badge count
+    // onOrderAccept(); // Update the badge count
   };
 
   const handleComplete = (orderId) => {
@@ -230,7 +225,7 @@ const CartSection = ({
                 className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
                 onClick={() => handleReject(order._id)}
               >
-                Cancel
+                complited
               </button>
             </>
           ) : (
@@ -506,14 +501,14 @@ const CartSection = ({
 
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
-
   const [totalOrders, setTotalOrders] = useState(7);
 
   const handleOrderAccept = () => {
-    setTotalOrders(prevCount => prevCount - 1); // Decrease the badge count
-  }
+    setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
+  };
+
   const [orders, setOrders] = useState([]);
-  
+
   // console.log(orders, "hhhh");
 
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -613,11 +608,11 @@ const HomeOrdersSection = () => {
 
   // Sort orders whenever the orders prop changes
   const sortedOrders = sortOrdersByPosOrderId(orders);
-// console.log(sortedOrders,"sortedOrders");
+  // console.log(sortedOrders,"sortedOrders");
 
   const onOrderClick = (order) => {
     setSelectedOrder(order);
-};
+  };
 
   return (
     <div className="flex h-screen">
