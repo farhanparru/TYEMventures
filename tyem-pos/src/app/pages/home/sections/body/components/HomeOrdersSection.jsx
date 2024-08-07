@@ -68,7 +68,7 @@ const OrderItem = ({ order, onClick ,isSelected }) => {
       </div>
       <div className="text-right">
         <h1 className="text-md font-semibold text-gray-700">{formattedDate}</h1>
-        <h2 className="text-sm text-gray-500">{formattedTime}</h2>
+        <h2 className="text-sm text-gray-600">{formattedTime}</h2>
       </div>
     </div>
   );
