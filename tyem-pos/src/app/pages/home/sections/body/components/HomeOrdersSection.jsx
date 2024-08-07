@@ -15,7 +15,7 @@ import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
 
 // OrderItem component
-const OrderItem = ({ order, onClick ,isSelected }) => {
+const OrderItem = ({ order, onClick,selected  }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -29,8 +29,8 @@ const OrderItem = ({ order, onClick ,isSelected }) => {
 
    return (
     <div
-      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
-        ${isSelected ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-300'}`}
+      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer hover:bg-blue-100 hover:border-blue-200
+        ${selected ? 'bg-blue-400 border-blue-600' : 'bg-white border-gray-200'}`}
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
@@ -517,7 +517,7 @@ const HomeOrdersSection = () => {
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -617,9 +617,7 @@ const HomeOrdersSection = () => {
     setSelectedOrder(order);
   };
 
-  const handleOrderClick = (order) => {
-    setSelectedOrderId(order.orderMeta.posOrderId);
-  };
+
 
   return (
     <div className="flex h-screen">
@@ -629,7 +627,12 @@ const HomeOrdersSection = () => {
         className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
       >
         {sortedOrders.map((order) => (
-          <OrderItem key={order._id} order={order} onClick={onOrderClick}  isSelected={selectedOrderId === order.orderMeta.posOrderId}/>
+          <OrderItem 
+          key={order._id} 
+          order={order}
+          onClick={onOrderClick} 
+          selected={selectedOrder?._id === order._id}
+           />
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
