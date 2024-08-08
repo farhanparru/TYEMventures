@@ -238,8 +238,8 @@ const CartSection = ({
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
-    updateOrderStatus(orderId, "Accepted");
-    onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
+    updateOrderStatus(orderId); // Call the passed handler
+    // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
   };
 
 
@@ -625,20 +625,15 @@ const HomeOrdersSection = () => {
     }
   };
 
-  // Status Update
-  const updateOrderStatus = (orderId, status) => {
-    setOrders(
-      orders.map((order) =>
-        order._id === orderId
-          ? {
-              ...order,
-              orderMeta: { ...order.orderMeta, paymentStatus: status },
-            }
-          : order
-      )
+  const handleOrderAccept = (orderId) => {
+    // Pause the notification sound, update order status, etc.
+    const updatedOrders = orders.map((order) =>
+      order._id === orderId
+        ? { ...order, orderMeta: { ...order.orderMeta, paymentStatus: "Accepted" } }
+        : order
     );
-  };
-
+    setOrders(updatedOrders);
+  }
   // Fetch orders and set up WebSocket
   // Fetch orders and set up WebSocket
   useEffect(() => {
@@ -701,12 +696,12 @@ const HomeOrdersSection = () => {
     setSelectedOrder(order);
   };
 
-  const handleOrderAccept = (orderId) => {
-    setOrders((prevOrders) =>
-      prevOrders.filter((order) => order._id !== orderId)
-    );
-    setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
-  };
+  // const handleOrderAccept = (orderId) => {
+  //   setOrders((prevOrders) =>
+  //     prevOrders.filter((order) => order._id !== orderId)
+  //   );
+  //   setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
+  // };
 
    
 
@@ -744,8 +739,9 @@ const HomeOrdersSection = () => {
             onCancel={handleCancel}
             pauseNotificationSound={pauseNotificationSound}
             orders={orders}
-            updateOrderStatus={updateOrderStatus}
-            onOrderAccept={handleOrderAccept}
+            updateOrderStatus={handleOrderAccept} // Pass the updated handler
+            
+            // onOrderAccept={handleOrderAccept}
           />
         ) : (
           <p className="text-gray-500">Select an order to view the cart.</p>
