@@ -9,7 +9,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import {BrowserRouter} from 'react-router-dom'
 import { OrderProvider } from "./app/pages/home/sections/body/components/OrderContext";
-import StatusContext from "./app/pages/home/components/StatusContext";
+import { OrderStatusProvider } from "./app/pages/home/components/StatusContext";
+
 // Tailwind css
 
 
@@ -19,9 +20,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <PersistGate loading={null} persistor={persistor}>
       <BrowserRouter>
       <OrderProvider>
-      <StatusContext>
+      <OrderStatusProvider>
         <App />
-        </StatusContext>
+        </OrderStatusProvider>
         </OrderProvider>,
         </BrowserRouter>
       </PersistGate>
