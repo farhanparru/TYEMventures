@@ -29,13 +29,13 @@ const OrderItem = ({ order, onClick,isMostRecent,selected  }) => {
    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
   // Determine the highlight color
-  const highlightColor = selected || isMostRecent ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200';
+  const highlightColor = isMostRecent || selected ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200';
    
    return (
     <div
       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
         ${highlightColor}
-        ${!selected && !isMostRecent ? 'hover:bg-blue-100 hover:border-blue-300' : ''}
+        ${!isMostRecent && !selected ? 'hover:bg-blue-100 hover:border-blue-300' : ''}
       `}
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
