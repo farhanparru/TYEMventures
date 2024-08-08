@@ -15,6 +15,7 @@ import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
 import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
+import { FaCheckCircle, FaRegCircle, FaUserTie } from 'react-icons/fa';
 
 // OrderItem component
 const OrderItem = ({ order, onClick,selected  }) => {
@@ -90,6 +91,7 @@ const OrderStatusHistory = ({ statuses }) => {
       <div className="relative">
         {statuses.map((status, index) => (
           <div key={index} className="flex items-center mb-4">
+            {/* Status Icon and Line */}
             <div className="flex flex-col items-center">
               {status.completed ? (
                 <FaCheckCircle className="w-6 h-6 text-blue-500" />
@@ -100,9 +102,16 @@ const OrderStatusHistory = ({ statuses }) => {
                 <div className={`h-12 border-l-2 ${status.completed ? 'border-blue-500' : 'border-gray-400'}`}></div>
               )}
             </div>
+            {/* Status Details */}
             <div className="ml-2">
               <span className="block text-sm font-semibold">{status.label}</span>
               {status.date && <span className="block text-sm text-gray-500">{status.date}</span>}
+              {status.employee && (
+                <div className="flex items-center text-sm text-gray-500">
+                  <FaUserTie className="mr-2" />
+                  <span>Assigned to: {status.employee}</span>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -111,11 +120,13 @@ const OrderStatusHistory = ({ statuses }) => {
   );
 };
 
+
 // OrderDetails component
 const OrderDetails = ({ order }) => {
   const statuses = [
     { label: 'Confirmed', completed: true, date: 'Fri, Aug 2, 2024, 7:58 AM' },
     { label: 'Ready', completed: true, date: 'Mon, Aug 5, 2024, 8:17 AM' },
+    { label: 'Assigned', completed: true, employee: 'John Doe', date: 'Mon, Aug 5, 2024, 9:00 AM' },
     { label: 'Completed', completed: false }
   ];
 
@@ -135,7 +146,7 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Order Type</h4>
-            <p>{order.orderType}</p> {/* Ensure orderType is available in the order object */}
+            <p>Pickup</p> {/* Ensure orderType is available in the order object */}
           </div>
           <div>
             <h4 className="font-semibold">Total Items</h4>
@@ -143,7 +154,7 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Subtotal</h4>
-            <p>{order.orderMeta.subTotal} {order.orderDetails[0].product_currency}</p>
+            <p>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</p>
           </div>
           <div>
           <h4 className="font-semibold flex items-center">
@@ -323,7 +334,7 @@ const CartSection = ({
         </div>
       </div>
 
-      
+
       {showPlaceModal && (
         <CustomModal
           onClose={() => {
