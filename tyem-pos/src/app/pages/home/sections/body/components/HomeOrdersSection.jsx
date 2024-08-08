@@ -13,10 +13,10 @@ import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
-import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
+
 
 // OrderItem component
-const OrderItem = ({ order, onClick,isMostRecent  }) => {
+const OrderItem = ({ order, isMostRecent  }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -34,7 +34,7 @@ const OrderItem = ({ order, onClick,isMostRecent  }) => {
     <div
     className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer hover:bg-blue-100 hover:border-blue-200
       ${isMostRecent ? 'bg-blue-400 border-blue-600' : 'bg-white border-gray-200'}`}
-    onClick={() => onClick(order)}
+   
     aria-label={`Order ${order.orderMeta?.posOrderId} details`}
   >
       <div>
