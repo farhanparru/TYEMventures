@@ -13,10 +13,10 @@ import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
-
+import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
 
 // OrderItem component
-const OrderItem = ({ order, isMostRecent  }) => {
+const OrderItem = ({ order, onClick,isMostRecent  }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -34,7 +34,7 @@ const OrderItem = ({ order, isMostRecent  }) => {
     <div
     className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer hover:bg-blue-100 hover:border-blue-200
       ${isMostRecent ? 'bg-blue-400 border-blue-600' : 'bg-white border-gray-200'}`}
-   
+    onClick={() => onClick(order)}
     aria-label={`Order ${order.orderMeta?.posOrderId} details`}
   >
       <div>
@@ -535,7 +535,7 @@ const HomeOrdersSection = () => {
 
   
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState();
+  // const [selectedOrder, setSelectedOrder] = useState();
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
@@ -666,14 +666,14 @@ const HomeOrdersSection = () => {
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
-          <OrderDetails order={selectedOrder} />
+          <OrderDetails  />
         ) : (
           <p className="text-gray-500">Select an order to view details.</p>
         )}
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection
-          order={selectedOrder}
+          // order={selectedOrder}
           onComplete={handleComplete}
           onCancel={handleCancel}
           pauseNotificationSound={pauseNotificationSound}
