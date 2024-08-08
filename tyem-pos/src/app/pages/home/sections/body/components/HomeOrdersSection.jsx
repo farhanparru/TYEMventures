@@ -16,7 +16,7 @@ import { DateTime } from "luxon";
 import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
 
 // OrderItem component
-const OrderItem = ({ order, onClick,selected  }) => {
+const OrderItem = ({ order, onClick,isMostRecent,selected  }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -28,18 +28,17 @@ const OrderItem = ({ order, onClick,selected  }) => {
    const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
-  
+   const isHighlighted = selected || isMostRecent; // Highlight if selected or most recent
    
    return (
     <div
-      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
-        ${selected ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200'}
-        ${selected ? '' : 'hover:bg-blue-100 hover:border-blue-300'}
-    
-      `}
-      onClick={() => onClick(order)}
-      aria-label={`Order ${order.orderMeta?.posOrderId} details`}
-    >
+    className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
+      ${isHighlighted ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200'}
+      ${!isHighlighted ? 'hover:bg-blue-100 hover:border-blue-300' : ''}
+    `}
+    onClick={() => onClick(order)}
+    aria-label={`Order ${order.orderMeta?.posOrderId} details`}
+  >
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -644,7 +643,7 @@ const HomeOrdersSection = () => {
 
   // Sort orders whenever the orders prop changes
   const sortedOrders = sortOrdersByPosOrderId(orders);
-  const mostRecentOrder = sortedOrders[0]; // Assuming the first item is the most recent after sorting
+  const mostRecentOrder = sortedOrders[0];// Assuming the first item is the most recent after sorting
   // console.log(sortedOrders,"sortedOrders");
   const onOrderClick = (order) => {
     setSelectedOrder(order);
@@ -673,8 +672,9 @@ const HomeOrdersSection = () => {
           key={order._id} 
           order={order}
           onClick={onOrderClick} 
-          selected={selectedOrder?._id === mostRecentOrder._id}
-          // isMostRecent={order._id === mostRecentOrder._id} // Pass the prop to highlight the most recent order
+          selected={selectedOrder?._id === order._id}
+          isMostRecent={order._id === mostRecentOrder._id} // Pass most recent prop
+        
            />
         ))}
       </div>
