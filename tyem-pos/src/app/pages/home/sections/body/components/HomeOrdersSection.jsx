@@ -248,7 +248,7 @@ const CartSection = ({
 
    const sendMessage = async () => {
     try {
-      const apiToken = '6893|MaonLbUzTlT3tLPPCf40wSi7sXMO2hmeSIQKFuGr';
+      const apiToken = '6894%7C7kBhTBNwO631guYWt9Nq3ayMOUIa752Ax8SdDZdl';
       const phoneNumberId = '301969286337576';
       const templateId = '95869';
       const templateVariables = {
