@@ -4,7 +4,7 @@ import { FaClipboardCheck, FaBoxOpen , FaCheckCircle, FaUserTie} from "react-ico
 
 const OrderStatusContext = createContext();
 
-const StatusContext = ({ children }) => {
+export const OrderStatusProvider = ({ children }) => {
     const [isAccepted, setIsAccepted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isAssigned, setIsAssigned] = useState(false);
@@ -53,4 +53,4 @@ const StatusContext = ({ children }) => {
   )
 }
 
-export default StatusContext
+export const useOrderStatus = () => useContext(OrderStatusContext);

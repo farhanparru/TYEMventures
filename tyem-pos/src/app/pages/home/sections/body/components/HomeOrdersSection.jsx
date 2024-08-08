@@ -19,7 +19,7 @@ import { FaCheckCircle, FaRegCircle, FaUserTie } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useOrderContext } from "./OrderContext.jsx";
-import {StatusContext} from "../../../components/StatusContext.jsx";
+import { useOrderStatus } from "../../../components/StatusContext.jsx";
 
 
 // OrderItem component
@@ -80,7 +80,7 @@ const OrderItem = ({ order, onClick, selected }) => {
 };
 
 const OrderStatusHistory = () => {
-  const { statuses } = StatusContext();
+  const { statuses } = useOrderStatus();
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
