@@ -117,7 +117,7 @@ const OrderDetails = ({ order }) => {
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
       <div className="mb-4">
         <h4 className="font-semibold">Order ID</h4>
-        <p>#{order?.orderMeta.posOrderId}</p>
+        <p>#{order.orderMeta.posOrderId}</p>
       </div>
       <div className="mb-4">
         <h4 className="font-semibold">Invoice Number</h4>
@@ -535,7 +535,7 @@ const HomeOrdersSection = () => {
 
   
   const [orders, setOrders] = useState([]);
-  // const [selectedOrder, setSelectedOrder] = useState();
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
@@ -648,7 +648,6 @@ const HomeOrdersSection = () => {
 
   return (
     <div className="flex h-screen">
-      {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
       <div
         id="order-list"
@@ -656,24 +655,22 @@ const HomeOrdersSection = () => {
       >
         {sortedOrders.map((order) => (
           <OrderItem 
-          key={order._id} 
-          order={order}
-          onClick={onOrderClick} 
-          selected={selectedOrder?._id === order._id}
-          isMostRecent={order._id === mostRecentOrder._id} // Pass the prop to highlight the most recent order
-           />
+            key={order._id} 
+            order={order}
+            onClick={() => setSelectedOrder(order)} // Optional: Allows user to select a different order
+            selected={selectedOrder?._id === order._id}
+            isMostRecent={selectedOrder && order._id === selectedOrder._id} // Highlight the selected order
+          />
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
-      
-          <OrderDetails  />
-        
-          <p className="text-gray-500">Select an order to view details.</p>
-       
+        {/* Always render OrderDetails with selected or most recent order */}
+        <OrderDetails order={selectedOrder} />
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
+        {/* Always render CartSection with selected or most recent order */}
         <CartSection
-          // order={selectedOrder}
+          order={selectedOrder}
           onComplete={handleComplete}
           onCancel={handleCancel}
           pauseNotificationSound={pauseNotificationSound}
