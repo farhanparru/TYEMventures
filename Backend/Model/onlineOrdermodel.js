@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema(
       paymentMethod: String,
       paymentTendered: Number,
       orderDate: Date, // Store date as UTC
-      paymentStatus:String,
+      paymentStatus: { type: String, default: 'Pending' },
     },
     customer: {
       name: String,

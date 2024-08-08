@@ -243,10 +243,41 @@ const CartSection = ({
   };
 
 
+   // send Message for Whtsapp
+
+   const sendMessage = async () => {
+    try {
+      const apiToken = '6893|MaonLbUzTlT3tLPPCf40wSi7sXMO2hmeSIQKFuGr';
+      const phoneNumberId = '301969286337576';
+      const templateId = '95869';
+      const templateVariables = {
+        name: `${order.customer.name}`,
+        billno: `${order.orderMeta.posOrderId}`,
+        systemCartTotalPrice: `${order.orderMeta.paymentTendered}`,
+        phoneNumber: `${order.customer.phone}`
+      };
+  
+      const url = `https://app.xpressbot.org/api/v1/whatsapp/send/template?apiToken=${apiToken}&phone_number_id=${phoneNumberId}&template_id=${templateId}&templateVariable-name-1=${templateVariables.name}&templateVariable-billno-2=${templateVariables.billno}&templateVariable-system-cart-total-price-3=${templateVariables.systemCartTotalPrice}&phone_number=${templateVariables.phoneNumber}`;
+  
+      await axios.get(url);
+      alert('Message sent successfully!');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message.');
+    }
+  };
+
+
+
+
+
+
+
 
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
     updateOrderStatus(orderId, "Completed");
+    sendMessage(); // Send WhatsApp message
   };
 
   const handleReject = (orderId) => {
