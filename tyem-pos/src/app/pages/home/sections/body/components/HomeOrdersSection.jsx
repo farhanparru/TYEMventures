@@ -16,7 +16,7 @@ import { DateTime } from "luxon";
 import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
 
 // OrderItem component
-const OrderItem = ({ order, onClick,isMostRecent,selected  }) => {
+const OrderItem = ({ order, onClick,selected  }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -35,7 +35,7 @@ const OrderItem = ({ order, onClick,isMostRecent,selected  }) => {
       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
         ${selected ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200'}
         ${selected ? '' : 'hover:bg-blue-100 hover:border-blue-300'}
-        ${isMostRecent ? 'bg-blue-400 border-blue-600 text-white' : ''}
+    
       `}
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
