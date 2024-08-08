@@ -90,30 +90,35 @@ const OrderItem = ({ order, onClick,selected  }) => {
 
 const OrderStatusHistory = ({ statuses }) => {
   return (
-    <div>
-      <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
-      <div className="flex justify-between items-center space-x-4">
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <h3 className="text-2xl font-semibold mb-6 text-center">Order Status History</h3>
+      <div className="flex flex-col items-center md:flex-row md:justify-between md:space-x-8">
         {statuses.map((status, index) => (
-          <div key={index} className="flex flex-col items-center">
+          <div key={index} className="flex flex-col items-center text-center mb-6 md:mb-0">
             {/* Status Icon */}
-            <div className="flex items-center flex-col">
+            <div className="relative flex flex-col items-center">
               {status.completed ? (
-                <FaCheckCircle className="w-6 h-6 text-blue-500" />
+                <FaCheckCircle className="w-8 h-8 text-blue-500" />
               ) : (
-                <FaRegCircle className="w-6 h-6 text-gray-400" />
+                <FaRegCircle className="w-8 h-8 text-gray-400" />
               )}
               {/* Connector Line */}
               {index < statuses.length - 1 && (
-                <div className={`w-24 border-b-2 ${status.completed ? 'border-blue-500' : 'border-gray-400'}`}></div>
+                <div
+                  className={`absolute top-4 left-full w-12 h-0.5 ${status.completed ? 'bg-blue-500' : 'bg-gray-400'}`}
+                  style={{ transform: 'translateX(50%)' }}
+                ></div>
               )}
             </div>
             {/* Status Details */}
-            <div className="text-center mt-2">
-              <span className="block text-sm font-semibold">{status.label}</span>
-              {status.date && <span className="block text-sm text-gray-500">{status.date}</span>}
+            <div className="mt-2">
+              <span className="block text-sm font-semibold text-gray-700">{status.label}</span>
+              {status.date && (
+                <span className="block text-sm text-gray-500">{status.date}</span>
+              )}
               {status.employee && (
                 <div className="flex items-center justify-center text-sm text-gray-500 mt-1">
-                  <FaUserTie className="mr-2" />
+                  <FaUserTie className="mr-1" />
                   <span>Assigned to: {status.employee}</span>
                 </div>
               )}
@@ -124,6 +129,7 @@ const OrderStatusHistory = ({ statuses }) => {
     </div>
   );
 };
+
 
 
 
@@ -237,10 +243,8 @@ const CartSection = ({
       break;
   }
 
-  const [isAccepted, setIsAccepted] = useState(
-    order?.orderMeta?.paymentStatus === "Accepted"
-  );
-
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [isAssigned, setIsAssigned] = useState(false);
 
    // send Message for Whtsapp
 
@@ -259,7 +263,7 @@ const CartSection = ({
       const url = `https://app.xpressbot.org/api/v1/whatsapp/send/template?apiToken=${apiToken}&phone_number_id=${phoneNumberId}&template_id=${templateId}&templateVariable-name-1=${templateVariables.name}&templateVariable-billno-2=${templateVariables.billno}&templateVariable-system-cart-total-price-3=${templateVariables.systemCartTotalPrice}&phone_number=${templateVariables.phoneNumber}`;
   
       await axios.get(url);
-      toast.success(`Message sent successfully to ${customerPhoneNumber}!`);
+      toast.success(`Message sent successfully to ${order.customer.phone}!`);
     } catch (error) {
       console.error('Error sending message:', error.response || error.message);
       toast.error('Failed to send message.');
@@ -279,18 +283,28 @@ const CartSection = ({
   };
 
 
-  const handleComplete = (orderId) => {
-    setShowPlaceModal(true);
+  const handleReady = (orderId) => {
     updateOrderStatus(orderId, "Completed");
   
   };
 
+
+  const handleComplete = (orderId) => {
+    setShowPlaceModal(true);
+    updateOrderStatus(orderId, "Completed");
+  };
+
   const handleReject = (orderId) => {
     setIsAccepted(false);
+    setIsAssigned(false);
     onCancel(order.number); // Call the onCancel function if needed
     updateOrderStatus(orderId, "Rejected");
   };
 
+  const handleAssigned = (orderId) => {
+    setIsAssigned(true);
+    updateOrderStatus(orderId, "Assigned");
+  };
 
 
   if (!order) {
@@ -335,15 +349,30 @@ const CartSection = ({
           </span>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-between items-center gap-4 mt-6">
-          {isAccepted ? (
+       {/* Action Buttons */}
+       <div className="flex justify-between items-center gap-4 mt-6">
+          {isAssigned ? (
             <>
               <button
                 className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                 onClick={() => handleComplete(order._id)}
               >
-                Ready
+                Complete
+              </button>
+              <button
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                onClick={() => handleReject(order._id)}
+              >
+                Cancel
+              </button>
+            </>
+          ) : isAccepted ? (
+            <>
+              <button
+                className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
+                onClick={() => handleAssigned(order._id)}
+              >
+                Assigned
               </button>
               <button
                 className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
