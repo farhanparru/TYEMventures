@@ -535,10 +535,10 @@ const HomeOrdersSection = () => {
 
   
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(orders.length > 0 ? orders[0] : null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
-  const [orderStatus, setOrderStatus] = useState(null); // Manage status here
+  const [orderStatus, setOrderStatus] = useState(); // Manage status here
  
 
   // Play notification sound
