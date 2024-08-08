@@ -3,6 +3,7 @@ import "tailwindcss/tailwind.css";
 import { Element } from "react-scroll";
 import { FaCheckCircle, FaRegCircle } from 'react-icons/fa';
 import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
+import { FaTruck } from 'react-icons/fa';
 import {
   fetchOrders,
   connectWebSocket,
@@ -119,76 +120,75 @@ const OrderDetails = ({ order }) => {
   ];
 
   return (
-    <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
-      <h3 className="text-xl font-semibold mb-4">Order Details</h3>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Order ID</h4>
-        <p>#{order.orderMeta.posOrderId}</p>
+    <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2">Order Details</h3>
+        
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <h4 className="font-semibold">Order ID</h4>
+            <p>#{order.orderMeta.posOrderId}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Invoice Number</h4>
+            <p>{order._id}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Order Type</h4>
+            <p>{order.orderType}</p> {/* Ensure orderType is available in the order object */}
+          </div>
+          <div>
+            <h4 className="font-semibold">Total Items</h4>
+            <p>{order.orderDetails.length}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Subtotal</h4>
+            <p>{order.orderMeta.subTotal} {order.orderDetails[0].product_currency}</p>
+          </div>
+          <div>
+          <h4 className="font-semibold flex items-center">
+              <FaTruck className="mr-2 text-gray-500" /> Delivery Charge
+            </h4>
+            <p>{order.orderMeta.deliveryCharge} {order.orderDetails[0].product_currency}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Total Amount</h4>
+            <p>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Payment Method</h4>
+            <p>{order.orderMeta.paymentMethod}</p> {/* Ensure paymentMethod is available in the order object */}
+          </div>
+        </div>
       </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Invoice Number</h4>
-        <p>{order._id}</p>
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Order Type</h4>
-        <p>{order.orderType}</p> {/* Ensure orderType is available in the order object */}
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Total Items</h4>
-        <p>{order.orderDetails.length}</p>
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Subtotal</h4>
-        <p>{order.orderMeta.subTotal} {order.orderDetails[0].product_currency}</p>
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Delivery Charge</h4>
-        <p>{order.orderMeta.deliveryCharge} {order.orderDetails[0].product_currency}</p>
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Total Amount</h4>
-        <p>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</p>
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Payment Method</h4>
-        <p>{order.orderMeta.paymentMethod}</p> {/* Ensure paymentMethod is available in the order object */}
-      </div>
-      
-      <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Name</h4>
-        <p>{order.customer.name}</p>
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Phone Number</h4>
-        <p>{order.customer.phone}</p>
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Place</h4>
-        <p>Kasaragod</p> {/* Ensure place is available in the order object */}
-      </div>
-      
-      <div className="mb-4">
-        <h4 className="font-semibold">Latitude & Longitude</h4>
-        <p>Null</p> {/* Ensure latitude and longitude are available in the order object */}
+
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2">Customer Details</h3>
+        
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <h4 className="font-semibold">Name</h4>
+            <p>{order.customer.name}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Phone Number</h4>
+            <p>{order.customer.phone}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Place</h4>
+            <p>Kasaragod</p> {/* Ensure place is available in the order object */}
+          </div>
+          <div>
+            <h4 className="font-semibold">Latitude & Longitude</h4>
+            <p>Null</p> {/* Ensure latitude and longitude are available in the order object */}
+          </div>
+        </div>
       </div>
       
       <OrderStatusHistory statuses={statuses} />
     </div>
   );
 };
-
 // CartSection component
 const CartSection = ({
   order,
@@ -252,40 +252,42 @@ const CartSection = ({
       </div>
     );
   }
-
   return (
-    <div className="flex flex-col h-full p-2 bg-gray-800 text-white">
-      {order.orderDetails.map((item, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
-        >
-          <span className="font-semibold">{item.product_name}</span>
-          <span>{item.product_quantity}</span>
-          <span>{order.orderMeta.paymentTendered}</span>
-          <span>{item.product_currency}</span>
-        </div>
-      ))}
+    <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
+      {/* Order Items */}
+      <div className="flex-grow">
+        {order.orderDetails.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+          >
+            <span className="font-semibold">{item.product_name}</span>
+            <span>{item.product_quantity}</span>
+            <span>{order.orderMeta.paymentTendered}</span>
+            <span>{item.product_currency}</span>
+          </div>
+        ))}
+      </div>
 
-      <div
-        style={{ marginTop: "31.5rem" }}
-        className="p-6 bg-gray-700 text-white rounded-lg"
-      >
+      {/* Summary and Actions */}
+      <div className="mt-auto p-6 bg-gray-700 text-white rounded-lg">
+        {/* Subtotal */}
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
           <span>
-            {order.orderMeta.paymentTendered}{" "}
-            {order.orderDetails[0].product_currency}
-          </span>
-        </div>
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-semibold">Total</span>
-          <span>
-            {order.orderMeta.paymentTendered}{" "}
-            {order.orderDetails[0].product_currency}
+            {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
           </span>
         </div>
 
+        {/* Total */}
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-semibold">Total</span>
+          <span>
+            {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
+          </span>
+        </div>
+
+        {/* Action Buttons */}
         <div className="flex justify-between items-center gap-4 mt-6">
           {isAccepted ? (
             <>
@@ -299,7 +301,7 @@ const CartSection = ({
                 className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
                 onClick={() => handleReject(order._id)}
               >
-                cancel
+                Cancel
               </button>
             </>
           ) : (
@@ -321,6 +323,7 @@ const CartSection = ({
         </div>
       </div>
 
+      
       {showPlaceModal && (
         <CustomModal
           onClose={() => {
