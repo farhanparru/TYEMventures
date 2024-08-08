@@ -673,7 +673,7 @@ const HomeOrdersSection = () => {
           key={order._id} 
           order={order}
           onClick={onOrderClick} 
-          selected={selectedOrder?._id === order._id}
+          selected={selectedOrder?._id === mostRecentOrder._id}
           // isMostRecent={order._id === mostRecentOrder._id} // Pass the prop to highlight the most recent order
            />
         ))}
