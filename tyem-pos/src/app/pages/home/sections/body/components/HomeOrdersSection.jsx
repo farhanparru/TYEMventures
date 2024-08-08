@@ -84,7 +84,7 @@ const OrderStatusHistory = ({ statuses }) => {
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
-        {statuses.map((status, index) => (
+        {statuses?.map((status, index) => (
           <div key={index} className="flex flex-col items-center">
             {/* Status Icon */}
             <div
