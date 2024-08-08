@@ -665,11 +665,11 @@ const HomeOrdersSection = () => {
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
-        {selectedOrder ? (
+       
           <OrderDetails  />
-        ) : (
+       
           <p className="text-gray-500">Select an order to view details.</p>
-        )}
+        
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection
