@@ -41,6 +41,7 @@ const OrderItem = ({ order, onClick,selected  }) => {
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
+    
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -74,8 +75,8 @@ const OrderItem = ({ order, onClick,selected  }) => {
         </div>
       </div>
       <div className="text-right">
-        <h1 className="text-md font-semibold text-gray-700">{formattedDate}</h1>
-        <h2 className="text-sm text-gray-600">{formattedTime}</h2>
+        <h1 className="text-md font- text-white">{formattedDate}</h1>
+        <h2 className="text-sm text-white">{formattedTime}</h2>
       </div>
     </div>
   );
@@ -231,7 +232,7 @@ const CartSection = ({
       ))}
 
       <div
-        style={{ marginTop: "37.5rem" }}
+        style={{ marginTop: "31.5rem" }}
         className="p-6 bg-gray-700 text-white rounded-lg"
       >
         <div className="flex justify-between mb-4">
