@@ -20,6 +20,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useOrderContext } from "./OrderContext.jsx";
 import { HiChevronRight } from 'react-icons/hi';
+import { FaClipboardCheck, FaBoxOpen, FaUserTie, FaCheckCircle } from 'react-icons/fa';
+import { HiOutlineMinus } from 'react-icons/hi';
 
 
 // OrderItem component
@@ -84,44 +86,38 @@ const OrderItem = ({ order, onClick,selected  }) => {
 
 const OrderStatusHistory = ({ statuses }) => {
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
-      <h3 className="text-xl font-semibold mb-4 text-center">Order Status History</h3>
-      <div className="flex flex-col items-center md:flex-row md:justify-between">
+    <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
+      <div className="flex flex-col items-center md:flex-row md:justify-between md:items-center">
         {statuses.map((status, index) => (
-          <div
-            key={index}
-            className="relative flex flex-col items-center text-center mb-4 md:mb-0"
-            style={{ flexBasis: '20%' }} // Equal spacing for each status in flex container
-          >
+          <div key={index} className="relative flex flex-col items-center text-center">
             {/* Status Icon */}
             <div className="relative flex flex-col items-center">
-              {status.completed ? (
-                <FaCheckCircle className="w-8 h-8 text-green-500" />
-              ) : (
-                <FaRegCircle className="w-8 h-8 text-gray-400" />
-              )}
+              <div
+                className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                  status.completed ? 'bg-blue-500' : 'bg-gray-300'
+                }`}
+              >
+                {status.icon}
+              </div>
             </div>
+
+            {/* Connecting Line */}
+            {index < statuses.length - 1 && (
+              <HiOutlineMinus
+                className={`w-10 h-1 ${status.completed ? 'text-blue-500' : 'text-gray-300'}`}
+              />
+            )}
 
             {/* Status Details */}
             <div className="mt-2">
-              <span className="block text-sm font-semibold text-gray-700">{status.label}</span>
-              {status.date && (
-                <span className="block text-xs text-gray-500">{status.date}</span>
-              )}
-              {status.employee && (
-                <div className="flex items-center justify-center text-xs text-gray-500 mt-1">
-                  <FaUserTie className="mr-1" />
-                  <span>Assigned to: {status.employee}</span>
-                </div>
-              )}
+              <span
+                className={`block text-sm font-semibold ${
+                  status.completed ? 'text-gray-700' : 'text-gray-400'
+                }`}
+              >
+                {status.label}
+              </span>
             </div>
-
-            {/* Arrow Mark */}
-            {index < statuses.length - 1 && (
-              <HiChevronRight className="absolute left-full w-5 h-5 text-gray-400"
-                style={{ top: '50%', transform: 'translateY(-50%) translateX(10%)' }}
-              />
-            )}
           </div>
         ))}
       </div>
@@ -135,10 +131,10 @@ const OrderStatusHistory = ({ statuses }) => {
 // OrderDetails component
 const OrderDetails = ({ order }) => {
   const statuses = [
-    { label: 'Confirmed', completed: true, date: 'Fri, Aug 2, 2024, 7:58 AM' },
-    { label: 'Ready', completed: true, date: 'Mon, Aug 5, 2024, 8:17 AM' },
-    { label: 'Assigned', completed: true, employee: 'John Doe', date: 'Mon, Aug 5, 2024, 9:00 AM' },
-    { label: 'Completed', completed: false }
+    { label: 'Confirmed', completed: true, icon: <FaClipboardCheck className="text-white w-6 h-6" /> },
+    { label: 'Ready', completed: true, icon: <FaBoxOpen className="text-white w-6 h-6" /> },
+    { label: 'Assigned', completed: true, icon: <FaUserTie className="text-white w-6 h-6" /> },
+    { label: 'Completed', completed: false, icon: <FaCheckCircle className="text-white w-6 h-6" /> },
   ];
 
   return (
@@ -335,7 +331,7 @@ const CartSection = ({
       </div>
 
       {/* Summary and Actions */}
-      <div className="mt-auto p-6 bg-gray-700 text-white rounded-lg">
+      <div className="mt-auto p-5 bg-gray-700 text-white rounded-lg">
         {/* Subtotal */}
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
