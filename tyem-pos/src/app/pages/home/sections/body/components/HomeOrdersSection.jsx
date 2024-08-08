@@ -20,7 +20,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useOrderContext } from "./OrderContext.jsx";
 import { HiChevronRight } from 'react-icons/hi';
-import { FaClipboardCheck, FaBoxOpen, } from 'react-icons/fa';
+import { FaBox, FaTruckLoading, FaMotorcycle, FaHandsHelping } from 'react-icons/fa';
 import { HiOutlineMinus } from 'react-icons/hi';
 
 
@@ -87,37 +87,21 @@ const OrderItem = ({ order, onClick,selected  }) => {
 const OrderStatusHistory = ({ statuses }) => {
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
-      <div className="flex flex-col items-center md:flex-row md:justify-between md:items-center">
+      <div className="flex items-center justify-between">
         {statuses.map((status, index) => (
-          <div key={index} className="relative flex flex-col items-center text-center">
+          <div key={index} className="flex flex-col items-center">
             {/* Status Icon */}
-            <div className="relative flex flex-col items-center">
-              <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center ${
-                  status.completed ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-              >
-                {status.icon}
-              </div>
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${status.completed ? 'bg-blue-500' : 'bg-gray-300'}`}>
+              {status.icon}
             </div>
 
             {/* Connecting Line */}
             {index < statuses.length - 1 && (
-              <HiOutlineMinus
-                className={`w-10 h-1 ${status.completed ? 'text-blue-500' : 'text-gray-300'}`}
-              />
+              <div className="w-16 h-1 bg-gray-400 my-4"></div>
             )}
 
-            {/* Status Details */}
-            <div className="mt-2">
-              <span
-                className={`block text-sm font-semibold ${
-                  status.completed ? 'text-gray-700' : 'text-gray-400'
-                }`}
-              >
-                {status.label}
-              </span>
-            </div>
+            {/* Status Label */}
+            <span className="mt-2 text-center text-sm font-semibold text-gray-700">{status.label}</span>
           </div>
         ))}
       </div>
@@ -127,14 +111,13 @@ const OrderStatusHistory = ({ statuses }) => {
 
 
 
-
 // OrderDetails component
 const OrderDetails = ({ order }) => {
   const statuses = [
-    { label: 'Confirmed', completed: true, icon: <FaClipboardCheck className="text-white w-6 h-6" /> },
-    { label: 'Ready', completed: true, icon: <FaBoxOpen className="text-white w-6 h-6" /> },
-    { label: 'Assigned', completed: true, icon: <FaUserTie className="text-white w-6 h-6" /> },
-    { label: 'Completed', completed: false, icon: <FaCheckCircle className="text-white w-6 h-6" /> },
+    { label: 'Pick Up', completed: true, icon: <FaBox className="text-white w-8 h-8" /> },
+    { label: 'On Process', completed: true, icon: <FaTruckLoading className="text-white w-8 h-8" /> },
+    { label: 'On Delivery', completed: false, icon: <FaMotorcycle className="text-white w-8 h-8" /> },
+    { label: 'Delivered', completed: false, icon: <FaHandsHelping className="text-white w-8 h-8" /> },
   ];
 
   return (
