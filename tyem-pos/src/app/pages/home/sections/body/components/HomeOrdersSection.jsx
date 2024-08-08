@@ -16,7 +16,7 @@ import { DateTime } from "luxon";
 import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
 
 // OrderItem component
-const OrderItem = ({ order, onClick,isMostRecent  }) => {
+const OrderItem = ({ order, onClick,isMostRecent,selected  }) => {
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -32,11 +32,14 @@ const OrderItem = ({ order, onClick,isMostRecent  }) => {
    
    return (
     <div
-    className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer hover:bg-blue-400 hover:border-blue-400
-      ${isMostRecent ? 'bg-blue-400 border-blue-600' : 'bg-white border-gray-200'}`}
-    onClick={() => onClick(order)}
-    aria-label={`Order ${order.orderMeta?.posOrderId} details`}
-  >
+      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
+        ${selected ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200'}
+        ${selected ? '' : 'hover:bg-blue-100 hover:border-blue-300'}
+        ${isMostRecent ? 'bg-blue-400 border-blue-600 text-white' : ''}
+      `}
+      onClick={() => onClick(order)}
+      aria-label={`Order ${order.orderMeta?.posOrderId} details`}
+    >
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
@@ -186,10 +189,12 @@ const CartSection = ({
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
-    // onComplete(order.number); // Call the onComplete function if needed
+    onComplete(order.number); // Call the onComplete function if needed
     updateOrderStatus(orderId, "Accepted");
     onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
   };
+
+
 
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
@@ -534,7 +539,7 @@ const CartSection = ({
 const HomeOrdersSection = () => {
 
   
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState(initialOrders);
   const [selectedOrder, setSelectedOrder] = useState(orders.length > 0 ? orders[0] : null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
