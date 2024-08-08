@@ -32,7 +32,7 @@ const OrderItem = ({ order, onClick,isMostRecent  }) => {
    
    return (
     <div
-    className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer hover:bg-blue-100 hover:border-blue-200
+    className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer hover:bg-blue-400 hover:border-blue-400
       ${isMostRecent ? 'bg-blue-400 border-blue-600' : 'bg-white border-gray-200'}`}
     onClick={() => onClick(order)}
     aria-label={`Order ${order.orderMeta?.posOrderId} details`}
@@ -186,7 +186,7 @@ const CartSection = ({
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
-    onComplete(order.number); // Call the onComplete function if needed
+    // onComplete(order.number); // Call the onComplete function if needed
     updateOrderStatus(orderId, "Accepted");
     onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
   };
@@ -256,7 +256,7 @@ const CartSection = ({
                 className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
                 onClick={() => handleReject(order._id)}
               >
-                complited
+                cancel
               </button>
             </>
           ) : (
