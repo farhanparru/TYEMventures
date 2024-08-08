@@ -29,17 +29,17 @@ const OrderItem = ({ order, onClick,isMostRecent,selected  }) => {
    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
   // Determine the highlight color
-  const highlightColor = isMostRecent || selected ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200';
+  const highlightColor = isMostRecent || selected ? 'bg-blue-400 border-blue-400 text-white' : 'bg-white border-gray-200';
    
    return (
     <div
-      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
-        ${highlightColor}
-        ${!isMostRecent && !selected ? 'hover:bg-blue-100 hover:border-blue-300' : ''}
-      `}
-      onClick={() => onClick(order)}
-      aria-label={`Order ${order.orderMeta?.posOrderId} details`}
-    >
+    className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
+      ${highlightColor}
+      ${!(isMostRecent || selected) ? 'hover:bg-blue-100 hover:border-blue-300' : ''}
+    `}
+    onClick={() => onClick(order)}
+    aria-label={`Order ${order.orderMeta?.posOrderId} details`}
+  >
       <div>
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId} | INV# {order._id}
