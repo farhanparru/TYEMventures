@@ -231,7 +231,7 @@ const CartSection = ({
 
 
 
-  const [showPlaceModal, setShowPlaceModal] = useState(false);
+ 
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
@@ -252,9 +252,6 @@ const CartSection = ({
       break;
   }
 
-  const [isAccepted, setIsAccepted] = useState(false);
-  const [isAssigned, setIsAssigned] = useState(false);
-  const [isReady, setIsReady] = useState(false);
 
   // send Message for Whtsapp
 
@@ -317,7 +314,12 @@ const CartSection = ({
   };
 
   // Status History Data
-  
+  const {
+    setIsAccepted,
+    setIsReady,
+    setIsAssigned,
+    setShowPlaceModal,
+  } = useOrderStatus();
 
 
   if (!order) {
