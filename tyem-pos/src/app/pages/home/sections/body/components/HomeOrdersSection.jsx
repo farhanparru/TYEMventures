@@ -535,10 +535,10 @@ const HomeOrdersSection = () => {
 
   
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(orders.length > 0 ? orders[0] : null);
+  const [selectedOrder, setSelectedOrder] = useState();
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
-  const [orderStatus, setOrderStatus] = useState(); // Manage status here
+  const [orderStatus, setOrderStatus] = useState(null); // Manage status here
  
 
   // Play notification sound
@@ -648,6 +648,7 @@ const HomeOrdersSection = () => {
 
   return (
     <div className="flex h-screen">
+      {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
       <div
         id="order-list"
@@ -655,20 +656,22 @@ const HomeOrdersSection = () => {
       >
         {sortedOrders.map((order) => (
           <OrderItem 
-            key={order._id} 
-            order={order}
-            onClick={() => setSelectedOrder(order)} // Optional: Allows user to select a different order
-            selected={selectedOrder?._id === order._id}
-            isMostRecent={selectedOrder && order._id === selectedOrder._id} // Highlight the selected order
-          />
+          key={order._id} 
+          order={order}
+          onClick={onOrderClick} 
+          selected={selectedOrder?._id === order._id}
+          isMostRecent={order._id === mostRecentOrder._id} // Pass the prop to highlight the most recent order
+           />
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
-        {/* Always render OrderDetails with selected or most recent order */}
-        <OrderDetails order={selectedOrder} />
+        {selectedOrder ? (
+          <OrderDetails order={selectedOrder} />
+        ) : (
+          <p className="text-gray-500">Select an order to view details.</p>
+        )}
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
-        {/* Always render CartSection with selected or most recent order */}
         <CartSection
           order={selectedOrder}
           onComplete={handleComplete}
