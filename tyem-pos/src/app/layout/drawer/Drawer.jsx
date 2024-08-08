@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React from "react";
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { Layout } from "antd";
 import styled, { keyframes } from "styled-components";
@@ -14,10 +14,8 @@ import {
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
 import logo from '../../../assets/Logo.png';
-import {
-  fetchOrders,
-  connectWebSocket,
-} from "../../../services/apiService.js";
+import { useOrderContext } from "../../pages/home/sections/body/components/OrderContext";
+
 
 const { Sider } = Layout;
 
@@ -112,33 +110,8 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, }) => {
 
 const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
 
-  const [totalOrders, setTotalOrders] = useState(0);
-  const [orders, setOrders] = useState([]);
-  
-  useEffect(() => {
-    const fetchAndSetOrders = async () => {
-      try {
-        const data = await fetchOrders();
-        setOrders(data); // Set the fetched orders to state
-        setTotalOrders(data.length); // Set the total number of orders for the badge
-      } catch (error) {
-        console.error("Error fetching initial orders:", error);
-      }
-    };
-
-    fetchAndSetOrders();
-
-    const socket = connectWebSocket((newOrder) => {
-      setOrders((prevOrders) => {
-        const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
-        setTotalOrders(updatedOrders.length); // Update total orders count
-        return updatedOrders;
-      });
-    });
-
+  const { totalOrders } = useOrderContext(); // Access totalOrders from context
    
-  }, []);
-
 
 
   const menuItems = [
@@ -159,7 +132,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       icon: AiOutlineShoppingCart,
       onClick: () => setActiveMenu(drawerMenuLabels.online.label),
       path: drawerMenuLabels.online.path,
-      badge: totalOrders, // Pass the total orders count here
+      badge: totalOrders, // Use totalOrders from context
     },
     {
       label: drawerMenuLabels.orders.label,

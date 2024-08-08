@@ -16,6 +16,10 @@ import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
 import Drawer  from '../../../../../layout/drawer/Drawer.jsx'
 import { FaCheckCircle, FaRegCircle, FaUserTie } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useOrderContext } from "./OrderContext.jsx";
+
 
 // OrderItem component
 const OrderItem = ({ order, onClick,selected  }) => {
@@ -88,26 +92,27 @@ const OrderStatusHistory = ({ statuses }) => {
   return (
     <div>
       <h3 className="text-xl font-semibold mb-4">Order Status History</h3>
-      <div className="relative">
+      <div className="flex justify-between items-center space-x-4">
         {statuses.map((status, index) => (
-          <div key={index} className="flex items-center mb-4">
-            {/* Status Icon and Line */}
-            <div className="flex flex-col items-center">
+          <div key={index} className="flex flex-col items-center">
+            {/* Status Icon */}
+            <div className="flex items-center flex-col">
               {status.completed ? (
                 <FaCheckCircle className="w-6 h-6 text-blue-500" />
               ) : (
                 <FaRegCircle className="w-6 h-6 text-gray-400" />
               )}
+              {/* Connector Line */}
               {index < statuses.length - 1 && (
-                <div className={`h-12 border-l-2 ${status.completed ? 'border-blue-500' : 'border-gray-400'}`}></div>
+                <div className={`w-24 border-b-2 ${status.completed ? 'border-blue-500' : 'border-gray-400'}`}></div>
               )}
             </div>
             {/* Status Details */}
-            <div className="ml-2">
+            <div className="text-center mt-2">
               <span className="block text-sm font-semibold">{status.label}</span>
               {status.date && <span className="block text-sm text-gray-500">{status.date}</span>}
               {status.employee && (
-                <div className="flex items-center text-sm text-gray-500">
+                <div className="flex items-center justify-center text-sm text-gray-500 mt-1">
                   <FaUserTie className="mr-2" />
                   <span>Assigned to: {status.employee}</span>
                 </div>
@@ -119,6 +124,7 @@ const OrderStatusHistory = ({ statuses }) => {
     </div>
   );
 };
+
 
 
 // OrderDetails component
@@ -235,14 +241,6 @@ const CartSection = ({
     order?.orderMeta?.paymentStatus === "Accepted"
   );
 
-  const handleAccept = (orderId) => {
-    pauseNotificationSound(); // Stop the sound when "Accept" is clicked
-    setIsAccepted(true);
-    onComplete(order.number); // Call the onComplete function if needed
-    updateOrderStatus(orderId); // Call the passed handler
-    // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
-  };
-
 
    // send Message for Whtsapp
 
@@ -261,24 +259,30 @@ const CartSection = ({
       const url = `https://app.xpressbot.org/api/v1/whatsapp/send/template?apiToken=${apiToken}&phone_number_id=${phoneNumberId}&template_id=${templateId}&templateVariable-name-1=${templateVariables.name}&templateVariable-billno-2=${templateVariables.billno}&templateVariable-system-cart-total-price-3=${templateVariables.systemCartTotalPrice}&phone_number=${templateVariables.phoneNumber}`;
   
       await axios.get(url);
-      alert('Message sent successfully!');
+      toast.success(`Message sent successfully to ${customerPhoneNumber}!`);
     } catch (error) {
-      console.error('Error sending message:', error);
-      alert('Failed to send message.');
+      console.error('Error sending message:', error.response || error.message);
+      toast.error('Failed to send message.');
     }
   };
 
 
 
 
-
-
+  const handleAccept = (orderId) => {
+    pauseNotificationSound(); // Stop the sound when "Accept" is clicked
+    setIsAccepted(true);
+    onComplete(order.number); // Call the onComplete function if needed
+    updateOrderStatus(orderId); // Call the passed handler
+    onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
+    sendMessage(); // Send WhatsApp message
+  };
 
 
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
     updateOrderStatus(orderId, "Completed");
-    sendMessage(); // Send WhatsApp message
+  
   };
 
   const handleReject = (orderId) => {
@@ -286,6 +290,8 @@ const CartSection = ({
     onCancel(order.number); // Call the onCancel function if needed
     updateOrderStatus(orderId, "Rejected");
   };
+
+
 
   if (!order) {
     return (
@@ -354,6 +360,7 @@ const CartSection = ({
               >
                 Accept
               </button>
+              <ToastContainer />
               <button
                 className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
                 onClick={() => handleReject(order._id)}
@@ -627,6 +634,8 @@ const HomeOrdersSection = () => {
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
+  const { totalOrders, setTotalOrders } = useOrderContext(); // Access context values
+
  
 
   useEffect(() => {
@@ -673,6 +682,7 @@ const HomeOrdersSection = () => {
       try {
         const data = await fetchOrders();
         setOrders(data); // Set the fetched orders to state
+        setTotalOrders(data.length); // Update context value
       } catch (error) {
         console.error("Error fetching initial orders:", error);
       }
@@ -683,6 +693,7 @@ const HomeOrdersSection = () => {
     const socket = connectWebSocket((newOrder) => {
       setOrders((prevOrders) => {
         const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
+        setTotalOrders(updatedOrders.length); // Update context value
         setSoundPlaying(true); // Play sound when a new order is received
         return updatedOrders;
       });
@@ -694,7 +705,7 @@ const HomeOrdersSection = () => {
         audio.pause(); // Ensure audio is stopped if the component unmounts
       }
     };
-  }, [audio]);
+  }, [audio,setTotalOrders]);
 
   // Handle sound playing state
   useEffect(() => {
@@ -728,12 +739,12 @@ const HomeOrdersSection = () => {
     setSelectedOrder(order);
   };
 
-  // const handleOrderAccept = (orderId) => {
-  //   setOrders((prevOrders) =>
-  //     prevOrders.filter((order) => order._id !== orderId)
-  //   );
-  //   setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
-  // };
+  const handleCountAccept = (orderId) => {
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order._id !== orderId)
+    );
+    setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
+  };
 
    
 
@@ -771,14 +782,13 @@ const HomeOrdersSection = () => {
             onCancel={handleCancel}
             pauseNotificationSound={pauseNotificationSound}
             orders={orders}
-            updateOrderStatus={handleOrderAccept} // Pass the updated handler
-            
-            // onOrderAccept={handleOrderAccept}
+            updateOrderStatus={handleOrderAccept} // Pass the updated handler 
+            onOrderAccept={handleCountAccept}
           />
         ) : (
           <p className="text-gray-500">Select an order to view the cart.</p>
         )}
-
+      
       </div>
     </div>
   );
