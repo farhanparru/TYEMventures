@@ -20,7 +20,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useOrderContext } from "./OrderContext.jsx";
 import { HiChevronRight } from 'react-icons/hi';
-import { FaClipboardCheck, FaBoxOpen, FaUserTie, FaCheckCircle } from 'react-icons/fa';
+import { FaClipboardCheck, FaBoxOpen, } from 'react-icons/fa';
 import { HiOutlineMinus } from 'react-icons/hi';
 
 
