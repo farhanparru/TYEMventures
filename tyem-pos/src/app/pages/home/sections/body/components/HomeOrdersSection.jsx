@@ -539,7 +539,7 @@ const CartSection = ({
 const HomeOrdersSection = () => {
 
   
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(orders.length > 0 ? orders[0] : null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
