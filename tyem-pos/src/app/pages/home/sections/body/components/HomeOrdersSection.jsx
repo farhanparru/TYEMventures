@@ -214,7 +214,7 @@ const OrderDetails = ({ order }) => {
         </div>
       </div>
 
-      <OrderStatusHistory statuses={statuses} />
+      <OrderStatusHistory  />
     </div>
   );
 };
