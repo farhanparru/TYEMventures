@@ -117,37 +117,73 @@ const OrderDetails = ({ order }) => {
     { label: 'Ready', completed: true, date: 'Mon, Aug 5, 2024, 8:17 AM' },
     { label: 'Completed', completed: false }
   ];
+
   return (
     <div className="p-3 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold mb-4">Order Details</h3>
+      
       <div className="mb-4">
         <h4 className="font-semibold">Order ID</h4>
         <p>#{order.orderMeta.posOrderId}</p>
       </div>
+      
       <div className="mb-4">
         <h4 className="font-semibold">Invoice Number</h4>
         <p>{order._id}</p>
       </div>
+      
+      <div className="mb-4">
+        <h4 className="font-semibold">Order Type</h4>
+        <p>{order.orderType}</p> {/* Ensure orderType is available in the order object */}
+      </div>
+      
       <div className="mb-4">
         <h4 className="font-semibold">Total Items</h4>
         <p>{order.orderDetails.length}</p>
       </div>
+      
+      <div className="mb-4">
+        <h4 className="font-semibold">Subtotal</h4>
+        <p>{order.orderMeta.subTotal} {order.orderDetails[0].product_currency}</p>
+      </div>
+      
+      <div className="mb-4">
+        <h4 className="font-semibold">Delivery Charge</h4>
+        <p>{order.orderMeta.deliveryCharge} {order.orderDetails[0].product_currency}</p>
+      </div>
+      
       <div className="mb-4">
         <h4 className="font-semibold">Total Amount</h4>
-        <p>
-          {order.orderMeta.paymentTendered}{" "}
-          {order.orderDetails[0].product_currency}
-        </p>
+        <p>{order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}</p>
       </div>
+      
+      <div className="mb-4">
+        <h4 className="font-semibold">Payment Method</h4>
+        <p>{order.orderMeta.paymentMethod}</p> {/* Ensure paymentMethod is available in the order object */}
+      </div>
+      
       <h3 className="text-xl font-semibold mb-4">Customer Details</h3>
+      
       <div className="mb-4">
         <h4 className="font-semibold">Name</h4>
         <p>{order.customer.name}</p>
       </div>
+      
       <div className="mb-4">
-        <h4 className="font-semibold">Phone</h4>
+        <h4 className="font-semibold">Phone Number</h4>
         <p>{order.customer.phone}</p>
       </div>
+      
+      <div className="mb-4">
+        <h4 className="font-semibold">Place</h4>
+        <p>Kasaragod</p> {/* Ensure place is available in the order object */}
+      </div>
+      
+      <div className="mb-4">
+        <h4 className="font-semibold">Latitude & Longitude</h4>
+        <p>Null</p> {/* Ensure latitude and longitude are available in the order object */}
+      </div>
+      
       <OrderStatusHistory statuses={statuses} />
     </div>
   );
