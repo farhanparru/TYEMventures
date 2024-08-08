@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "tailwindcss/tailwind.css";
 import { Element } from "react-scroll";
-import { FaCheckCircle, FaRegCircle } from 'react-icons/fa';
 import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
 import { FaTruck } from 'react-icons/fa';
 import {
