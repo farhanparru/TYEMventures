@@ -535,11 +535,17 @@ const HomeOrdersSection = () => {
 
   
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState();
+  const [selectedOrder, setSelectedOrder] = useState(orders.length > 0 ? orders[0] : null);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
  
+
+  useEffect(() => {
+    if (orders.length > 0) {
+      setSelectedOrder(orders[0]); // Set the first order as the default selected order
+    }
+  }, [orders]);
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -646,6 +652,9 @@ const HomeOrdersSection = () => {
     setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
   };
 
+   
+
+
   return (
     <div className="flex h-screen">
       {/* <Drawer totalOrders={totalOrders} /> */}
@@ -672,15 +681,20 @@ const HomeOrdersSection = () => {
         )}
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
-        <CartSection
-          order={selectedOrder}
-          onComplete={handleComplete}
-          onCancel={handleCancel}
-          pauseNotificationSound={pauseNotificationSound}
-          orders={orders}
-          updateOrderStatus={updateOrderStatus}
-          onOrderAccept={handleOrderAccept}
-        />
+      {selectedOrder ? (
+          <CartSection
+            order={selectedOrder} // Always render CartSection
+            onComplete={handleComplete}
+            onCancel={handleCancel}
+            pauseNotificationSound={pauseNotificationSound}
+            orders={orders}
+            updateOrderStatus={updateOrderStatus}
+            onOrderAccept={handleOrderAccept}
+          />
+        ) : (
+          <p className="text-gray-500">Select an order to view the cart.</p>
+        )}
+
       </div>
     </div>
   );
