@@ -231,7 +231,7 @@ const CartSection = ({
 
 
 
- 
+  const [showPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
@@ -252,6 +252,9 @@ const CartSection = ({
       break;
   }
 
+  const [isAccepted,] = useState(false);
+  const [isAssigned, ] = useState(false);
+  const [isReady, ] = useState(false);
 
   // send Message for Whtsapp
 
