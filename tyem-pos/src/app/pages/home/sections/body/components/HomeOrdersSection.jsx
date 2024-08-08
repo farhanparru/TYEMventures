@@ -19,9 +19,8 @@ import { FaCheckCircle, FaRegCircle, FaUserTie } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useOrderContext } from "./OrderContext.jsx";
-import { HiChevronRight } from "react-icons/hi";
-import { FaClipboardCheck, FaBoxOpen } from "react-icons/fa";
-import { HiOutlineMinus } from "react-icons/hi";
+import {StatusContext} from "../../../components/StatusContext.jsx";
+
 
 // OrderItem component
 const OrderItem = ({ order, onClick, selected }) => {
@@ -80,7 +79,8 @@ const OrderItem = ({ order, onClick, selected }) => {
   );
 };
 
-const OrderStatusHistory = ({ statuses }) => {
+const OrderStatusHistory = () => {
+  const { statuses } = StatusContext();
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
@@ -214,7 +214,7 @@ const OrderDetails = ({ order }) => {
         </div>
       </div>
 
-      <OrderStatusHistory  />
+      <OrderStatusHistory/>
     </div>
   );
 };
@@ -228,6 +228,9 @@ const CartSection = ({
   updateOrderStatus,
   onOrderAccept, // New prop
 }) => {
+
+
+
   const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
@@ -314,33 +317,8 @@ const CartSection = ({
   };
 
   // Status History Data
-  const statuses = [
-    {
-      label: "Confirmed",
-      completed: isAccepted,
-      icon: <FaClipboardCheck className="text-white w-8 h-8" />,
-      date: isAccepted ? "Fri, Aug 2, 2024, 7:58 AM" : "",
-    },
-    {
-      label: "Ready",
-      completed: isReady,
-      icon: <FaBoxOpen className="text-white w-8 h-8" />,
-      date: isReady ? "Mon, Aug 5, 2024, 8:17 AM" : "",
-    },
-    {
-      label: "Assigned",
-      completed: isAssigned,
-      icon: <FaUserTie className="text-white w-8 h-8" />,
-      date: isAssigned ? "Mon, Aug 5, 2024, 9:00 AM" : "",
-      employee: isAssigned ? "John Doe" : "",
-    },
-    {
-      label: "Completed",
-      completed: showPlaceModal,
-      icon: <FaCheckCircle className="text-white w-8 h-8" />,
-      date: showPlaceModal ? "Mon, Aug 5, 2024, 9:30 AM" : "",
-    },
-  ];
+  
+
 
   if (!order) {
     return (
@@ -351,8 +329,7 @@ const CartSection = ({
   }
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
-      {/* Order Items */}
-      <OrderStatusHistory statuses={statuses} />
+     
       <div className="flex-grow">
         {order.orderDetails.map((item, index) => (
           <div
