@@ -101,17 +101,17 @@ const OrderStatusHistory = ({ statuses }) => {
             {/* Status Icon */}
             <div className="relative flex flex-col items-center">
               {status.completed ? (
-                <FaCheckCircle className="w-8 h-8 text-blue-500" />
+                <FaCheckCircle className="w-8 h-8 text-green-500" />
               ) : (
                 <FaRegCircle className="w-8 h-8 text-gray-400" />
               )}
               {/* Connector Line */}
               {index < statuses.length - 1 && (
                 <div
-                  className={`absolute top-4 left-full w-12 h-0.5 ${
-                    status.completed ? 'bg-blue-500' : 'bg-gray-400'
+                  className={`absolute top-1/2 left-full w-12 h-0.5 ${
+                    status.completed ? 'bg-green-500' : 'bg-gray-400'
                   }`}
-                  style={{ transform: 'translateX(50%)' }}
+                  style={{ transform: 'translateY(-50%) translateX(50%)' }}
                 ></div>
               )}
             </div>
@@ -119,10 +119,10 @@ const OrderStatusHistory = ({ statuses }) => {
             <div className="mt-2">
               <span className="block text-sm font-semibold text-gray-700">{status.label}</span>
               {status.date && (
-                <span className="block text-sm text-gray-500">{status.date}</span>
+                <span className="block text-xs text-gray-500">{status.date}</span>
               )}
               {status.employee && (
-                <div className="flex items-center justify-center text-sm text-gray-500 mt-1">
+                <div className="flex items-center justify-center text-xs text-gray-500 mt-1">
                   <FaUserTie className="mr-1" />
                   <span>Assigned to: {status.employee}</span>
                 </div>
@@ -250,7 +250,7 @@ const CartSection = ({
 
   const [isAccepted, setIsAccepted] = useState(false);
   const [isAssigned, setIsAssigned] = useState(false);
-  const [isReady,setReady] = useState(false)
+  const [isReady,setIsReady] = useState(false)
 
    // send Message for Whtsapp
 
@@ -291,6 +291,7 @@ const CartSection = ({
 
   const handleReady = (orderId) => {
     updateOrderStatus(orderId, "Completed");
+    setIsReady(true);
   
   };
 
@@ -303,12 +304,14 @@ const CartSection = ({
   const handleReject = (orderId) => {
     setIsAccepted(false);
     setIsAssigned(false);
+    setIsReady(false);
     onCancel(order.number); // Call the onCancel function if needed
     updateOrderStatus(orderId, "Rejected");
   };
 
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
+    setIsReady(false); // Ensure `isReady` is false when transitioning to `isAssigned`
     updateOrderStatus(orderId, "Assigned");
   };
 
