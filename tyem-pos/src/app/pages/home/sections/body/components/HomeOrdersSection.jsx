@@ -29,14 +29,16 @@ const OrderItem = ({ order, onClick,isMostRecent,selected  }) => {
    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
 
-   const isSelectedOrMostRecent = selected || isMostRecent;
+     // Determine the classes based on selection and recent status
+   // Determine the classes based on selection and recent status
+   const itemClass = `p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
+   ${selected || isMostRecent ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200'}
+   ${selected || isMostRecent ? '' : 'hover:bg-blue-100 hover:border-blue-300'}
+ `;
    
    return (
     <div
-      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
-        ${isSelectedOrMostRecent ? 'bg-blue-500 border-blue-700 text-white' : 'bg-white border-gray-200'}
-        ${isSelectedOrMostRecent ? '' : 'hover:bg-blue-100 hover:border-blue-300'}
-      `}
+      className={itemClass}
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
@@ -552,6 +554,18 @@ const HomeOrdersSection = () => {
     }
   }, [orders]);
 
+
+    // Fetch orders and initialize the selected order from localStorage
+    useEffect(() => {
+      const storedSelectedOrderId = localStorage.getItem('selectedOrderId');
+      if (storedSelectedOrderId) {
+        const storedOrder = orders.find(order => order._id === storedSelectedOrderId);
+        setSelectedOrder(storedOrder || null);
+      }
+    }, [orders]);
+  
+
+
   // Play notification sound
   const playNotificationSound = () => {
     const newAudio = new Audio(notificationSound);
@@ -648,13 +662,18 @@ const HomeOrdersSection = () => {
   // console.log(sortedOrders,"sortedOrders");
   const onOrderClick = (order) => {
     setSelectedOrder(order);
+    localStorage.setItem('selectedOrderId', order._id); // Save the selected order ID
   };
+
 
   const handleOrderAccept = (orderId) => {
     setOrders((prevOrders) =>
       prevOrders.filter((order) => order._id !== orderId)
     );
     setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
+
+    localStorage.removeItem('selectedOrderId');
+    setSelectedOrder(null);
   };
 
    
