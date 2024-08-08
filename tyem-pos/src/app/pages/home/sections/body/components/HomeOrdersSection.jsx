@@ -829,7 +829,7 @@ const HomeOrdersSection = () => {
             onCancel={handleCancel}
             pauseNotificationSound={pauseNotificationSound}
             orders={orders}
-            updateOrderStatus={handleOrderAccept} // Pass the updated handler 
+            // updateOrderStatus={handleOrderAccept} // Pass the updated handler 
             onOrderAccept={handleCountAccept}
           />
         ) : (
