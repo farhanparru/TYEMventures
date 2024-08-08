@@ -94,7 +94,10 @@ const OrderStatusHistory = ({ statuses }) => {
       <h3 className="text-2xl font-semibold mb-6 text-center">Order Status History</h3>
       <div className="flex flex-col items-center md:flex-row md:justify-between md:space-x-8">
         {statuses.map((status, index) => (
-          <div key={index} className="flex flex-col items-center text-center mb-6 md:mb-0">
+          <div
+            key={index}
+            className="relative flex flex-col items-center text-center mb-6 md:mb-0"
+          >
             {/* Status Icon */}
             <div className="relative flex flex-col items-center">
               {status.completed ? (
@@ -105,7 +108,9 @@ const OrderStatusHistory = ({ statuses }) => {
               {/* Connector Line */}
               {index < statuses.length - 1 && (
                 <div
-                  className={`absolute top-4 left-full w-12 h-0.5 ${status.completed ? 'bg-blue-500' : 'bg-gray-400'}`}
+                  className={`absolute top-4 left-full w-12 h-0.5 ${
+                    status.completed ? 'bg-blue-500' : 'bg-gray-400'
+                  }`}
                   style={{ transform: 'translateX(50%)' }}
                 ></div>
               )}
@@ -245,6 +250,7 @@ const CartSection = ({
 
   const [isAccepted, setIsAccepted] = useState(false);
   const [isAssigned, setIsAssigned] = useState(false);
+  const [isReady,setReady] = useState(false)
 
    // send Message for Whtsapp
 
@@ -349,8 +355,8 @@ const CartSection = ({
           </span>
         </div>
 
-       {/* Action Buttons */}
-       <div className="flex justify-between items-center gap-4 mt-6">
+        {/* Action Buttons */}
+        <div className="flex justify-between items-center gap-4 mt-6">
           {isAssigned ? (
             <>
               <button
@@ -366,13 +372,28 @@ const CartSection = ({
                 Cancel
               </button>
             </>
-          ) : isAccepted ? (
+          ) : isReady ? (
             <>
               <button
                 className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
                 onClick={() => handleAssigned(order._id)}
               >
                 Assigned
+              </button>
+              <button
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                onClick={() => handleReject(order._id)}
+              >
+                Cancel
+              </button>
+            </>
+          ) : isAccepted ? (
+            <>
+              <button
+                className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
+                onClick={() => handleReady(order._id)}
+              >
+                Ready
               </button>
               <button
                 className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
