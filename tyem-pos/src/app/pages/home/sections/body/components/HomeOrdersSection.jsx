@@ -19,6 +19,7 @@ import { FaCheckCircle, FaRegCircle, FaUserTie } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useOrderContext } from "./OrderContext.jsx";
+import { HiChevronRight } from 'react-icons/hi';
 
 
 // OrderItem component
@@ -60,15 +61,8 @@ const OrderItem = ({ order, onClick,selected  }) => {
   
         <div className="flex items-center mt-2">
           <span
-            className={`px-2 py-1 text-xs font-semibold rounded ${
-              order.orderMeta.paymentStatus === "Accepted"
-                ? "bg-green-100 text-green-800"
-                : order.orderMeta.paymentStatus === "Rejected"
-                ? "bg-red-100 text-red-800"
-                : order.orderMeta.paymentStatus === "Completed"
-                ? "bg-blue-100 text-blue-800"
-                : "bg-gray-100 text-gray-800"
-            }`}
+            className={`px-2 py-1 text-xs font-semibold rounded `
+            }
           >
             {order.orderMeta.paymentStatus}
           </span>
@@ -90,13 +84,14 @@ const OrderItem = ({ order, onClick,selected  }) => {
 
 const OrderStatusHistory = ({ statuses }) => {
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg">
-      <h3 className="text-2xl font-semibold mb-6 text-center">Order Status History</h3>
-      <div className="flex flex-col items-center md:flex-row md:justify-between md:space-x-8">
+    <div className="p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
+      <h3 className="text-xl font-semibold mb-4 text-center">Order Status History</h3>
+      <div className="flex flex-col items-center md:flex-row md:justify-between">
         {statuses.map((status, index) => (
           <div
             key={index}
-            className="relative flex flex-col items-center text-center mb-6 md:mb-0"
+            className="relative flex flex-col items-center text-center mb-4 md:mb-0"
+            style={{ flexBasis: '20%' }} // Equal spacing for each status in flex container
           >
             {/* Status Icon */}
             <div className="relative flex flex-col items-center">
@@ -105,16 +100,8 @@ const OrderStatusHistory = ({ statuses }) => {
               ) : (
                 <FaRegCircle className="w-8 h-8 text-gray-400" />
               )}
-              {/* Connector Line */}
-              {index < statuses.length - 1 && (
-                <div
-                  className={`absolute top-1/2 left-full w-12 h-0.5 ${
-                    status.completed ? 'bg-green-500' : 'bg-gray-400'
-                  }`}
-                  style={{ transform: 'translateY(-50%) translateX(50%)' }}
-                ></div>
-              )}
             </div>
+
             {/* Status Details */}
             <div className="mt-2">
               <span className="block text-sm font-semibold text-gray-700">{status.label}</span>
@@ -128,6 +115,13 @@ const OrderStatusHistory = ({ statuses }) => {
                 </div>
               )}
             </div>
+
+            {/* Arrow Mark */}
+            {index < statuses.length - 1 && (
+              <HiChevronRight className="absolute left-full w-5 h-5 text-gray-400"
+                style={{ top: '50%', transform: 'translateY(-50%) translateX(10%)' }}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -283,7 +277,7 @@ const CartSection = ({
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     onComplete(order.number); // Call the onComplete function if needed
-    updateOrderStatus(orderId); // Call the passed handler
+  
     onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     sendMessage(); // Send WhatsApp message
   };
@@ -306,7 +300,7 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     onCancel(order.number); // Call the onCancel function if needed
-    updateOrderStatus(orderId, "Rejected");
+  
   };
 
   const handleAssigned = (orderId) => {
@@ -413,7 +407,7 @@ const CartSection = ({
               >
                 Accept
               </button>
-              <ToastContainer />
+     
               <button
                 className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
                 onClick={() => handleReject(order._id)}
@@ -719,15 +713,15 @@ const HomeOrdersSection = () => {
     }
   };
 
-  const handleOrderAccept = (orderId) => {
-    // Pause the notification sound, update order status, etc.
-    const updatedOrders = orders.map((order) =>
-      order._id === orderId
-        ? { ...order, orderMeta: { ...order.orderMeta, paymentStatus: "Accepted" } }
-        : order
-    );
-    setOrders(updatedOrders);
-  }
+  // const handleOrderAccept = (orderId) => {
+  //   // Pause the notification sound, update order status, etc.
+  //   const updatedOrders = orders.map((order) =>
+  //     order._id === orderId
+  //       ? { ...order, orderMeta: { ...order.orderMeta, paymentStatus: "Accepted" } }
+  //       : order
+  //   );
+  //   setOrders(updatedOrders);
+  // }
   // Fetch orders and set up WebSocket
   // Fetch orders and set up WebSocket
   useEffect(() => {
@@ -841,7 +835,7 @@ const HomeOrdersSection = () => {
         ) : (
           <p className="text-gray-500">Select an order to view the cart.</p>
         )}
-      
+        <ToastContainer />
       </div>
     </div>
   );
