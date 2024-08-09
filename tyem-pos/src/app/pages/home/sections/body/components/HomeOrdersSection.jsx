@@ -72,16 +72,16 @@ const OrderItem = ({ order, onClick, selected }) => {
         </div>
       </div>
       <div className="text-right">
-        <h1 className="text-md font- text-white">{formattedDate}</h1>
-        <h2 className="text-sm text-white">{formattedTime}</h2>
+        <h1 className="text-md font- text-black">{formattedDate}</h1>
+        <h2 className="text-sm text-black">{formattedTime}</h2>
       </div>
     </div>
   );
 };
 
 const OrderStatusHistory = () => {
-  const { statuses } = useOrderStatus();
-
+  const { orderStatuses } = useOrderStatus();
+  const statuses = orderStatuses[orderId] || {}; 
     // Define a color mapping for the status
     const statusColors = {
       Confirmed: "bg-green-500",
@@ -93,43 +93,34 @@ const OrderStatusHistory = () => {
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
-          {statuses?.map((status, index) => (
+          {Object.keys(statuses).map((label, index) => (
             <div key={index} className="flex flex-col items-center">
               {/* Status Icon */}
               <div
                 className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                  status.completed ? statusColors[status.label] : "bg-gray-300"
+                  statuses[label]?.completed ? statusColors[label] : "bg-gray-300"
                 }`}
               >
-                {status.icon}
+                {/* Icon can be added here if needed */}
               </div>
   
               {/* Connector Line */}
-              {index < statuses.length - 1 && (
+              {index < Object.keys(statuses).length - 1 && (
                 <div
                   className={`absolute top-1/2 left-full w-20 h-1 ${
-                    statuses[index + 1].completed ? statusColors[statuses[index + 1].label] : "bg-gray-300"
+                    statuses[Object.keys(statuses)[index + 1]]?.completed ? statusColors[Object.keys(statuses)[index + 1]] : "bg-gray-300"
                   }`}
                 ></div>
               )}
   
               {/* Status Details */}
               <div className="mt-2 text-center">
-                <span
-                  className={`block text-sm font-semibold ${
-                    status.completed ? "text-gray-700" : "text-gray-400"
-                  }`}
-                >
-                  {status.label}
+                <span className={`block text-sm font-semibold ${statuses[label]?.completed ? "text-gray-700" : "text-gray-400"}`}>
+                  {label}
                 </span>
-                {status.date && (
+                {statuses[label]?.date && (
                   <span className="block text-sm text-gray-500">
-                    {status.date}
-                  </span>
-                )}
-                {status.employee && (
-                  <span className="block text-sm text-gray-500">
-                    Assigned to: {status.employee}
+                    {statuses[label].date}
                   </span>
                 )}
               </div>
@@ -139,6 +130,7 @@ const OrderStatusHistory = () => {
       </div>
     );
   };
+  
   
 
 // OrderDetails component
@@ -235,7 +227,6 @@ const CartSection = ({
   onCancel,
   pauseNotificationSound,
   orders,
-  updateOrderStatus,
   onOrderAccept, // New prop
 }) => {
 
@@ -263,11 +254,18 @@ const CartSection = ({
   }
 
 
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [isAssigned, setIsAssigned] = useState(false);
+  const [showPlaceModal,setShowPlaceModal]=useState(false)
 
+ // useContext Data
   
-  const { setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal,isAccepted,isAssigned,isReady,showPlaceModal } = useOrderStatus();
-  // send Message for Whtsapp
+ const { updateOrderStatus } = useOrderStatus();
 
+
+
+  // send Message for Whtsapp
   const sendMessage = async () => {
     try {
       const apiToken = "6894%7C7kBhTBNwO631guYWt9Nq3ayMOUIa752Ax8SdDZdl";
@@ -290,20 +288,29 @@ const CartSection = ({
     }
   };
 
+  // each item specific Order
+   const handleStatusChange = (statusLabel) => {
+    updateOrderStatus(order._id, statusLabel, true); // Update the status for the specific order
+  };
+
+
+
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);
     setIsAssigned(false);
     onComplete(order.number); // Call the onComplete function if needed
-    onComplete(orderId); // Call the onComplete function if needed
+    onComplete(orderId);
+    handleStatusChange("Confirmed");
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
-    // sendMessage(); // Send WhatsApp message
+    sendMessage(); // Send WhatsApp message
   };
 
   const handleReady = (orderId) => {
     setIsReady(true);
     setIsAssigned(false);
+    handleStatusChange("Ready"); // Update status to Ready
   };
 
   const handleComplete = (orderId) => {
@@ -312,6 +319,7 @@ const CartSection = ({
     setIsReady(false);
     setIsAssigned(false);
     onComplete(orderId);  
+    handleStatusChange("Completed"); // Update status to Completed
   };
 
   const handleReject = (orderId) => {
@@ -319,12 +327,13 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     onCancel(order.number); // Call the onCancel function if needed
-    onCancel(orderId); // Call the onCancel function if needed
+    // onCancel(orderId); // Call the onCancel function if needed
   };
 
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
     setIsReady(false);
+    handleStatusChange("Assigned"); // Update status to Assigned
   };
 
   // Status History Data
@@ -701,9 +710,10 @@ const HomeOrdersSection = () => {
   const [selectedOrder, setSelectedOrder] = useState(
     orders.length > 0 ? orders[0] : null
   );
+  
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
-  const [orderStatus, setOrderStatus] = useState(null); // Manage status here
+  const { setOrderStatus } = useOrderStatus(); // Assuming setOrderStatus is in your context
   const { totalOrders, setTotalOrders } = useOrderContext(); // Access context values
 
   useEffect(() => {
@@ -816,7 +826,6 @@ const HomeOrdersSection = () => {
 
   return (
     <div className=" flex h-screen">
-      {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
       <div
         id="order-list"
