@@ -47,22 +47,7 @@ const OrderItem = ({ order, onClick, selected }) => {
   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
 
-   // State to manage payment status
-   const [paymentStatus, setPaymentStatus] = useState("Pending");
-
-   // Load the payment status from local storage
-   useEffect(() => {
-     const storedStatus = localStorage.getItem(`order-${order._id}-status`);
-     if (storedStatus) {
-       setPaymentStatus(storedStatus);
-     }
-   }, [order._id]);
- 
-   // Function to update status in local storage
-   const updateStatus = (newStatus) => {
-     setPaymentStatus(newStatus);
-     localStorage.setItem(`order-${order._id}-status`, newStatus);
-   };
+  ;
 
   return (
     <div
@@ -88,11 +73,15 @@ const OrderItem = ({ order, onClick, selected }) => {
           {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}
         </p>
 
-       
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${statusColors[paymentStatus]}`}>
-            {paymentStatus}
+          <span
+            className={`px-2 py-1 text-xs font-semibold rounded ${
+              statusColors[order.orderMeta.paymentStatus] || "bg-gray-200 text-gray-800"
+            }`}
+          >
+            {order.orderMeta.paymentStatus}
           </span>
+
 
 
           {order.new && (
@@ -335,41 +324,13 @@ const CartSection = ({
 
 
 
-   // Function to update status in local storage
-   const updateStatus = (newStatus) => {
-    localStorage.setItem(`order-${order._id}-status`, JSON.stringify(newStatus));
-  };
-
-  // Update state based on local storage on component mount
-  useEffect(() => {
-    const storedStatus = JSON.parse(localStorage.getItem(`order-${order._id}-status`));
-    if (storedStatus) {
-      switch (storedStatus) {
-        case "Confirmed":
-          setIsAccepted(true);
-          break;
-        case "Ready":
-          setIsReady(true);
-          break;
-        case "Assigned":
-          setIsAssigned(true);
-          break;
-        case "Completed":
-          setShowPlaceModal(true);
-          break;
-        default:
-          break;
-      }
-    }
-  }, [order._id]);
-
+ 
 
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);
     setIsAssigned(false);
-    updateStatus("Confirmed");
     onComplete(orderId); // Call the onComplete function if needed
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     sendMessage(); // Send WhatsApp message
@@ -377,13 +338,11 @@ const CartSection = ({
 
   const handleReady = (orderId) => {
     setIsReady(true);
-    updateStatus("Ready");
     setIsAssigned(false);
   };
 
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
-    updateStatus("Completed");
     setIsAccepted(false);
     setIsReady(false);
     setIsAssigned(false);
@@ -392,14 +351,12 @@ const CartSection = ({
 
   const handleReject = (orderId) => {
     setIsAccepted(false);
-    updateStatus("Rejected");
     setIsAssigned(false);
     setIsReady(false);
    
   };
 
   const handleAssigned = (orderId) => {
-    updateStatus("Assigned");
     setIsAssigned(true);
     setIsReady(false);
   };
