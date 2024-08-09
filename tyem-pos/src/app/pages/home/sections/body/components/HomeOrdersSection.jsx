@@ -806,7 +806,7 @@ const HomeOrdersSection = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className=" h-screen">
       {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
       <div
