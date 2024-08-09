@@ -72,18 +72,18 @@ const OrderItem = ({ order, onClick, selected }) => {
         </div>
       </div>
       <div className="text-right">
-        <h1 className="text-md font- text-white">{formattedDate}</h1>
-        <h2 className="text-sm text-white">{formattedTime}</h2>
+        <h1 className="text-md font- text-black">{formattedDate}</h1>
+        <h2 className="text-sm text-black">{formattedTime}</h2>
       </div>
     </div>
   );
 };
 
-const OrderStatusHistory = ({ selectedOrderId }) => {
+const OrderStatusHistory = () => {
   const { statuses } = useOrderStatus();
 
   // Assuming each status has an orderId field, filter based on selectedOrderId
-  const filteredStatuses = statuses.filter(status => status.orderId === selectedOrderId);
+  
 
     // Define a color mapping for the status
     const statusColors = {
@@ -96,7 +96,7 @@ const OrderStatusHistory = ({ selectedOrderId }) => {
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
-        {filteredStatuses.map((status, index) => (
+        {statuses.map((status, index) => (
             <div key={index} className="flex flex-col items-center">
               {/* Status Icon */}
               <div
@@ -149,9 +149,9 @@ const OrderDetails = ({ order }) => {
 
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-  const handleOrderClick = (order) => {
-    setSelectedOrderId(order._id);
-  };
+ 
+
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
@@ -307,7 +307,7 @@ const CartSection = ({
     onComplete(order.number); // Call the onComplete function if needed
     onComplete(orderId); // Call the onComplete function if needed
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
-    // sendMessage(); // Send WhatsApp message
+    sendMessage(); // Send WhatsApp message
   };
 
   const handleReady = (orderId) => {
@@ -811,10 +811,18 @@ const HomeOrdersSection = () => {
   // Sort orders whenever the orders prop changes
   const sortedOrders = sortOrdersByPosOrderId(orders);
   const mostRecentOrder = sortedOrders[0]; // Assuming the first item is the most recent after sorting
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+
+  
+
+  
   // console.log(sortedOrders,"sortedOrders");
-  const onOrderClick = (order) => {
-    setSelectedOrder(order);
+  const handleOrderClick = (order) => {
+    setSelectedOrderId(order._id);
   };
+
+
 
   const handleCountAccept = (orderId) => {
     setOrders((prevOrders) =>
@@ -835,7 +843,7 @@ const HomeOrdersSection = () => {
           <OrderItem
             key={order._id}
             order={order}
-            onClick={onOrderClick}
+            onClick={handleOrderClick}
             selected={selectedOrder?._id === order._id}
             isMostRecent={order._id === mostRecentOrder._id} // Pass the prop to highlight the most recent order
           />
