@@ -124,6 +124,9 @@ onlineOrder: async (req, res) => {
       product_amount: item.unit_price
     }));
 
+    console.log(orderDetails,"kk");
+    
+
        // Convert current date and time to IST
        const orderDate = moment().tz('Asia/Kolkata').format();
     // Construct order data
