@@ -14,7 +14,6 @@ import CustomModal from "../../../../../components/CustomModal.jsx";
 import { clearCart, setPaymentMethod } from "../../../store/cartSlice.js";
 import OrderNotification from "./OrderNotification.jsx";
 import { DateTime } from "luxon";
-import Drawer from "../../../../../layout/drawer/Drawer.jsx";
 import { FaCheckCircle, FaRegCircle, FaUserTie } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,6 +29,13 @@ const OrderItem = ({ order, onClick, selected }) => {
     (sum, item) => sum + item.product_quantity,
     0
   );
+
+  const statusColors = {
+    Confirmed: "bg-green-200 text-green-800",
+    Ready: "bg-yellow-200 text-yellow-800",
+    Assigned: "bg-blue-200 text-blue-800",
+    Completed: "bg-purple-200 text-purple-800",
+  };
 
   // Convert UTC to IST
   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
@@ -62,9 +68,14 @@ const OrderItem = ({ order, onClick, selected }) => {
         </p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded `}>
+          <span
+            className={`px-2 py-1 text-xs font-semibold rounded ${
+              statusColors[order.orderMeta.paymentStatus] || "bg-gray-200 text-gray-800"
+            }`}
+          >
             {order.orderMeta.paymentStatus}
           </span>
+
 
           {order.new && (
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
@@ -74,11 +85,11 @@ const OrderItem = ({ order, onClick, selected }) => {
         </div>
       </div>
       <div className="text-right">
-  <h1 className="text-md font-bold text-black">
+  <h1 className="text-md  text-black">
     <FaCalendar className="inline mr-1" /> {/* Replace with your icon */}
     {formattedDate}
   </h1>
-  <h2 className="text-sm font-bold text-black">
+  <h2 className="text-sm  text-black">
     <FaClock className="inline mr-1" /> {/* Replace with your icon */}
     {formattedTime}
   </h2>
@@ -113,14 +124,17 @@ const OrderStatusHistory = () => {
                 {status.icon}
               </div>
   
-              {/* Connector Line */}
-              {index < statuses.length - 1 && (
-                <div
-                  className={`absolute top-1/2 left-full w-20 h-1 ${
-                    statuses[index + 1].completed ? statusColors[statuses[index + 1].label] : "bg-gray-300"
-                  }`}
-                ></div>
-              )}
+             
+            {/* Connector Line */}
+            {index < statuses.length - 1 && (
+              <div
+                className={`absolute top-1/2 left-full transform -translate-y-1/2 w-20 h-1 ${
+                  statuses[index + 1].completed
+                    ? statusColors[statuses[index + 1].label]
+                    : "bg-gray-300"
+                }`}
+              ></div>
+            )}
   
               {/* Status Details */}
               <div className="mt-2 text-center">
@@ -153,11 +167,6 @@ const OrderStatusHistory = () => {
 // OrderDetails component
 const OrderDetails = ({ order }) => {
 
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
-
-  const handleOrderClick = (order) => {
-    setSelectedOrderId(order._id);
-  };
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
@@ -174,7 +183,7 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Order Type</h4>
-            <p>Pickup</p>{" "}
+            <p>WhatsAppOrder</p>{" "}
             {/* Ensure orderType is available in the order object */}
           </div>
           <div>
@@ -206,8 +215,8 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Payment Method</h4>
-            <p>{order.orderMeta.paymentMethod}</p>{" "}
-            {/* Ensure paymentMethod is available in the order object */}
+            <p>Null</p>{" "}
+          
           </div>
         </div>
       </div>
@@ -239,7 +248,7 @@ const OrderDetails = ({ order }) => {
         </div>
       </div>
 
-      <OrderStatusHistory selectedOrderId={selectedOrderId} />
+      <OrderStatusHistory  />
     </div>
   );
 };
@@ -305,24 +314,53 @@ const CartSection = ({
     }
   };
 
+
+
+  useEffect(() => {
+    // Restore paymentStatus from localStorage if it exists
+    if (order) {
+      const storedStatus = localStorage.getItem(
+        `orderStatus-${order._id}`
+      );
+      if (storedStatus) {
+        setPaymentStatus(storedStatus);
+      }
+    }
+  }, [order]);
+
+  const updateStatus = (status) => {
+    const updatedOrder = { ...order, orderMeta: { ...order.orderMeta, paymentStatus: status } };
+    // Save to localStorage
+    localStorage.setItem(
+      `orderStatus-${order._id}`,
+      status
+    );
+    // Optionally, you can also update this in your global state or API
+  };
+
+
+
+
   const handleAccept = (orderId) => {
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);
     setIsAssigned(false);
-    onComplete(order.number); // Call the onComplete function if needed
+    updateStatus("Confirmed");
     onComplete(orderId); // Call the onComplete function if needed
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
-    // sendMessage(); // Send WhatsApp message
+    sendMessage(); // Send WhatsApp message
   };
 
   const handleReady = (orderId) => {
     setIsReady(true);
+    updateStatus("Ready");
     setIsAssigned(false);
   };
 
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
+    updateStatus("Completed");
     setIsAccepted(false);
     setIsReady(false);
     setIsAssigned(false);
@@ -331,10 +369,10 @@ const CartSection = ({
 
   const handleReject = (orderId) => {
     setIsAccepted(false);
+    updateStatus("Rejected");
     setIsAssigned(false);
     setIsReady(false);
-    onCancel(order.number); // Call the onCancel function if needed
-    // onCancel(orderId); // Call the onCancel function if needed
+   
   };
 
   const handleAssigned = (orderId) => {
@@ -749,16 +787,8 @@ const HomeOrdersSection = () => {
     }
   };
 
-  // const handleOrderAccept = (orderId) => {
-  //   // Pause the notification sound, update order status, etc.
-  //   const updatedOrders = orders.map((order) =>
-  //     order._id === orderId
-  //       ? { ...order, orderMeta: { ...order.orderMeta, paymentStatus: "Accepted" } }
-  //       : order
-  //   );
-  //   setOrders(updatedOrders);
-  // }
-  // Fetch orders and set up WebSocket
+
+
   // Fetch orders and set up WebSocket
   useEffect(() => {
     const fetchAndSetOrders = async () => {
@@ -817,10 +847,12 @@ const HomeOrdersSection = () => {
   // Sort orders whenever the orders prop changes
   const sortedOrders = sortOrdersByPosOrderId(orders);
   const mostRecentOrder = sortedOrders[0]; // Assuming the first item is the most recent after sorting
-  // console.log(sortedOrders,"sortedOrders");
+
+
   const onOrderClick = (order) => {
     setSelectedOrder(order);
   };
+
 
   const handleCountAccept = (orderId) => {
     setOrders((prevOrders) =>
@@ -831,7 +863,6 @@ const HomeOrdersSection = () => {
 
   return (
     <div className=" flex h-screen">
-      {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
       <div
         id="order-list"
