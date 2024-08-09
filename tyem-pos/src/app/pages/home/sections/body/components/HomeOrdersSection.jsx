@@ -20,11 +20,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { useOrderContext } from "./OrderContext.jsx";
 import { useOrderStatus } from "../../../components/StatusContext.jsx";
 import { FaCalendar, FaClock } from 'react-icons/fa'; // Adjust the import according to your icon library
+import { usePaymentStatus } from "../../../components/PaymentStatusContext.jsx";
 
 
 
 // OrderItem component
 const OrderItem = ({ order, onClick, selected }) => {
+  const { paymentStatus } = usePaymentStatus(); // Get payment status from context
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -74,14 +76,9 @@ const OrderItem = ({ order, onClick, selected }) => {
         </p>
 
         <div className="flex items-center mt-2">
-          <span
-            className={`px-2 py-1 text-xs font-semibold rounded ${
-              statusColors[order.orderMeta.paymentStatus] || "bg-gray-200 text-gray-800"
-            }`}
-          >
-            {order.orderMeta.paymentStatus}
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${statusColors[paymentStatus[order._id]] || statusColors.Pending}`}>
+            {paymentStatus[order._id] || "Pending"}
           </span>
-
 
 
           {order.new && (
@@ -93,11 +90,11 @@ const OrderItem = ({ order, onClick, selected }) => {
       </div>
       <div className="text-right">
   <h1 className="text-md  text-black">
-    <FaCalendar className="inline mr-1" /> {/* Replace with your icon */}
+    <FaCalendar className="inline mr-1" /> 
     {formattedDate}
   </h1>
   <h2 className="text-sm  text-black">
-    <FaClock className="inline mr-1" /> {/* Replace with your icon */}
+    <FaClock className="inline mr-1" /> 
     {formattedTime}
   </h2>
 </div>
@@ -272,7 +269,7 @@ const CartSection = ({
 
 
 
-  const [paymentStatus, setPaymentStatus] = useState("Pending");
+  const { updatePaymentStatus } = usePaymentStatus(); // Get update function from context
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
@@ -334,11 +331,13 @@ const CartSection = ({
     onComplete(orderId); // Call the onComplete function if needed
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     sendMessage(); // Send WhatsApp message
+    updatePaymentStatus(orderId, "Confirmed"); // Update payment status
   };
 
   const handleReady = (orderId) => {
     setIsReady(true);
     setIsAssigned(false);
+    updatePaymentStatus(orderId, "Ready"); // Update payment status
   };
 
   const handleComplete = (orderId) => {
@@ -347,6 +346,7 @@ const CartSection = ({
     setIsReady(false);
     setIsAssigned(false);
     onComplete(orderId);  
+    updatePaymentStatus(orderId, "Completed"); // Update payment status
   };
 
   const handleReject = (orderId) => {
@@ -359,6 +359,7 @@ const CartSection = ({
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
     setIsReady(false);
+    updatePaymentStatus(orderId, "Assigned"); // Update payment status
   };
 
   // Status History Data
