@@ -20,6 +20,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useOrderContext } from "./OrderContext.jsx";
 import { useOrderStatus } from "../../../components/StatusContext.jsx";
+import { FaCalendar, FaClock } from 'react-icons/fa'; // Adjust the import according to your icon library
+
 
 
 // OrderItem component
@@ -72,9 +74,16 @@ const OrderItem = ({ order, onClick, selected }) => {
         </div>
       </div>
       <div className="text-right">
-        <h1 className="text-md font- text-black">{formattedDate}</h1>
-        <h2 className="text-sm text-black">{formattedTime}</h2>
-      </div>
+  <h1 className="text-md font-bold text-black">
+    <FaCalendar className="inline mr-1" /> {/* Replace with your icon */}
+    {formattedDate}
+  </h1>
+  <h2 className="text-sm font-bold text-black">
+    <FaClock className="inline mr-1" /> {/* Replace with your icon */}
+    {formattedTime}
+  </h2>
+</div>
+
     </div>
   );
 };
