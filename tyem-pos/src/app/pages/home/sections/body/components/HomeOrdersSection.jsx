@@ -117,6 +117,9 @@ const OrderStatusHistory = ({ order }) => {
     // Assuming you have a way to filter the statuses based on the selected order
   const orderStatuses = statuses.filter(status => status.orderId === order._id); // Adjust according to how you manage statuses per order
 
+  console.log(orderStatuses,"kkk");
+  
+
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
