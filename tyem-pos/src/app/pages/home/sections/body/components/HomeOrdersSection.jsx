@@ -114,10 +114,13 @@ const OrderStatusHistory = () => {
       Completed: "bg-purple-500",
     };
 
+    // Assuming you have a way to filter the statuses based on the selected order
+  const orderStatuses = statuses.filter(status => status.orderId === order._id); // Adjust according to how you manage statuses per order
+
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
-          {statuses?.map((status, index) => (
+          {orderStatuses?.map((status, index) => (
             <div key={index} className="flex flex-col items-center">
               {/* Status Icon */}
               <div
@@ -252,7 +255,7 @@ const OrderDetails = ({ order }) => {
         </div>
       </div>
 
-      <OrderStatusHistory  />
+      {/* <OrderStatusHistory  /> */}
     </div>
   );
 };
@@ -263,7 +266,6 @@ const CartSection = ({
   onCancel,
   pauseNotificationSound,
   orders,
-  updateOrderStatus,
   onOrderAccept, // New prop
 }) => {
 
@@ -293,7 +295,16 @@ const CartSection = ({
 
 
   
-  const { setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal,isAccepted,isAssigned,isReady,showPlaceModal } = useOrderStatus();
+  const { 
+         setIsAccepted,
+          setIsReady,
+          setIsAssigned,
+          setShowPlaceModal,
+          isAccepted,
+          isAssigned,
+          isReady,
+          showPlaceModal 
+        } = useOrderStatus();
   // send Message for Whtsapp
 
   const sendMessage = async () => {
@@ -862,7 +873,10 @@ const HomeOrdersSection = () => {
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
-          <OrderDetails order={selectedOrder} />
+          <>
+            <OrderDetails order={selectedOrder} />
+            <OrderStatusHistory order={selectedOrder} /> {/* Add OrderStatusHistory */}
+          </>
         ) : (
           <p className="text-gray-500">Select an order to view details.</p>
         )}
