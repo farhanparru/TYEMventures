@@ -81,11 +81,12 @@ const OrderItem = ({ order, onClick, selected }) => {
 
 const OrderStatusHistory = () => {
   const { statuses } = useOrderStatus();
+
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
         {statuses?.map((status, index) => (
-          <div key={index} className="flex flex-col items-center">
+          <div key={index} className="relative flex flex-col items-center">
             {/* Status Icon */}
             <div
               className={`w-16 h-16 rounded-full flex items-center justify-center ${
@@ -286,7 +287,7 @@ const CartSection = ({
     setIsReady(false);
     setIsAssigned(false);
     onComplete(order.number); // Call the onComplete function if needed
-
+    onComplete(orderId); // Call the onComplete function if needed
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     // sendMessage(); // Send WhatsApp message
   };
@@ -301,7 +302,7 @@ const CartSection = ({
     setIsAccepted(false);
     setIsReady(false);
     setIsAssigned(false);
-    onComplete(orderId);
+    onComplete(orderId);  
   };
 
   const handleReject = (orderId) => {
@@ -309,6 +310,7 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     onCancel(order.number); // Call the onCancel function if needed
+    onCancel(orderId); // Call the onCancel function if needed
   };
 
   const handleAssigned = (orderId) => {
@@ -345,7 +347,7 @@ const CartSection = ({
       </div>
   
       {/* Summary and Actions */}
-      <div className="mt-auto p-5 bg-gray-700 text-white rounded-lg">
+      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg">
         {/* Subtotal */}
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
@@ -804,7 +806,7 @@ const HomeOrdersSection = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col h-screen">
       {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
       <div
