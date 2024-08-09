@@ -82,6 +82,9 @@ const OrderItem = ({ order, onClick, selected }) => {
 const OrderStatusHistory = () => {
   const { statuses } = useOrderStatus();
 
+  // Assuming each status has an orderId field, filter based on selectedOrderId
+  const filteredStatuses = statuses.filter(status => status.orderId === selectedOrderId);
+
     // Define a color mapping for the status
     const statusColors = {
       Confirmed: "bg-green-500",
@@ -93,7 +96,7 @@ const OrderStatusHistory = () => {
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
-          {statuses?.map((status, index) => (
+        {filteredStatuses.map((status, index) => (
             <div key={index} className="flex flex-col items-center">
               {/* Status Icon */}
               <div
@@ -143,6 +146,12 @@ const OrderStatusHistory = () => {
 
 // OrderDetails component
 const OrderDetails = ({ order }) => {
+
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+  const handleOrderClick = (order) => {
+    setSelectedOrderId(order._id);
+  };
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
@@ -224,7 +233,7 @@ const OrderDetails = ({ order }) => {
         </div>
       </div>
 
-      <OrderStatusHistory/>
+      <OrderStatusHistory selectedOrderId={selectedOrderId} />
     </div>
   );
 };
