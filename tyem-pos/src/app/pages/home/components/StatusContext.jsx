@@ -4,52 +4,58 @@ import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie } from "react-ico
 const OrderStatusContext = createContext();
 
 export const OrderStatusProvider = ({ children }) => {
-  const [orderStatuses, setOrderStatuses] = useState(() => {
-    const saved = JSON.parse(localStorage.getItem("orderStatuses"));
-    return saved || {};
-  });
+  const [isAccepted, setIsAccepted] = useState(() => JSON.parse(localStorage.getItem("isAccepted")) || false);
+  const [isReady, setIsReady] = useState(() => JSON.parse(localStorage.getItem("isReady")) || false);
+  const [isAssigned, setIsAssigned] = useState(() => JSON.parse(localStorage.getItem("isAssigned")) || false);
+  const [showPlaceModal, setShowPlaceModal] = useState(() => JSON.parse(localStorage.getItem("showPlaceModal")) || false);
 
   useEffect(() => {
-    localStorage.setItem("orderStatuses", JSON.stringify(orderStatuses));
-  }, [orderStatuses]);
+    localStorage.setItem("isAccepted", JSON.stringify(isAccepted));
+  }, [isAccepted]);
 
-  const updateOrderStatus = (orderId, status, value) => {
-    setOrderStatuses((prev) => ({
-      ...prev,
-      [orderId]: { ...prev[orderId], [status]: value },
-    }));
-  };
+  useEffect(() => {
+    localStorage.setItem("isReady", JSON.stringify(isReady));
+  }, [isReady]);
 
-  const getStatusArray = (orderId) => [
+  useEffect(() => {
+    localStorage.setItem("isAssigned", JSON.stringify(isAssigned));
+  }, [isAssigned]);
+
+  useEffect(() => {
+    localStorage.setItem("showPlaceModal", JSON.stringify(showPlaceModal));
+  }, [showPlaceModal]);
+
+  const statuses = [
     {
       label: "Confirmed",
-      completed: orderStatuses[orderId]?.isAccepted || false,
+      completed: isAccepted,
       icon: <FaClipboardCheck className="text-white w-8 h-8" />,
-      date: orderStatuses[orderId]?.isAccepted ? new Date().toLocaleString() : "",
+      date: isAccepted ? new Date().toLocaleString() : "",
     },
     {
       label: "Ready",
-      completed: orderStatuses[orderId]?.isReady || false,
+      completed: isReady,
       icon: <FaBoxOpen className="text-white w-8 h-8" />,
-      date: orderStatuses[orderId]?.isReady ? new Date().toLocaleString() : "",
+      date: isReady ? new Date().toLocaleString() : "",
     },
     {
       label: "Assigned",
-      completed: orderStatuses[orderId]?.isAssigned || false,
+      completed: isAssigned,
       icon: <FaUserTie className="text-white w-8 h-8" />,
-      date: orderStatuses[orderId]?.isAssigned ? new Date().toLocaleString() : "",
-      employee: orderStatuses[orderId]?.isAssigned ? "John Doe" : "",
+      date: isAssigned ? new Date().toLocaleString() : "",
+      employee: isAssigned ? "John Doe" : "",
     },
     {
       label: "Completed",
-      completed: orderStatuses[orderId]?.showPlaceModal || false,
+      completed: showPlaceModal,
       icon: <FaCheckCircle className="text-white w-8 h-8" />,
-      date: orderStatuses[orderId]?.showPlaceModal ? new Date().toLocaleString() : "",
+      date: showPlaceModal ? new Date().toLocaleString() : "",
     },
   ];
 
+
   return (
-    <OrderStatusContext.Provider value={{ getStatusArray, updateOrderStatus }}>
+    <OrderStatusContext.Provider value={{ statuses, setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal,isAccepted,isReady,isAssigned,showPlaceModal }}>
       {children}
     </OrderStatusContext.Provider>
   );
