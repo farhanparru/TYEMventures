@@ -4,24 +4,11 @@ import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie } from "react-ico
 const OrderStatusContext = createContext();
 
 export const OrderStatusProvider = ({ children }) => {
-  // Load initial states from localStorage or set to false by default
-  const [isAccepted, setIsAccepted] = useState(() => {
-    return JSON.parse(localStorage.getItem("isAccepted")) || false;
-  });
+  const [isAccepted, setIsAccepted] = useState(() => JSON.parse(localStorage.getItem("isAccepted")) || false);
+  const [isReady, setIsReady] = useState(() => JSON.parse(localStorage.getItem("isReady")) || false);
+  const [isAssigned, setIsAssigned] = useState(() => JSON.parse(localStorage.getItem("isAssigned")) || false);
+  const [showPlaceModal, setShowPlaceModal] = useState(() => JSON.parse(localStorage.getItem("showPlaceModal")) || false);
 
-  const [isReady, setIsReady] = useState(() => {
-    return JSON.parse(localStorage.getItem("isReady")) || false;
-  });
-
-  const [isAssigned, setIsAssigned] = useState(() => {
-    return JSON.parse(localStorage.getItem("isAssigned")) || false;
-  });
-
-  const [showPlaceModal, setShowPlaceModal] = useState(() => {
-    return JSON.parse(localStorage.getItem("showPlaceModal")) || false;
-  });
-
-  // Save states to localStorage when they change
   useEffect(() => {
     localStorage.setItem("isAccepted", JSON.stringify(isAccepted));
   }, [isAccepted]);
@@ -43,39 +30,32 @@ export const OrderStatusProvider = ({ children }) => {
       label: "Confirmed",
       completed: isAccepted,
       icon: <FaClipboardCheck className="text-white w-8 h-8" />,
-      date: isAccepted ? "Fri, Aug 2, 2024, 7:58 AM" : "",
+      date: isAccepted ? new Date().toLocaleString() : "",
     },
     {
       label: "Ready",
       completed: isReady,
       icon: <FaBoxOpen className="text-white w-8 h-8" />,
-      date: isReady ? "Mon, Aug 5, 2024, 8:17 AM" : "",
+      date: isReady ? new Date().toLocaleString() : "",
     },
     {
       label: "Assigned",
       completed: isAssigned,
       icon: <FaUserTie className="text-white w-8 h-8" />,
-      date: isAssigned ? "Mon, Aug 5, 2024, 9:00 AM" : "",
+      date: isAssigned ? new Date().toLocaleString() : "",
       employee: isAssigned ? "John Doe" : "",
     },
     {
       label: "Completed",
       completed: showPlaceModal,
       icon: <FaCheckCircle className="text-white w-8 h-8" />,
-      date: showPlaceModal ? "Mon, Aug 5, 2024, 9:30 AM" : "",
+      date: showPlaceModal ? new Date().toLocaleString() : "",
     },
   ];
 
+  
   return (
-    <OrderStatusContext.Provider
-      value={{
-        statuses,
-        setIsAccepted,
-        setIsReady,
-        setIsAssigned,
-        setShowPlaceModal,
-      }}
-    >
+    <OrderStatusContext.Provider value={{ statuses, setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal }}>
       {children}
     </OrderStatusContext.Provider>
   );

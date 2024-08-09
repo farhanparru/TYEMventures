@@ -82,55 +82,64 @@ const OrderItem = ({ order, onClick, selected }) => {
 const OrderStatusHistory = () => {
   const { statuses } = useOrderStatus();
 
-  return (
-    <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
-      <div className="flex items-center justify-between">
-        {statuses?.map((status, index) => (
-          <div key={index} className="relative flex flex-col items-center">
-            {/* Status Icon */}
-            <div
-              className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                status.completed ? "bg-blue-500" : "bg-gray-300"
-              }`}
-            >
-              {status.icon}
-            </div>
+    // Define a color mapping for the status
+    const statusColors = {
+      Confirmed: "bg-green-500",
+      Ready: "bg-yellow-500",
+      Assigned: "bg-blue-500",
+      Completed: "bg-purple-500",
+    };
 
-            {/* Connector Line */}
-            {index < statuses.length - 1 && (
+    return (
+      <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
+        <div className="flex items-center justify-between">
+          {statuses?.map((status, index) => (
+            <div key={index} className="flex flex-col items-center">
+              {/* Status Icon */}
               <div
-                className={`absolute top-1/2 left-full w-20 h-1 ${
-                  statuses[index + 1].completed ? "bg-blue-500" : "bg-gray-300"
-                }`}
-              ></div>
-            )}
-
-            {/* Status Details */}
-            <div className="mt-2 text-center">
-              <span
-                className={`block text-sm font-semibold ${
-                  status.completed ? "text-gray-700" : "text-gray-400"
+                className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                  status.completed ? statusColors[status.label] : "bg-gray-300"
                 }`}
               >
-                {status.label}
-              </span>
-              {status.date && (
-                <span className="block text-sm text-gray-500">
-                  {status.date}
-                </span>
+                {status.icon}
+              </div>
+  
+              {/* Connector Line */}
+              {index < statuses.length - 1 && (
+                <div
+                  className={`absolute top-1/2 left-full w-20 h-1 ${
+                    statuses[index + 1].completed ? statusColors[statuses[index + 1].label] : "bg-gray-300"
+                  }`}
+                ></div>
               )}
-              {status.employee && (
-                <span className="block text-sm text-gray-500">
-                  Assigned to: {status.employee}
+  
+              {/* Status Details */}
+              <div className="mt-2 text-center">
+                <span
+                  className={`block text-sm font-semibold ${
+                    status.completed ? "text-gray-700" : "text-gray-400"
+                  }`}
+                >
+                  {status.label}
                 </span>
-              )}
+                {status.date && (
+                  <span className="block text-sm text-gray-500">
+                    {status.date}
+                  </span>
+                )}
+                {status.employee && (
+                  <span className="block text-sm text-gray-500">
+                    Assigned to: {status.employee}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
+  
 
 // OrderDetails component
 const OrderDetails = ({ order }) => {
@@ -232,7 +241,7 @@ const CartSection = ({
 
 
 
-  const [showPlaceModal, setShowPlaceModal] = useState(false);
+
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
@@ -256,7 +265,9 @@ const CartSection = ({
   const [isAccepted, setIsAccepted] = useState(false);
   const [isAssigned, setIsAssigned] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [showPlaceModal, setShowPlaceModal] = useState(false);
 
+  
   // send Message for Whtsapp
 
   const sendMessage = async () => {
@@ -324,7 +335,7 @@ const CartSection = ({
 
   if (!order) {
     return (
-      <div className="p-4 bg-gray-100 text-gray-500 rounded-lg">
+      <div className="p-6 bg-gray-100 text-gray-500 rounded-lg">
         Select an order to view cart items.
       </div>
     );
@@ -347,7 +358,7 @@ const CartSection = ({
       </div>
   
       {/* Summary and Actions */}
-      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg">
+      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg" style={{marginBottom:"42px"}}>
         {/* Subtotal */}
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
