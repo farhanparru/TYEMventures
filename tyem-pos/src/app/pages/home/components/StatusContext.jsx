@@ -1,61 +1,98 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie } from "react-icons/fa";
+import { DateTime } from "luxon"; // Make sure to import luxon
 
 const OrderStatusContext = createContext();
 
 export const OrderStatusProvider = ({ children }) => {
-  const [isAccepted, setIsAccepted] = useState(() => JSON.parse(localStorage.getItem("isAccepted")) || false);
-  const [isReady, setIsReady] = useState(() => JSON.parse(localStorage.getItem("isReady")) || false);
-  const [isAssigned, setIsAssigned] = useState(() => JSON.parse(localStorage.getItem("isAssigned")) || false);
-  const [showPlaceModal, setShowPlaceModal] = useState(() => JSON.parse(localStorage.getItem("showPlaceModal")) || false);
+  const [ordersStatus, setOrdersStatus] = useState(() => {
+    const storedStatus = JSON.parse(localStorage.getItem("ordersStatus"));
+    return storedStatus || {};
+  });
 
   useEffect(() => {
-    localStorage.setItem("isAccepted", JSON.stringify(isAccepted));
-  }, [isAccepted]);
+    localStorage.setItem("ordersStatus", JSON.stringify(ordersStatus));
+  }, [ordersStatus]);
 
-  useEffect(() => {
-    localStorage.setItem("isReady", JSON.stringify(isReady));
-  }, [isReady]);
+  const updateOrderStatus = (orderId, statusKey, value) => {
+    const currentDateTime = DateTime.now().setZone("Asia/Kolkata").toISO(); // Current date and time in IST
+    setOrdersStatus((prev) => {
+      const orderStatuses = prev[orderId] || {
+        isAccepted: false,
+        isReady: false,
+        isAssigned: false,
+        showPlaceModal: false,
+        confirmedDate: "",
+        readyDate: "",
+        assignedDate: "",
+        completedDate: "",
+      };
 
-  useEffect(() => {
-    localStorage.setItem("isAssigned", JSON.stringify(isAssigned));
-  }, [isAssigned]);
+      // Update the specific status key and set the date
+      orderStatuses[statusKey] = value;
+      if (value) {
+        orderStatuses[`${statusKey}Date`] = currentDateTime; // Store the date and time when status was updated
+      }
 
-  useEffect(() => {
-    localStorage.setItem("showPlaceModal", JSON.stringify(showPlaceModal));
-  }, [showPlaceModal]);
+      return { ...prev, [orderId]: orderStatuses };
+    });
+  };
 
-  const statuses = [
-    {
-      label: "Confirmed",
-      completed: isAccepted,
-      icon: <FaClipboardCheck className="text-white w-8 h-8" />,
-      date: isAccepted ? new Date().toLocaleString() : "",
-    },
-    {
-      label: "Ready",
-      completed: isReady,
-      icon: <FaBoxOpen className="text-white w-8 h-8" />,
-      date: isReady ? new Date().toLocaleString() : "",
-    },
-    {
-      label: "Assigned",
-      completed: isAssigned,
-      icon: <FaUserTie className="text-white w-8 h-8" />,
-      date: isAssigned ? new Date().toLocaleString() : "",
-      employee: isAssigned ? "John Doe" : "",
-    },
-    {
-      label: "Completed",
-      completed: showPlaceModal,
-      icon: <FaCheckCircle className="text-white w-8 h-8" />,
-      date: showPlaceModal ? new Date().toLocaleString() : "",
-    },
-  ];
+  const getOrderStatuses = (orderId) => {
+    return ordersStatus[orderId] || {
+      isAccepted: false,
+      isReady: false,
+      isAssigned: false,
+      showPlaceModal: false,
+      confirmedDate: "",
+      readyDate: "",
+      assignedDate: "",
+      completedDate: "",
+    };
+  };
 
+  const statuses = (orderId) => {
+    const orderStatuses = getOrderStatuses(orderId);
+
+    return [
+      {
+        label: "Confirmed",
+        completed: orderStatuses.isAccepted,
+        icon: <FaClipboardCheck className="text-white w-8 h-8" />,
+        date: orderStatuses.confirmedDate
+          ? DateTime.fromISO(orderStatuses.confirmedDate).toFormat("MMM dd, yyyy hh:mm:ss a")
+          : "",
+      },
+      {
+        label: "Ready",
+        completed: orderStatuses.isReady,
+        icon: <FaBoxOpen className="text-white w-8 h-8" />,
+        date: orderStatuses.readyDate
+          ? DateTime.fromISO(orderStatuses.readyDate).toFormat("MMM dd, yyyy hh:mm:ss a")
+          : "",
+      },
+      {
+        label: "Assigned",
+        completed: orderStatuses.isAssigned,
+        icon: <FaUserTie className="text-white w-8 h-8" />,
+        date: orderStatuses.assignedDate
+          ? DateTime.fromISO(orderStatuses.assignedDate).toFormat("MMM dd, yyyy hh:mm:ss a")
+          : "",
+        employee: orderStatuses.isAssigned ? "John Doe" : "",
+      },
+      {
+        label: "Completed",
+        completed: orderStatuses.showPlaceModal,
+        icon: <FaCheckCircle className="text-white w-8 h-8" />,
+        date: orderStatuses.completedDate
+          ? DateTime.fromISO(orderStatuses.completedDate).toFormat("MMM dd, yyyy hh:mm:ss a")
+          : "",
+      },
+    ];
+  };
 
   return (
-    <OrderStatusContext.Provider value={{ statuses, setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal,isAccepted,isReady,isAssigned,showPlaceModal }}>
+    <OrderStatusContext.Provider value={{ getOrderStatuses, updateOrderStatus, statuses }}>
       {children}
     </OrderStatusContext.Provider>
   );

@@ -115,7 +115,7 @@ const OrderStatusHistory = ({ order }) => {
     };
 
     // Assuming you have a way to filter the statuses based on the selected order
-  const orderStatuses = statuses.filter(status => status.orderId === order._id); // Adjust according to how you manage statuses per order
+    const orderStatuses = statuses(order._id); // Get the statuses for the specific order // Adjust according to how you manage statuses per order
 
   console.log(orderStatuses,"kkk");
   
@@ -146,27 +146,23 @@ const OrderStatusHistory = ({ order }) => {
               ></div>
             )}
   
-              {/* Status Details */}
-              <div className="mt-2 text-center">
-                <span
-                  className={`block text-sm font-semibold ${
-                    status.completed ? "text-gray-700" : "text-gray-400"
-                  }`}
-                >
-                  {status.label}
+            {/* Status Details */}
+            <div className="mt-2 text-center">
+              <span className={`block text-sm font-semibold ${status.completed ? "text-gray-700" : "text-gray-400"}`}>
+                {status.label}
+              </span>
+              {status.date && (
+                <span className="block text-sm text-gray-500">
+                  {status.date}
                 </span>
-                {status.date && (
-                  <span className="block text-sm text-gray-500">
-                    {status.date}
-                  </span>
-                )}
-                {status.employee && (
-                  <span className="block text-sm text-gray-500">
-                    Assigned to: {status.employee}
-                  </span>
-                )}
-              </div>
+              )}
+              {status.employee && (
+                <span className="block text-sm text-gray-500">
+                  Assigned to: {status.employee}
+                </span>
+              )}
             </div>
+          </div>
           ))}
         </div>
       </div>
