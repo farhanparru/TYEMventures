@@ -804,14 +804,12 @@ const HomeOrdersSection = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen">
-      {/* Order Notification (Hidden on smaller screens) */}
+    <div className="flex h-screen">
+      {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
-
-      {/* Order List */}
       <div
         id="order-list"
-        className="w-full md:w-1/3 h-1/3 md:h-full p-4 border-b md:border-b-0 md:border-r border-gray-300 bg-white overflow-y-auto"
+        className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
       >
         {sortedOrders.map((order) => (
           <OrderItem
@@ -819,29 +817,26 @@ const HomeOrdersSection = () => {
             order={order}
             onClick={onOrderClick}
             selected={selectedOrder?._id === order._id}
-            isMostRecent={order._id === mostRecentOrder._id}
+            isMostRecent={order._id === mostRecentOrder._id} // Pass the prop to highlight the most recent order
           />
         ))}
       </div>
-
-      {/* Order Details */}
-      <div className="w-full md:w-1/3 h-1/3 md:h-full p-4 bg-white overflow-y-auto">
+      <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         {selectedOrder ? (
           <OrderDetails order={selectedOrder} />
         ) : (
           <p className="text-gray-500">Select an order to view details.</p>
         )}
       </div>
-
-      {/* Cart Section */}
-      <div className="w-full md:w-1/3 h-1/3 md:h-full p-4 border-t md:border-t-0 md:border-l border-gray-300 bg-white">
+      <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         {selectedOrder ? (
           <CartSection
-            order={selectedOrder}
+            order={selectedOrder} // Always render CartSection
             onComplete={handleComplete}
             onCancel={handleCancel}
             pauseNotificationSound={pauseNotificationSound}
             orders={orders}
+            // updateOrderStatus={handleOrderAccept} // Pass the updated handler
             onOrderAccept={handleCountAccept}
           />
         ) : (
