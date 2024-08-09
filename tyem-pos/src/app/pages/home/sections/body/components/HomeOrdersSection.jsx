@@ -103,7 +103,7 @@ const OrderItem = ({ order, onClick, selected }) => {
   );
 };
 
-const OrderStatusHistory = () => {
+const OrderStatusHistory = ({ order }) => {
   const { statuses } = useOrderStatus();
 
     // Define a color mapping for the status
