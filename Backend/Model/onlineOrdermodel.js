@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema(
         product_name: String,
         product_quantity: Number,
         product_currency: String,
-        unit_price:Number,
+        unit_price: Number,  // Unit price added here
       }
     ],
     orderMeta: {
@@ -23,9 +23,7 @@ const orderSchema = new mongoose.Schema(
       phone: String,
     },
   
-  },
- 
-);
+  });
 
 const Order = mongoose.model("OnlineOrder", orderSchema);
 module.exports = Order;

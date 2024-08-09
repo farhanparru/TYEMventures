@@ -116,15 +116,15 @@ onlineOrder: async (req, res) => {
       item_lines, // Extract item_lines from the request body
     } = req.body;
 
-    // Map item_lines to orderDetails structure
-    const orderDetails = item_lines.map(item => ({
-      product_name: item.product_name,
-      product_quantity: item.product_quantity,
-      product_currency: item.product_currency,
-      unit_price: item.unit_price
-    }));
+ 
+// Map item_lines to orderDetails structure
+const orderDetails = item_lines.map((item) => ({
+  product_name: item.product_name,
+  product_quantity: item.product_quantity,
+  product_currency: item.product_currency,
+  unit_price: item.unit_price,
+}));
 
-    console.log(orderDetails,"kk");
     
 
        // Convert current date and time to IST
