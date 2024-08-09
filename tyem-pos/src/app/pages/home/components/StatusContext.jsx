@@ -53,9 +53,9 @@ export const OrderStatusProvider = ({ children }) => {
     },
   ];
 
-  
+
   return (
-    <OrderStatusContext.Provider value={{ statuses, setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal }}>
+    <OrderStatusContext.Provider value={{ statuses, setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal,isAccepted,isReady,isAssigned,showPlaceModal }}>
       {children}
     </OrderStatusContext.Provider>
   );

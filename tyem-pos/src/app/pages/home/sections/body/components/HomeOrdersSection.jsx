@@ -262,12 +262,10 @@ const CartSection = ({
       break;
   }
 
-  const [isAccepted, setIsAccepted] = useState(false);
-  const [isAssigned, setIsAssigned] = useState(false);
-  const [isReady, setIsReady] = useState(false);
-  const [showPlaceModal, setShowPlaceModal] = useState(false);
+
 
   
+  const { setIsAccepted, setIsReady, setIsAssigned, setShowPlaceModal,isAccepted,isAssigned,isReady,showPlaceModal } = useOrderStatus();
   // send Message for Whtsapp
 
   const sendMessage = async () => {
