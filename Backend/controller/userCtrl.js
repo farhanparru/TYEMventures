@@ -113,7 +113,7 @@ onlineOrder: async (req, res) => {
       customer_name,
       customer_phone_number,
       payment_status,
-      item_lines // Extract item_lines from the request body
+      item_lines, // Extract item_lines from the request body
     } = req.body;
 
     // Map item_lines to orderDetails structure
@@ -121,6 +121,7 @@ onlineOrder: async (req, res) => {
       product_name: item.product_name,
       product_quantity: item.product_quantity,
       product_currency: item.product_currency,
+      product_amount: item.unit_price
     }));
 
        // Convert current date and time to IST
@@ -301,15 +302,6 @@ onlineOrder: async (req, res) => {
   },
 
   // Customer Mobile Number message
-
-
-  sendWhatsAppMessage:async(req,res)=>{
-    
-    
-
-   
-  }
-
   
   }
 

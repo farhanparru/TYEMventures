@@ -287,7 +287,7 @@ const CartSection = ({
     setIsAssigned(false);
     onComplete(order.number); // Call the onComplete function if needed
 
-    onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
+    // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     // sendMessage(); // Send WhatsApp message
   };
 
@@ -338,7 +338,7 @@ const CartSection = ({
           >
             <span className="font-semibold">{item.product_name}</span>
             <span>{item.product_quantity}</span>
-            <span>{order.orderMeta.paymentTendered}</span>
+            <span>{item.unit_price}</span>
             <span>{item.product_currency}</span>
           </div>
         ))}
