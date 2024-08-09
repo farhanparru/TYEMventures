@@ -122,7 +122,7 @@ const orderDetails = item_lines.map((item) => ({
   product_name: item.product_name,
   product_quantity: item.product_quantity,
   product_currency: item.product_currency,
-  // unit_price: item.unit_price,
+  unit_price: item.unit_price,
 }));
 
     

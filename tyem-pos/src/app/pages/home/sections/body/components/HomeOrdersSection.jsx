@@ -339,7 +339,7 @@ const CartSection = ({
             <span className="font-semibold">{item.product_name}</span>
             <span>{item.product_quantity}</span>
             <span>{order.orderMeta.paymentTendered}</span>
-            <span>{item.product_currency}</span>
+            <span>{item.unit_price}</span>
           </div>
         ))}
       </div>
