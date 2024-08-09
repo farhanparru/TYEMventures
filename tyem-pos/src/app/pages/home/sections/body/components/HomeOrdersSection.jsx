@@ -115,7 +115,7 @@ const OrderStatusHistory = ({ order }) => {
     };
 
     // Assuming you have a way to filter the statuses based on the selected order
-    const orderStatuses = statuses(order._id); // Get the statuses for the specific order // Adjust according to how you manage statuses per order
+    const orderStatuses = statuses(order._id); 
 
   console.log(orderStatuses,"kkk");
   
@@ -269,7 +269,7 @@ const CartSection = ({
 }) => {
 
 
-
+  const { updateOrderStatus, getOrderStatuses } = useOrderStatus();
   const { updatePaymentStatus } = usePaymentStatus(); // Get update function from context
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
@@ -326,7 +326,8 @@ const CartSection = ({
   };
 
 
-
+ // Retrieve order statuses for the current order
+ const orderStatuses = getOrderStatuses(order._id);
 
  
 
@@ -339,9 +340,12 @@ const CartSection = ({
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     sendMessage(); // Send WhatsApp message
     updatePaymentStatus(orderId, "Confirmed"); // Update payment status
+    updateOrderStatus(order._id, "isAccepted", true);
+    onComplete(order._id); // Call the completion handler
   };
 
   const handleReady = (orderId) => {
+    updateOrderStatus(order._id, "isReady", true);
     setIsReady(true);
     setIsAssigned(false);
     updatePaymentStatus(orderId, "Ready"); // Update payment status
@@ -354,12 +358,17 @@ const CartSection = ({
     setIsAssigned(false);
     onComplete(orderId);  
     updatePaymentStatus(orderId, "Completed"); // Update payment status
+    updateOrderStatus(order._id, "showPlaceModal", true);
+    onComplete(order._id); // Call the completion handler
   };
 
   const handleReject = (orderId) => {
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
+    updateOrderStatus(order._id, "isAccepted", false);
+    updateOrderStatus(order._id, "isAssigned", false);
+    updateOrderStatus(order._id, "isReady", false);
    
   };
 
@@ -367,6 +376,7 @@ const CartSection = ({
     setIsAssigned(true);
     setIsReady(false);
     updatePaymentStatus(orderId, "Assigned"); // Update payment status
+    updateOrderStatus(order._id, "isAssigned", true);
   };
 
   // Status History Data
