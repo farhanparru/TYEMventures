@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema(
         product_name: String,
         product_quantity: Number,
         product_currency: String,
-        unit_price: Number,  // Unit price added here
+        // unit_price: Number,  // Unit price added here
       }
     ],
     orderMeta: {
