@@ -79,7 +79,7 @@ const OrderItem = ({ order, onClick, selected }) => {
   );
 };
 
-const OrderStatusHistory = () => {
+const OrderStatusHistory = ({ selectedOrderId }) => {
   const { statuses } = useOrderStatus();
 
   // Assuming each status has an orderId field, filter based on selectedOrderId
