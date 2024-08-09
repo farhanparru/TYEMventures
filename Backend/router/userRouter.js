@@ -13,6 +13,7 @@ router.post('/createCategory', userCtrl.category)
 router.get('/getCategory', userCtrl.getCategory)
 router.post('/Expense', userCtrl.expense)
 router.post('/addCustomer', userCtrl.addCustomer)
+router.put('/orders/:id/status',userCtrl.statusUpdate)
 
 
      

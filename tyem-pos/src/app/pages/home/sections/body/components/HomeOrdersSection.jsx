@@ -70,7 +70,7 @@ const OrderItem = ({ order, onClick, selected }) => {
         <div className="flex items-center mt-2">
           <span
             className={`px-2 py-1 text-xs font-semibold rounded ${
-              statusColors[order.orderMeta.paymentStatus] || "bg-gray-200 text-gray-800"
+              statusColors[order.orderMeta.paymentStatus] || statusColors.Pending
             }`}
           >
             {order.orderMeta.paymentStatus}
@@ -265,7 +265,7 @@ const CartSection = ({
 
 
 
-
+  const [paymentStatus, setPaymentStatus] = useState("Pending");
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
@@ -315,30 +315,26 @@ const CartSection = ({
   };
 
 
-
   useEffect(() => {
     // Restore paymentStatus from localStorage if it exists
-    if (order) {
-      const storedStatus = localStorage.getItem(
-        `orderStatus-${order._id}`
-      );
-      if (storedStatus) {
-        setPaymentStatus(storedStatus);
-      }
+    const storedStatus = localStorage.getItem(`orderStatus-${order._id}`);
+    if (storedStatus) {
+      setPaymentStatus(storedStatus);
+    } else {
+      setPaymentStatus(order.orderMeta.paymentStatus || "Pending");
     }
   }, [order]);
 
-  const updateStatus = (status) => {
-    const updatedOrder = { ...order, orderMeta: { ...order.orderMeta, paymentStatus: status } };
-    // Save to localStorage
-    localStorage.setItem(
-      `orderStatus-${order._id}`,
-      status
-    );
-    // Optionally, you can also update this in your global state or API
+  const updateStatus = async (status) => {
+    try {
+      const response = await axios.put(`https://tyem.invenro.site/api/user/orders/${order._id}/status`, { status });
+      setPaymentStatus(response.data.paymentStatus);
+      // Save the updated status to localStorage
+      localStorage.setItem(`orderStatus-${order._id}`, response.data.paymentStatus);
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+    }
   };
-
-
 
 
   const handleAccept = (orderId) => {
@@ -376,6 +372,7 @@ const CartSection = ({
   };
 
   const handleAssigned = (orderId) => {
+    updateStatus("Assigned");
     setIsAssigned(true);
     setIsReady(false);
   };

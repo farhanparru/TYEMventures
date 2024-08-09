@@ -270,9 +270,6 @@ const orderDetails = item_lines.map((item) => ({
       });
   
       await newCustomer.save();
-  
-
-
       try {
         // await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
         // newCustomer.messageSent = true;
@@ -291,20 +288,31 @@ const orderDetails = item_lines.map((item) => ({
 
 
   statusUpdate:async(req,res)=>{
-    const { id } = req.params;
-    const { status } = req.body;
+  
+    const {status} = req.body
 
     try {
-      const updateOrder = await OnlineOrder.findByIdAndUpdate(
-        id,
-
-      )
-    } catch (error) {
       
+      const order = await OnlineOrder.findByIdAndUpdate(
+        req.params.id,
+        { paymentStatus: status },
+        { new: true } // Return the updated order
+      );
+
+      if (!order) {
+        return res.status(404).send("Order not found");
+      }
+
+      res.send(order); // Send back the updated order
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Server error");
     }
+    
+
   },
 
-  // Customer Mobile Number message
+  
   
   }
 
