@@ -369,6 +369,7 @@ const CartSection = ({
     updateOrderStatus(order._id, "isAccepted", false);
     updateOrderStatus(order._id, "isAssigned", false);
     updateOrderStatus(order._id, "isReady", false);
+    updateOrderStatus(order._id, "showPlaceModal", false);
    
   };
 
