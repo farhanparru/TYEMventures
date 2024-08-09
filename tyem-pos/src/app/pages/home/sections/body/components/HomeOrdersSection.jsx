@@ -79,7 +79,7 @@ const OrderItem = ({ order, onClick, selected }) => {
   );
 };
 
-const OrderStatusHistory = ({ orderId }) => {
+const OrderStatusHistory = () => {
   const { orderStatuses } = useOrderStatus();
   const statuses = orderStatuses[orderId] || {}; 
     // Define a color mapping for the status
@@ -254,14 +254,17 @@ const CartSection = ({
   }
 
 
-  const [isAccepted, setIsAccepted] = useState(false);
-  const [isReady, setIsReady] = useState(false);
-  const [isAssigned, setIsAssigned] = useState(false);
-  const [showPlaceModal,setShowPlaceModal]=useState(false)
-
  // useContext Data
   
- const { updateOrderStatus } = useOrderStatus();
+  const { setIsAccepted, 
+          setIsReady,
+          setIsAssigned, 
+          setShowPlaceModal,
+          isAccepted,
+          isAssigned,
+          isReady,
+          showPlaceModal
+         } = useOrderStatus();
 
 
 
@@ -288,7 +291,6 @@ const CartSection = ({
     }
   };
 
-  // each item specific Order
    const handleStatusChange = (statusLabel) => {
     updateOrderStatus(order._id, statusLabel, true); // Update the status for the specific order
   };
@@ -710,10 +712,9 @@ const HomeOrdersSection = () => {
   const [selectedOrder, setSelectedOrder] = useState(
     orders.length > 0 ? orders[0] : null
   );
-  
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
-  const { setOrderStatus } = useOrderStatus(); // Assuming setOrderStatus is in your context
+  const [orderStatus, setOrderStatus] = useState(null); // Manage status here
   const { totalOrders, setTotalOrders } = useOrderContext(); // Access context values
 
   useEffect(() => {
@@ -826,6 +827,7 @@ const HomeOrdersSection = () => {
 
   return (
     <div className=" flex h-screen">
+      {/* <Drawer totalOrders={totalOrders} /> */}
       <OrderNotification setOrders={setOrders} />
       <div
         id="order-list"
