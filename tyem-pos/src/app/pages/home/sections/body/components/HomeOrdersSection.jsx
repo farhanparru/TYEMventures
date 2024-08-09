@@ -288,7 +288,7 @@ const CartSection = ({
     onComplete(order.number); // Call the onComplete function if needed
 
     onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
-    sendMessage(); // Send WhatsApp message
+    // sendMessage(); // Send WhatsApp message
   };
 
   const handleReady = (orderId) => {
@@ -329,8 +329,8 @@ const CartSection = ({
   }
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
-     
-      <div className="flex-grow">
+      {/* Cart Items */}
+      <div className="flex-grow overflow-auto max-h-96">
         {order.orderDetails.map((item, index) => (
           <div
             key={index}
@@ -343,7 +343,7 @@ const CartSection = ({
           </div>
         ))}
       </div>
-
+  
       {/* Summary and Actions */}
       <div className="mt-auto p-5 bg-gray-700 text-white rounded-lg">
         {/* Subtotal */}
@@ -354,7 +354,7 @@ const CartSection = ({
             {order.orderDetails[0].product_currency}
           </span>
         </div>
-
+  
         {/* Total */}
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold">Total</span>
@@ -363,7 +363,7 @@ const CartSection = ({
             {order.orderDetails[0].product_currency}
           </span>
         </div>
-
+  
         {/* Action Buttons */}
         <div className="flex justify-between items-center gap-4 mt-6">
           {isAssigned ? (
@@ -419,7 +419,7 @@ const CartSection = ({
               >
                 Accept
               </button>
-
+  
               <button
                 className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
                 onClick={() => handleReject(order._id)}
@@ -430,6 +430,7 @@ const CartSection = ({
           )}
         </div>
       </div>
+
 
       {showPlaceModal && (
         <CustomModal
