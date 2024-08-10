@@ -216,7 +216,7 @@ const Salesssection = () => {
 
   return (
     <div className=" flex h-screen">
-      <OrderNotification  />
+   
       <div
         id="order-list"
         className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
@@ -238,8 +238,7 @@ const Salesssection = () => {
           <CartSection />
         
           <p className="text-gray-500">Select an order to view the cart.</p>
-       
-        <ToastContainer />
+      
       </div>
     </div>
   );
