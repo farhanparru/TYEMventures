@@ -117,7 +117,6 @@ const OrderStatusHistory = ({ order }) => {
     // Assuming you have a way to filter the statuses based on the selected order
     const orderStatuses = statuses(order._id); 
 
-  console.log(orderStatuses,"kkk");
   
 
     return (
@@ -366,12 +365,22 @@ const CartSection = ({
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
-    updateOrderStatus(order._id, "isAccepted", false);
-    updateOrderStatus(order._id, "isAssigned", false);
-    updateOrderStatus(order._id, "isReady", false);
-    updateOrderStatus(order._id, "showPlaceModal", false);
+    updatePaymentStatus(orderId, "Reject"); // Update payment status
+    // updateOrderStatus(order._id, "isAccepted", false);
+    // updateOrderStatus(order._id, "isAssigned", false);
+    // updateOrderStatus(order._id, "isReady", false);
+    // updateOrderStatus(order._id, "showPlaceModal", false);
    
   };
+
+  const handlecancle = (orderId) => {
+    setIsAccepted(false);
+    setIsAssigned(false);
+    setIsReady(false);
+    updatePaymentStatus(orderId, "Cancel"); // Update payment status
+  
+  };
+
 
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
@@ -470,7 +479,7 @@ const CartSection = ({
               </button>
               <button
                 className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                onClick={() => handleReject(order._id)}
+                onClick={() => handlecancle(order._id)}
               >
                 Cancel
               </button>

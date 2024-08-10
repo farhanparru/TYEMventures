@@ -1,9 +1,3 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie } from "react-icons/fa";
-import { DateTime } from "luxon"; // Make sure to import luxon
-
-const OrderStatusContext = createContext();
-
 export const OrderStatusProvider = ({ children }) => {
   const [ordersStatus, setOrdersStatus] = useState(() => {
     const storedStatus = JSON.parse(localStorage.getItem("ordersStatus"));
@@ -97,5 +91,3 @@ export const OrderStatusProvider = ({ children }) => {
     </OrderStatusContext.Provider>
   );
 };
-
-export const useOrderStatus = () => useContext(OrderStatusContext);
