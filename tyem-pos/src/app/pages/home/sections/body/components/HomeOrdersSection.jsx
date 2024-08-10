@@ -109,11 +109,11 @@ const OrderStatusHistory = ({ order }) => {
 
 
   
-    // Convert UTC to IST
-    const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
-    const zonedDate = utcDate.setZone("Asia/Kolkata");
-    const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
-    const formattedTime = zonedDate.toFormat("hh:mm:ss a");
+    // // Convert UTC to IST
+    // const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
+    // const zonedDate = utcDate.setZone("Asia/Kolkata");
+    // const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+    // const formattedTime = zonedDate.toFormat("hh:mm:ss a");
   
   
     // Define a color mapping for the status
