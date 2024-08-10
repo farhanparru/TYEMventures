@@ -8,6 +8,7 @@ const OrderNotification = ({ setOrders }) => {
     const [audio] = useState(new Audio(notificationSound));
 
     const playNotificationSound = () => {
+        //Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
         audio.play();
     };
 
@@ -18,11 +19,11 @@ const OrderNotification = ({ setOrders }) => {
             const newOrder = JSON.parse(event.data);
             playNotificationSound();
 
-            // Notify the user
-            toast.info(`New order received: ${newOrder.orderMeta?.posOrderId}`, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 5000
-            });
+            // // Notify the user
+            // toast.info(`New order received: ${newOrder.orderMeta?.posOrderId}`, {
+            //     position: toast.POSITION.TOP_RIGHT,
+            //     autoClose: 5000
+            // });
 
              // Add the new order to the beginning of the orders list
              setOrders((prevOrders) => [newOrder, ...prevOrders]);

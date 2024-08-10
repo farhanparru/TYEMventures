@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie } from "react-icons/fa";
+import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie, FaTimes } from "react-icons/fa";
+
 import { DateTime } from "luxon"; // Make sure to import luxon
 
 const OrderStatusContext = createContext();
@@ -26,17 +27,21 @@ export const OrderStatusProvider = ({ children }) => {
         readyDate: "",
         assignedDate: "",
         completedDate: "",
+        rejectedDate: "", // Add this line if necessary
       };
 
-      // Update the specific status key and set the date
+      
       orderStatuses[statusKey] = value;
       if (value) {
-        orderStatuses[`${statusKey}Date`] = currentDateTime; // Store the date and time when status was updated
+        orderStatuses[`${statusKey}Date`] = currentDateTime;
+      } else if (statusKey === "isAccepted") {
+        orderStatuses.rejectedDate = currentDateTime; // Track rejection date if applicable
       }
-
+  
       return { ...prev, [orderId]: orderStatuses };
     });
   };
+
 
   const getOrderStatuses = (orderId) => {
     return ordersStatus[orderId] || {
@@ -48,6 +53,7 @@ export const OrderStatusProvider = ({ children }) => {
       readyDate: "",
       assignedDate: "",
       completedDate: "",
+      rejectedDate: "", // Add this line
     };
   };
 
@@ -55,10 +61,12 @@ export const OrderStatusProvider = ({ children }) => {
     const orderStatuses = getOrderStatuses(orderId);
 
     return [
+
+   
       {
         label: "Confirmed",
         completed: orderStatuses.isAccepted,
-        icon: <FaClipboardCheck className="text-white w-8 h-8" />,
+        icon: orderStatuses.isAccepted ? <FaClipboardCheck className="text-white w-8 h-8" /> : <FaTimes className="text-white w-8 h-8" />,
         date: orderStatuses.confirmedDate
           ? DateTime.fromISO(orderStatuses.confirmedDate).toFormat("MMM dd, yyyy hh:mm:ss a")
           : "",

@@ -21,7 +21,7 @@ import { useOrderContext } from "./OrderContext.jsx";
 import { useOrderStatus } from "../../../components/StatusContext.jsx";
 import { FaCalendar, FaClock } from 'react-icons/fa'; // Adjust the import according to your icon library
 import { usePaymentStatus } from "../../../components/PaymentStatusContext.jsx";
-
+import { DateTime } from 'luxon'; // Import luxon for date formatting
 
 
 // OrderItem component
@@ -113,11 +113,13 @@ const OrderStatusHistory = ({ order }) => {
       Ready: "bg-yellow-500",
       Assigned: "bg-blue-500",
       Completed: "bg-purple-500",
+      Rejected: "bg-red-500", // Add color for Rejected
     };
 
     // Assuming you have a way to filter the statuses based on the selected order
     const orderStatuses = statuses(order._id); 
 
+  console.log(orderStatuses,"gg");
   
 
     return (
@@ -151,16 +153,17 @@ const OrderStatusHistory = ({ order }) => {
               <span className={`block text-sm font-semibold ${status.completed ? "text-gray-700" : "text-gray-400"}`}>
                 {status.label}
               </span>
-              {status.date && (
-                <span className="block text-sm text-gray-500">
-                  {status.date}
-                </span>
-              )}
-              {status.employee && (
-                <span className="block text-sm text-gray-500">
-                  Assigned to: {status.employee}
-                </span>
-              )}
+              <h3 className="text-lg font-semibold">{status.label}</h3>
+            {status.date && (
+              <p className="text-sm text-gray-600">
+                {`Date: ${DateTime.fromISO(status.date).setZone('Asia/Kolkata').toFormat('MMM dd, yyyy hh:mm:ss a')}`}
+              </p>
+            )}
+            {status.employee && (
+              <p className="text-sm text-gray-600">
+                {`Handled by: ${status.employee}`}
+              </p>
+            )}
             </div>
           </div>
           ))}
@@ -341,6 +344,7 @@ const CartSection = ({
     sendMessage(); // Send WhatsApp message
     updatePaymentStatus(orderId, "Confirmed"); // Update payment status
     updateOrderStatus(order._id, "isAccepted", true);
+    updateOrderStatus(orderId, "confirmedDate", true); // Set the confirmation date
     onComplete(order._id); // Call the completion handler
   };
 
@@ -367,10 +371,8 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     updatePaymentStatus(orderId, "Reject"); // Update payment status
-    // updateOrderStatus(order._id, "isAccepted", false);
-    // updateOrderStatus(order._id, "isAssigned", false);
-    // updateOrderStatus(order._id, "isReady", false);
-    // updateOrderStatus(order._id, "showPlaceModal", false);
+    updateOrderStatus(orderId, "isAccepted", false); // Update order status
+ 
    
   };
 
@@ -779,6 +781,7 @@ const HomeOrdersSection = () => {
   const playNotificationSound = () => {
     const newAudio = new Audio(notificationSound);
     newAudio.loop = true;
+    //HomeOrdersSection.jsx:782 Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
     newAudio.play();
     setAudio(newAudio);
 
@@ -837,6 +840,9 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
+
+
+
   const handleComplete = (orderId) => {
     console.log(`Order ${orderId} accepted`);
     setOrderStatus("Completed");
@@ -870,6 +876,8 @@ const HomeOrdersSection = () => {
     );
     setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
   };
+
+
 
   return (
     <div className=" flex h-screen">
