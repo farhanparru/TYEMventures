@@ -8,7 +8,7 @@ const SalesSection = () => {
     <div className="min-h-screen bg-gray-100 p-4">
       <Header />
       <div className="grid grid-cols-4 gap-4">
-        <div className="col-span-1 bg-white p-4 rounded-lg shadow-lg h-screen overflow-y-auto">
+        <div className="col-span-1 bg-white p-4 rounded-lg shadow-lg overflow-y-auto h-screen">
           <OrderList />
         </div>
         <div className="col-span-2 bg-white p-6 rounded-lg shadow-lg">
@@ -61,46 +61,34 @@ const Header = () => {
 }
 
 const OrderList = () => {
-  const [selectedOrder, setSelectedOrder] = useState(null);
-
   const orders = [
-    { invoice: '967782782207240018', items: 1, amount: 40, method: 'Credit', date: 'Sat, Jul 27, 2024, 6:50 AM' },
-    { invoice: '967782782207240017', items: 1, amount: 70, method: 'Cash', date: 'Mon, Jul 22, 2024, 6:53 AM' },
-    { invoice: '967782782207240016', items: 1, amount: 40, method: 'Card', date: 'Mon, Jul 22, 2024, 6:53 AM' },
-    { invoice: '967782781607240015', items: 1, amount: 390, method: 'Other', date: 'Tue, Jul 16, 2024, 1:07 PM' },
-    { invoice: '967782781607240014', items: 1, amount: 50, method: 'Card', date: 'Tue, Jul 16, 2024, 12:40 PM' },
-    { invoice: '967782781607240013', items: 1, amount: 60, method: 'Cash', date: 'Tue, Jul 16, 2024, 11:17 AM' },
+    { invoice: '967782782207240018', items: 1, amount: 40, method: 'Credit', date: 'Sat, Jul 27, 2024, 6:50 AM', selected: true },
+    { invoice: '967782782207240017', items: 1, amount: 70, method: 'Cash', date: 'Mon, Jul 22, 2024, 6:53 AM', selected: false },
+    { invoice: '967782782207240016', items: 1, amount: 40, method: 'Card', date: 'Mon, Jul 22, 2024, 6:53 AM', selected: false },
+    { invoice: '967782781607240015', items: 1, amount: 390, method: 'Other', date: 'Tue, Jul 16, 2024, 1:07 PM', selected: false },
+    { invoice: '967782781607240014', items: 1, amount: 50, method: 'Card', date: 'Tue, Jul 16, 2024, 12:40 PM', selected: false },
+    { invoice: '967782781607240013', items: 1, amount: 60, method: 'Cash', date: 'Tue, Jul 16, 2024, 11:17 AM', selected: false },
     // Add other orders here...
   ];
 
-  const handleOrderClick = (order) => {
-    setSelectedOrder(order.invoice);
-  };
-
   return (
-    <div className="space-y-3">
-      {orders.map((order) => (
-        <div
-          key={order.invoice}
-          className={`p-4 rounded-lg shadow-md border cursor-pointer ${
-            selectedOrder === order.invoice ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-gray-200'
-          } ${selectedOrder !== order.invoice ? 'hover:bg-blue-100 hover:border-blue-300' : ''}`}
-          onClick={() => handleOrderClick(order)}
-        >
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-lg font-semibold">INV# {order.invoice}</h3>
-              <p className="text-sm">
-                {order.items} Item{order.items > 1 ? 's' : ''} | ₹{order.amount} | {order.method}
-              </p>
-              <p className="text-xs text-gray-400">{order.date}</p>
-            </div>
+    <div>
+      <h2 className="text-xl font-bold mb-4">Showing {orders.length} / {orders.length} orders</h2>
+      <div className="space-y-2">
+        {orders.map((order) => (
+          <div
+            key={order.invoice}
+            className={`p-4 border rounded-lg cursor-pointer ${order.selected ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}
+          >
+            <div className="font-bold">#{order.invoice}</div>
+            <div>{order.items} Item | ₹{order.amount} | {order.method}</div>
+            <div className="text-sm text-gray-600">{order.date}</div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
-};
+}
 
 const OrderDetails = () => {
   return (
@@ -155,47 +143,80 @@ const OrderDetails = () => {
   );
 }
 
-const CartSummary = () => {
+
+const CartSummary = ({ order }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  
   const menu = (
     <Menu>
       <Menu.Item key="1" icon={<FaPrint />}>Print</Menu.Item>
       <Menu.Item key="2" icon={<FaDownload />}>Download</Menu.Item>
       <Menu.Item key="3" icon={<MailOutlined />}>e-mail</Menu.Item>
-      <Menu.Item key="4" icon={<MessageOutlined />}>SMS</Menu.Item>
+      <Menu.Item key="4" icon={<MessageOutlined />}>sms</Menu.Item>
       <Menu.Item key="5" icon={<WhatsAppOutlined />}>WhatsApp</Menu.Item>
     </Menu>
   );
 
+  if (!order) {
+    return (
+      <div className="p-6 bg-gray-100 text-gray-500 rounded-lg">
+        Select an order to view cart items.
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Cart Summary</h3>
-        <FaUndoAlt className="text-xl cursor-pointer text-gray-500 hover:text-red-500 transition-colors" />
+    <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
+      {/* Cart Items */}
+      <div className="flex-grow overflow-auto max-h-96">
+        {order.orderDetails.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+          >
+            <span className="font-semibold">{item.product_name}</span>
+            <span>{item.product_quantity}</span>
+            <span>{item.unit_price}</span>
+            <span>{item.product_currency}</span>
+          </div>
+        ))}
       </div>
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-500">Subtotal:</div>
-        <div className="font-semibold">₹540.00</div>
-      </div>
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-500">Total Items:</div>
-        <div className="font-semibold">1</div>
-      </div>
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-500">Refund:</div>
-        <FaUndoAlt className="text-xl cursor-pointer text-gray-500 hover:text-red-500 transition-colors" />
-      </div>
-      <Dropdown overlay={menu} onVisibleChange={setDropdownVisible} visible={dropdownVisible}>
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => setDropdownVisible(!dropdownVisible)}
-        >
-          <div className="text-sm text-gray-500">Receipt:</div>
-          {dropdownVisible ? <UpOutlined /> : <DownOutlined />}
+
+      {/* Summary and Actions */}
+      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg">
+        {/* Subtotal */}
+        <div className="flex justify-between mb-4">
+          <span className="font-semibold">Subtotal</span>
+          <span>
+            {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
+          </span>
         </div>
-      </Dropdown>
+
+        {/* Total */}
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-semibold">Total</span>
+          <span>
+            {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
+          </span>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-between items-center gap-4 mt-6">
+          <button className="flex-1 flex items-center justify-center bg-yellow-500 text-black py-2 px-4 rounded-lg hover:bg-yellow-600">
+            <FaUndoAlt className="mr-2" /> Refund
+          </button>
+          <Dropdown
+            overlay={menu}
+            trigger={['click']}
+            onVisibleChange={(visible) => setDropdownVisible(visible)}
+          >
+            <button className="flex-1 flex items-center justify-center bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
+              Receipt {dropdownVisible ? <UpOutlined className="ml-2" /> : <DownOutlined className="ml-2" />}
+            </button>
+          </Dropdown>
+        </div>
+      </div>
     </div>
   );
-}
-
+};
 export default SalesSection;
