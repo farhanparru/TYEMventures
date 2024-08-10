@@ -82,7 +82,7 @@ const OrderDetails = () => {
           </div>
           <div>
             <h4 className="font-semibold flex items-center">
-              <FaTruck className="mr-2 text-gray-500" /> Delivery Charge
+           Delivery Charge
             </h4>
             <p>
              98
