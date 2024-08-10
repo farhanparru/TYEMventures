@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie, FaTimesCircle } from "react-icons/fa"; // Import FaTimesCircle for Reject
-import { DateTime } from "luxon";
+import { FaClipboardCheck, FaBoxOpen, FaCheckCircle, FaUserTie } from "react-icons/fa";
+import { DateTime } from "luxon"; // Make sure to import luxon
 
 const OrderStatusContext = createContext();
 
@@ -15,46 +15,39 @@ export const OrderStatusProvider = ({ children }) => {
   }, [ordersStatus]);
 
   const updateOrderStatus = (orderId, statusKey, value) => {
-    const currentDateTime = DateTime.now().setZone("Asia/Kolkata").toISO();
+    const currentDateTime = DateTime.now().setZone("Asia/Kolkata").toISO(); // Current date and time in IST
     setOrdersStatus((prev) => {
       const orderStatuses = prev[orderId] || {
         isAccepted: false,
         isReady: false,
         isAssigned: false,
-        isRejected: false,
         showPlaceModal: false,
         confirmedDate: "",
         readyDate: "",
         assignedDate: "",
         completedDate: "",
-        rejectedDate: "",
       };
 
+      // Update the specific status key and set the date
       orderStatuses[statusKey] = value;
       if (value) {
-        orderStatuses[`${statusKey}Date`] = currentDateTime;
+        orderStatuses[`${statusKey}Date`] = currentDateTime; // Store the date and time when status was updated
       }
 
       return { ...prev, [orderId]: orderStatuses };
     });
   };
 
-
-  
-
-  
   const getOrderStatuses = (orderId) => {
     return ordersStatus[orderId] || {
       isAccepted: false,
       isReady: false,
       isAssigned: false,
-      isRejected: false,
       showPlaceModal: false,
       confirmedDate: "",
       readyDate: "",
       assignedDate: "",
       completedDate: "",
-      rejectedDate: "",
     };
   };
 
@@ -68,14 +61,6 @@ export const OrderStatusProvider = ({ children }) => {
         icon: <FaClipboardCheck className="text-white w-8 h-8" />,
         date: orderStatuses.confirmedDate
           ? DateTime.fromISO(orderStatuses.confirmedDate).toFormat("MMM dd, yyyy hh:mm:ss a")
-          : "",
-      },
-      {
-        label: "Rejected",
-        completed: orderStatuses.isRejected,
-        icon: <FaTimesCircle className="text-white w-8 h-8" />,
-        date: orderStatuses.rejectedDate
-          ? DateTime.fromISO(orderStatuses.rejectedDate).toFormat("MMM dd, yyyy hh:mm:ss a")
           : "",
       },
       {
