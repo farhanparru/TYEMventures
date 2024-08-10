@@ -1,193 +1,102 @@
-import React, { useState } from 'react';
-import { FaUndoAlt, FaPrint, FaDownload } from 'react-icons/fa';
-import { Dropdown, Menu } from 'antd';
-import { DownOutlined, UpOutlined, MailOutlined, MessageOutlined, WhatsAppOutlined } from '@ant-design/icons';
+import React from 'react';
 
 const SalesSection = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <Header />
-      <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-3 bg-white p-4 rounded-lg shadow-lg overflow-y-auto h-[calc(100vh-150px)]">
-          <OrderList />
+    <div className="flex flex-col w-full h-screen p-4">
+      {/* Search & Filter Bar */}
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex space-x-4">
+          <input type="text" placeholder="Search by invoice #" className="p-2 border rounded" />
+          <input type="text" placeholder="Customer name" className="p-2 border rounded" />
+          <select className="p-2 border rounded">
+            <option>Payment Method</option>
+            <option>Cash</option>
+            <option>Credit</option>
+            <option>Card</option>
+            <option>Other</option>
+          </select>
+          <input type="date" placeholder="Date Range" className="p-2 border rounded" />
+          <select className="p-2 border rounded">
+            <option>Status</option>
+            <option>Completed</option>
+            <option>Pending</option>
+            <option>Cancelled</option>
+          </select>
         </div>
-        <div className="col-span-6 bg-white p-6 rounded-lg shadow-lg h-[calc(100vh-150px)]">
-          <OrderDetails />
-        </div>
-        <div className="col-span-3 bg-white p-6 rounded-lg shadow-lg h-[calc(100vh-150px)]">
-          <CartSummary />
+        <div className="flex space-x-2">
+          <button className="bg-blue-500 text-white px-4 py-2 rounded">Export</button>
+          <button className="bg-red-500 text-white px-4 py-2 rounded">Clear All</button>
         </div>
       </div>
-    </div>
-  );
-}
 
-const Header = () => {
-  return (
-    <div className="mb-6 flex space-x-4">
-      <input
-        type="text"
-        placeholder="Search by invoice #"
-        className="w-1/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <input
-        type="text"
-        placeholder="Customer name"
-        className="w-1/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <select className="w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option>Payment Method</option>
-        <option>Credit</option>
-        <option>Cash</option>
-        <option>Card</option>
-      </select>
-      <input
-        type="date"
-        className="w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <select className="w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option>Status</option>
-        <option>Paid</option>
-        <option>Outstanding</option>
-      </select>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-        Export
-      </button>
-      <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-        Clear All
-      </button>
-    </div>
-  );
-}
-
-const OrderList = () => {
-  const orders = [
-    { invoice: '967782782207240018', items: 1, amount: 40, method: 'Credit', date: 'Sat, Jul 27, 2024, 6:50 AM', selected: true },
-    { invoice: '967782782207240017', items: 1, amount: 70, method: 'Cash', date: 'Mon, Jul 22, 2024, 6:53 AM', selected: false },
-    { invoice: '967782782207240016', items: 1, amount: 40, method: 'Card', date: 'Mon, Jul 22, 2024, 6:53 AM', selected: false },
-    { invoice: '967782781607240015', items: 1, amount: 390, method: 'Other', date: 'Tue, Jul 16, 2024, 1:07 PM', selected: false },
-    { invoice: '967782781607240014', items: 1, amount: 50, method: 'Card', date: 'Tue, Jul 16, 2024, 12:40 PM', selected: false },
-    { invoice: '967782781607240013', items: 1, amount: 60, method: 'Cash', date: 'Tue, Jul 16, 2024, 11:17 AM', selected: false },
-    // Add other orders here...
-  ];
-
-  return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Showing {orders.length} / {orders.length} orders</h2>
-      <div className="space-y-2">
-        {orders.map((order) => (
-          <div
-            key={order.invoice}
-            className={`p-4 border rounded-lg cursor-pointer ${order.selected ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}
-          >
-            <div className="font-bold">#{order.invoice}</div>
-            <div>{order.items} Item | ₹{order.amount} | {order.method}</div>
-            <div className="text-sm text-gray-600">{order.date}</div>
+      {/* Main Content */}
+      <div className="flex flex-1">
+        {/* Orders List */}
+        <div className="w-1/4 border-r p-2 overflow-y-auto">
+          <p className="font-bold">Showing 16 / 16 orders</p>
+          <div className="mt-4">
+            {/* Order Item */}
+            <div className="p-4 bg-gray-100 border-b mb-2 cursor-pointer">
+              <p className="font-semibold"># 96778278207240020</p>
+              <p>1 Item | ₹100.00 | Cash</p>
+              <p>Wed, Aug 7, 2024, 11:47 PM</p>
+            </div>
+            <div className="p-4 bg-blue-200 border-b mb-2 cursor-pointer">
+              <p className="font-semibold"># 96778278207240017</p>
+              <p>1 Item | ₹70.00 | Cash</p>
+              <p>Mon, Jul 22, 2024, 6:53 AM</p>
+            </div>
+            {/* Add more order items similarly */}
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+        </div>
 
-const OrderDetails = () => {
-  return (
-    <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg h-full">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-4">Payment Details</h2>
-        <div className="grid grid-cols-2 gap-4 text-gray-800">
+        {/* Payment & Customer Details */}
+        <div className="w-2/4 p-4">
+          <div className="mb-4">
+            <p className="text-lg font-semibold">Payment Details</p>
+            <p>Invoice Number: 96778278207240017</p>
+            <p>Payment Method: Cash</p>
+            <p>Amount Tendered: ₹2,000.00</p>
+            <p>Change Given: ₹1,930.00</p>
+            <p>Date & Time: Mon, Jul 22, 2024, 6:53 AM</p>
+          </div>
           <div>
-            <div className="font-semibold">Invoice Number:</div>
-            <div className="mt-2">Payment Method:</div>
-            <div className="mt-2">Notes:</div>
-            <div className="mt-2">Date & Time:</div>
+            <p className="text-lg font-semibold">Customer Details</p>
+            <p>Name: Muhammad Shamin Farhan Farhan</p>
+            <p>Phone Number: xxxxxx7703</p>
           </div>
-          <div className="text-right">
-            <div className="font-semibold">967782782207240018</div>
-            <div className="mt-2">Credit</div>
-            <div className="mt-2">noo</div>
-            <div className="mt-2">Sat, Jul 27, 2024, 6:50 AM</div>
+          <div className="mt-4 text-green-500 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="ml-2">Transaction Synced</p>
           </div>
         </div>
-      </div>
 
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-4">Customer Details</h2>
-        <div className="grid grid-cols-2 gap-4 text-gray-800">
+        {/* Cart Section */}
+        <div className="w-1/4 bg-gray-800 text-white p-4 flex flex-col justify-between">
           <div>
-            <div className="font-semibold">Name:</div>
-            <div className="mt-2">Phone Number:</div>
-            <div className="mt-2">Order Outstanding:</div>
+            <p>CHICKEN SHAWARMA ROLL (NORMAL)</p>
+            <p>₹70.00 × 1 = ₹70.00</p>
           </div>
-          <div className="text-right">
-            <div className="mt-2">Mahroof</div>
-            <div className="mt-2">xxxxxx9688</div>
-            <div className="mt-2 text-red-500 font-bold">₹40.00</div>
+          <div className="mt-4">
+            <div className="flex justify-between">
+              <p>Subtotal</p>
+              <p>₹70.00</p>
+            </div>
+            <div className="flex justify-between mt-2">
+              <p>Total</p>
+              <p className="text-xl font-bold">₹70.00</p>
+            </div>
+            <div className="flex space-x-2 mt-4">
+              <button className="flex-1 bg-yellow-500 text-black py-2 rounded">Refund</button>
+              <button className="flex-1 bg-green-500 text-black py-2 rounded">Receipt</button>
+            </div>
           </div>
-        </div>
-        <button className="bg-green-500 text-white px-6 py-3 rounded-lg mt-6 hover:bg-green-600 transition-colors">
-          Pay Outstanding
-        </button>
-      </div>
-
-      <div className="flex items-center text-green-500 mt-6">
-        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-        </svg>
-        <div className="ml-2">
-          <div className="font-semibold">Transaction Synced</div>
-          <div className="text-gray-500 text-sm">Sat, Jul 27, 2024, 6:50 AM</div>
         </div>
       </div>
     </div>
   );
-}
-
-const CartSummary = () => {
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const menu = (
-    <Menu>
-      <Menu.Item key="1" icon={<FaPrint />}>Print</Menu.Item>
-      <Menu.Item key="2" icon={<FaDownload />}>Download</Menu.Item>
-      <Menu.Item key="3" icon={<MailOutlined />}>e-mail</Menu.Item>
-      <Menu.Item key="4" icon={<MessageOutlined />}>sms</Menu.Item>
-      <Menu.Item key="5" icon={<WhatsAppOutlined />}>WhatsApp</Menu.Item>
-    </Menu>
-  );
-
-  return (
-    <div className="flex flex-col h-full p-6 bg-gray-100 shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">Cart Summary</h2>
-      <div className="space-y-4">
-        <div className="p-4 bg-white rounded-lg shadow">
-          <div className="font-bold">Total Items: 1</div>
-          <div className="mt-2 font-semibold">₹40.00</div>
-        </div>
-        <div className="p-4 bg-white rounded-lg shadow">
-          <div className="font-bold">Discount: ₹0.00</div>
-        </div>
-        <div className="p-4 bg-white rounded-lg shadow">
-          <div className="font-bold">Total Amount: ₹40.00</div>
-        </div>
-        <div className="p-4 bg-white rounded-lg shadow">
-          <div className="font-bold">Paid: ₹0.00</div>
-        </div>
-      </div>
-      <div className="mt-auto">
-        <Dropdown
-          overlay={menu}
-          trigger={['click']}
-          visible={dropdownVisible}
-          onVisibleChange={(flag) => setDropdownVisible(flag)}
-        >
-          <button className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg mt-6 hover:bg-blue-600 transition-colors flex items-center justify-between">
-            More Options
-            {dropdownVisible ? <UpOutlined className="ml-2" /> : <DownOutlined className="ml-2" />}
-          </button>
-        </Dropdown>
-      </div>
-    </div>
-  );
-}
+};
 
 export default SalesSection;
