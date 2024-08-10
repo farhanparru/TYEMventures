@@ -127,7 +127,7 @@ const OrderStatusHistory = ({ order }) => {
     // Assuming you have a way to filter the statuses based on the selected order
     const orderStatuses = statuses(order._id); 
 
-  
+    console.log(orderStatuses,"orderStatuses");
 
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">

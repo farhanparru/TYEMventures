@@ -39,7 +39,7 @@ export const OrderStatusProvider = ({ children }) => {
     });
   };
 
-  console.log(orderStatuses,"orderStatuses");
+
   
 
   
