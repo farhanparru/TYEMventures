@@ -17,6 +17,8 @@ export const OrderStatusProvider = ({ children }) => {
 
   const updateOrderStatus = (orderId, statusKey, value) => {
     const currentDateTime = DateTime.now().setZone("Asia/Kolkata").toISO(); // Current date and time in IST
+    console.log(currentDateTime,"currentDateTime");
+    
     setOrdersStatus((prev) => {
       const orderStatuses = prev[orderId] || {
         isAccepted: false,
@@ -64,9 +66,9 @@ export const OrderStatusProvider = ({ children }) => {
 
    
       {
-        label: "Confirmed",
-        completed: orderStatuses.isAccepted,
-        icon: orderStatuses.isAccepted ? <FaClipboardCheck className="text-white w-8 h-8" /> : <FaTimes className="text-white w-8 h-8" />,
+        label: orderStatuses.isRejected ? "Rejected" : "Confirmed",
+        completed: orderStatuses.isAccepted || orderStatuses.isRejected,
+        icon: orderStatuses.isRejected ? <FaTimes className="text-white w-8 h-8" /> : <FaClipboardCheck className="text-white w-8 h-8" />,
         date: orderStatuses.confirmedDate
           ? DateTime.fromISO(orderStatuses.confirmedDate).toFormat("MMM dd, yyyy hh:mm:ss a")
           : "",

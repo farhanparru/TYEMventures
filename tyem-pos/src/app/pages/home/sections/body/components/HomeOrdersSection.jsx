@@ -137,12 +137,13 @@ const OrderStatusHistory = ({ order }) => {
               </div>
   
              
+          
             {/* Connector Line */}
-            {index < statuses.length - 1 && (
+            {index < orderStatuses.length - 1 && (
               <div
                 className={`absolute top-1/2 left-full transform -translate-y-1/2 w-20 h-1 ${
-                  statuses[index + 1].completed
-                    ? statusColors[statuses[index + 1].label]
+                  orderStatuses[index + 1].completed
+                    ? statusColors[orderStatuses[index + 1].label]
                     : "bg-gray-300"
                 }`}
               ></div>
@@ -154,16 +155,16 @@ const OrderStatusHistory = ({ order }) => {
                 {status.label}
               </span>
               <h3 className="text-lg font-semibold">{status.label}</h3>
-            {status.date && (
-              <p className="text-sm text-gray-600">
-                {`Date: ${DateTime.fromISO(status.date).setZone('Asia/Kolkata').toFormat('MMM dd, yyyy hh:mm:ss a')}`}
-              </p>
-            )}
-            {status.employee && (
-              <p className="text-sm text-gray-600">
-                {`Handled by: ${status.employee}`}
-              </p>
-            )}
+                {status.date && (
+                  <p className="text-sm text-gray-600">
+                    {`Date: ${status.date}`}
+                  </p>
+                )}
+                {status.employee && (
+                  <p className="text-sm text-gray-600">
+                    {`Handled by: ${status.employee}`}
+                  </p>
+                )}
             </div>
           </div>
           ))}
@@ -335,6 +336,7 @@ const CartSection = ({
  
 
   const handleAccept = (orderId) => {
+    const now = new Date().toISOString(); // Get current date and time in ISO format
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);
@@ -343,7 +345,10 @@ const CartSection = ({
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     sendMessage(); // Send WhatsApp message
     updatePaymentStatus(orderId, "Confirmed"); // Update payment status
-    updateOrderStatus(order._id, "isAccepted", true);
+    updateOrderStatus(orderId, {
+      isAccepted: true,
+      confirmedDate: now, // Set current date and time
+    });
     updateOrderStatus(orderId, "confirmedDate", true); // Set the confirmation date
     onComplete(order._id); // Call the completion handler
   };
