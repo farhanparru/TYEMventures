@@ -91,3 +91,5 @@ export const OrderStatusProvider = ({ children }) => {
     </OrderStatusContext.Provider>
   );
 };
+
+export const useOrderStatus = () => useContext(OrderStatusContext);
