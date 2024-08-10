@@ -3,11 +3,12 @@ import { FaUndoAlt, FaPrint, FaDownload } from 'react-icons/fa';
 import { Dropdown, Menu } from 'antd';
 import { DownOutlined, UpOutlined, MailOutlined, MessageOutlined, WhatsAppOutlined } from '@ant-design/icons';
 
+// Main SalesSection Component
 const SalesSection = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <Header />
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="col-span-1 bg-white p-4 rounded-lg shadow-lg overflow-y-auto h-screen">
           <OrderList />
         </div>
@@ -15,27 +16,28 @@ const SalesSection = () => {
           <OrderDetails />
         </div>
         <div className="col-span-1 bg-white p-6 rounded-lg shadow-lg">
-          <CartSummary />
+          <CartSummary order={null} /> {/* Pass an actual order object here */}
         </div>
       </div>
     </div>
   );
 }
 
+// Header Component
 const Header = () => {
   return (
-    <div className="mb-6 flex space-x-4">
+    <div className="mb-6 flex flex-wrap space-x-4 gap-4">
       <input
         type="text"
         placeholder="Search by invoice #"
-        className="w-1/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <input
         type="text"
         placeholder="Customer name"
-        className="w-1/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-      <select className="w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <select className="w-full md:w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
         <option>Payment Method</option>
         <option>Credit</option>
         <option>Cash</option>
@@ -43,9 +45,9 @@ const Header = () => {
       </select>
       <input
         type="date"
-        className="w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full md:w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-      <select className="w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <select className="w-full md:w-1/6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
         <option>Status</option>
         <option>Paid</option>
         <option>Outstanding</option>
@@ -60,15 +62,13 @@ const Header = () => {
   );
 }
 
+// OrderList Component
 const OrderList = () => {
   const orders = [
+    // Sample orders data
     { invoice: '967782782207240018', items: 1, amount: 40, method: 'Credit', date: 'Sat, Jul 27, 2024, 6:50 AM', selected: true },
     { invoice: '967782782207240017', items: 1, amount: 70, method: 'Cash', date: 'Mon, Jul 22, 2024, 6:53 AM', selected: false },
-    { invoice: '967782782207240016', items: 1, amount: 40, method: 'Card', date: 'Mon, Jul 22, 2024, 6:53 AM', selected: false },
-    { invoice: '967782781607240015', items: 1, amount: 390, method: 'Other', date: 'Tue, Jul 16, 2024, 1:07 PM', selected: false },
-    { invoice: '967782781607240014', items: 1, amount: 50, method: 'Card', date: 'Tue, Jul 16, 2024, 12:40 PM', selected: false },
-    { invoice: '967782781607240013', items: 1, amount: 60, method: 'Cash', date: 'Tue, Jul 16, 2024, 11:17 AM', selected: false },
-    // Add other orders here...
+    // Add more orders here...
   ];
 
   return (
@@ -90,6 +90,7 @@ const OrderList = () => {
   );
 }
 
+// OrderDetails Component
 const OrderDetails = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">
@@ -143,7 +144,7 @@ const OrderDetails = () => {
   );
 }
 
-
+// CartSummary Component
 const CartSummary = ({ order }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   
@@ -183,40 +184,33 @@ const CartSummary = ({ order }) => {
       </div>
 
       {/* Summary and Actions */}
-      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg">
-        {/* Subtotal */}
-        <div className="flex justify-between mb-4">
-          <span className="font-semibold">Subtotal</span>
-          <span>
-            {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
-          </span>
+      <div className="mt-4 flex flex-col space-y-4">
+        <div className="flex justify-between text-white font-semibold text-lg">
+          <span>Subtotal:</span>
+          <span>₹{order.subtotal}</span>
         </div>
-
-        {/* Total */}
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-semibold">Total</span>
-          <span>
-            {order.orderMeta.paymentTendered} {order.orderDetails[0].product_currency}
-          </span>
+        <div className="flex justify-between text-white font-semibold text-lg">
+          <span>Discount:</span>
+          <span>₹{order.discount}</span>
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-between items-center gap-4 mt-6">
-          <button className="flex-1 flex items-center justify-center bg-yellow-500 text-black py-2 px-4 rounded-lg hover:bg-yellow-600">
-            <FaUndoAlt className="mr-2" /> Refund
+        <div className="flex justify-between text-white font-semibold text-lg">
+          <span>Total:</span>
+          <span>₹{order.total}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <button className="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition">
+            <FaUndoAlt />
+            <span className="ml-2">Refund</span>
           </button>
-          <Dropdown
-            overlay={menu}
-            trigger={['click']}
-            onVisibleChange={(visible) => setDropdownVisible(visible)}
-          >
-            <button className="flex-1 flex items-center justify-center bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
-              Receipt {dropdownVisible ? <UpOutlined className="ml-2" /> : <DownOutlined className="ml-2" />}
-            </button>
+          <Dropdown overlay={menu} trigger={['click']} visible={dropdownVisible} onClick={() => setDropdownVisible(!dropdownVisible)}>
+            <a className="ant-dropdown-link text-blue-400 hover:underline">
+              More Actions <DownOutlined />
+            </a>
           </Dropdown>
         </div>
       </div>
     </div>
   );
-};
+}
+
 export default SalesSection;

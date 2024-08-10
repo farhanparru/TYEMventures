@@ -108,13 +108,6 @@ const OrderStatusHistory = ({ order }) => {
   const { statuses } = useOrderStatus();
 
 
-  const formatDateTime = (timestamp) => {
-    const utcDate = DateTime.fromISO(timestamp, { zone: 'utc' });
-    const zonedDate = utcDate.setZone('Asia/Kolkata');
-    const formattedDate = zonedDate.toFormat('MMM dd, yyyy');
-    const formattedTime = zonedDate.toFormat('hh:mm:ss a');
-    return { formattedDate, formattedTime };
-  };
   
     // Define a color mapping for the status
     const statusColors = {
@@ -131,49 +124,48 @@ const OrderStatusHistory = ({ order }) => {
 
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
-        <div className="relative flex flex-col items-center">
-          {orderStatuses?.map((status, index) => {
-            const { formattedDate, formattedTime } = formatDateTime(status.timestamp);
-  
-            return (
-              <div key={index} className="flex flex-col items-center relative mb-8">
-                {/* Status Icon */}
-                <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                    status.completed ? statusColors[status.label] : "bg-gray-300"
-                  }`}
-                >
-                  {status.icon}
-                </div>
-  
-                {/* Connector Line */}
-                {index < orderStatuses.length - 1 && (
-                  <div
-                    className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-8 ${
-                      orderStatuses[index + 1].completed
-                        ? statusColors[orderStatuses[index + 1].label]
-                        : "bg-gray-300"
-                    }`}
-                  ></div>
-                )}
-  
-                {/* Status Details */}
-                <div className="mt-2 text-center">
-                  <span className={`block text-sm font-semibold ${status.completed ? "text-gray-700" : "text-gray-400"}`}>
-                    {status.label}
-                  </span>
-                  <span className="block text-sm text-gray-500">
-                    {formattedDate} {formattedTime}
-                  </span>
-                  {status.employee && (
-                    <span className="block text-sm text-gray-500">
-                      Assigned to: {status.employee}
-                    </span>
-                  )}
-                </div>
+        <div className="flex items-center justify-between">
+          {orderStatuses?.map((status, index) => (
+            <div key={index} className="flex flex-col items-center">
+              {/* Status Icon */}
+              <div
+                className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                  status.completed ? statusColors[status.label] : "bg-gray-300"
+                }`}
+              >
+                {status.icon}
               </div>
-            );
-          })}
+  
+             
+            {/* Connector Line */}
+            {index < statuses.length - 1 && (
+              <div
+                className={`absolute top-1/2 left-full transform -translate-y-1/2 w-20 h-1 ${
+                  statuses[index + 1].completed
+                    ? statusColors[statuses[index + 1].label]
+                    : "bg-gray-300"
+                }`}
+              ></div>
+            )}
+  
+            {/* Status Details */}
+            <div className="mt-2 text-center">
+              <span className={`block text-sm font-semibold ${status.completed ? "text-gray-700" : "text-gray-400"}`}>
+                {status.label}
+              </span>
+              {status.date && (
+                <span className="block text-sm text-gray-500">
+                  {status.date}
+                </span>
+              )}
+              {status.employee && (
+                <span className="block text-sm text-gray-500">
+                  Assigned to: {status.employee}
+                </span>
+              )}
+            </div>
+          </div>
+          ))}
         </div>
       </div>
     );
