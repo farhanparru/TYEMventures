@@ -50,7 +50,7 @@ const OrderItem = ({ order, onClick, selected }) => {
   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
 
-
+  ;
 
   return (
     <div
@@ -107,27 +107,18 @@ const OrderItem = ({ order, onClick, selected }) => {
 const OrderStatusHistory = ({ order }) => {
   const { statuses } = useOrderStatus();
 
-
-  
-    // // Convert UTC to IST
-    // const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
-    // const zonedDate = utcDate.setZone("Asia/Kolkata");
-    // const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
-    // const formattedTime = zonedDate.toFormat("hh:mm:ss a");
-  
-  
     // Define a color mapping for the status
     const statusColors = {
       Confirmed: "bg-green-500",
-      Rejected: "bg-red-500", // Add a color for the rejected status
       Ready: "bg-yellow-500",
       Assigned: "bg-blue-500",
       Completed: "bg-purple-500",
     };
+
     // Assuming you have a way to filter the statuses based on the selected order
     const orderStatuses = statuses(order._id); 
 
-    console.log(orderStatuses,"orderStatuses");
+  
 
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
@@ -157,7 +148,7 @@ const OrderStatusHistory = ({ order }) => {
   
             {/* Status Details */}
             <div className="mt-2 text-center">
-            <span className={`block text-sm font-semibold ${status.completed ? "text-gray-700" : "text-gray-400"}`}>
+              <span className={`block text-sm font-semibold ${status.completed ? "text-gray-700" : "text-gray-400"}`}>
                 {status.label}
               </span>
               {status.date && (
@@ -376,8 +367,10 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     updatePaymentStatus(orderId, "Reject"); // Update payment status
-    updateOrderStatus(orderId, "isRejected", true); // Update the order status to rejected
-   
+    // updateOrderStatus(order._id, "isAccepted", false);
+    // updateOrderStatus(order._id, "isAssigned", false);
+    // updateOrderStatus(order._id, "isReady", false);
+    // updateOrderStatus(order._id, "showPlaceModal", false);
    
   };
 
@@ -784,19 +777,17 @@ const HomeOrdersSection = () => {
 
   // Play notification sound
   const playNotificationSound = () => {
-    if (audio) {
-      audio.loop = true;
-      audio.muted = false;
-      audio.play();
+    const newAudio = new Audio(notificationSound);
+    newAudio.loop = true;
+    newAudio.play();
+    setAudio(newAudio);
 
-      setTimeout(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        setSoundPlaying(false);
-      }, 5 * 60 * 1000); // Stop sound after 5 minutes
-    }
-  }
-
+    setTimeout(() => {
+      newAudio.pause();
+      newAudio.currentTime = 0;
+      setSoundPlaying(false);
+    }, 5 * 60 * 1000); // Stop sound after 5 minutes
+  };
 
   const pauseNotificationSound = () => {
     if (audio) {
@@ -808,29 +799,8 @@ const HomeOrdersSection = () => {
 
 
 
-  
-
   // Fetch orders and set up WebSocket
   useEffect(() => {
-
-
-   // Preload and play muted audio to bypass restrictions
-   const initializeAudio = () => {
-    const newAudio = new Audio(notificationSound);
-    newAudio.loop = true;
-    newAudio.muted = true; // Start muted
-    newAudio.play().then(() => {
-      newAudio.pause(); // Pause after the first play
-      newAudio.muted = false; // Unmute for future plays
-      setAudio(newAudio);
-    }).catch((error) => {
-      console.error('Failed to autoplay audio:', error);
-    });
-  };
-
-  initializeAudio();
-
-
     const fetchAndSetOrders = async () => {
       try {
         const data = await fetchOrders();
@@ -858,7 +828,7 @@ const HomeOrdersSection = () => {
         audio.pause(); // Ensure audio is stopped if the component unmounts
       }
     };
-  }, [audio, setTotalOrders,notificationSound]);
+  }, [audio, setTotalOrders]);
 
   // Handle sound playing state
   useEffect(() => {
@@ -866,8 +836,6 @@ const HomeOrdersSection = () => {
       playNotificationSound();
     }
   }, [soundPlaying]);
-
-
 
   const handleComplete = (orderId) => {
     console.log(`Order ${orderId} accepted`);
@@ -902,10 +870,6 @@ const HomeOrdersSection = () => {
     );
     setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
   };
-
-  
-
-
 
   return (
     <div className=" flex h-screen">
