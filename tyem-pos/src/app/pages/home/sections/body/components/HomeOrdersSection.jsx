@@ -127,6 +127,8 @@ const OrderStatusHistory = ({ order }) => {
         <div className="flex items-center justify-between">
           {orderStatuses?.map((status, index) => (
             <div key={index} className="flex flex-col items-center">
+
+         
               {/* Status Icon */}
               <div
                 className={`w-16 h-16 rounded-full flex items-center justify-center ${
@@ -155,16 +157,16 @@ const OrderStatusHistory = ({ order }) => {
                 {status.label}
               </span>
               <h3 className="text-lg font-semibold">{status.label}</h3>
-                {status.date && (
-                  <p className="text-sm text-gray-600">
-                    {`Date: ${status.date}`}
-                  </p>
-                )}
-                {status.employee && (
-                  <p className="text-sm text-gray-600">
-                    {`Handled by: ${status.employee}`}
-                  </p>
-                )}
+              {status.date && (
+                <p className="text-sm text-gray-600">
+                  {`Date: ${DateTime.fromISO(status.date).toFormat("MMM dd, yyyy hh:mm:ss a")}`}
+                </p>
+              )}
+              {status.employee && (
+                <p className="text-sm text-gray-600">
+                  {`Handled by: ${status.employee}`}
+                </p>
+              )}
             </div>
           </div>
           ))}
@@ -336,7 +338,7 @@ const CartSection = ({
  
 
   const handleAccept = (orderId) => {
-    const now = new Date().toISOString(); // Get current date and time in ISO format
+  
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);
@@ -345,12 +347,10 @@ const CartSection = ({
     // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
     sendMessage(); // Send WhatsApp message
     updatePaymentStatus(orderId, "Confirmed"); // Update payment status
-    updateOrderStatus(orderId, {
-      isAccepted: true,
-      confirmedDate: now, // Set current date and time
-    });
-    updateOrderStatus(orderId, "confirmedDate", true); // Set the confirmation date
+    updateOrderStatus(orderId, "isAccepted", true);
+    updateOrderStatus(orderId, "confirmedDate", now);
     onComplete(order._id); // Call the completion handler
+    updateOrderStatus(orderId, "isRejected", false); // Ensure rejected is false
   };
 
   const handleReady = (orderId) => {
@@ -377,7 +377,7 @@ const CartSection = ({
     setIsReady(false);
     updatePaymentStatus(orderId, "Reject"); // Update payment status
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
- 
+    updateOrderStatus(orderId, "isRejected", true);
    
   };
 
