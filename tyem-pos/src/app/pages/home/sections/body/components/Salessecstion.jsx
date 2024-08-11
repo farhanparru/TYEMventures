@@ -9,6 +9,7 @@ import {
   WhatsAppOutlined,
 } from "@ant-design/icons";
 import { FaCheckCircle } from 'react-icons/fa';
+import axios from "axios";
 
 
 const OrderItem = () => {
@@ -209,7 +210,7 @@ const CartSection = () => {
         className="mt-auto p-4 bg-gray-700 text-white rounded-lg"
         style={{ marginBottom: "42px" }}
       >
-        {/* Subtotal */}
+        
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
           <span>
