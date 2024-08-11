@@ -10,6 +10,8 @@ const PrinterTypes = require("node-thermal-printer").types;
 const path = require('path');
 require("dotenv").config();
 
+
+
 const validateOrderData = (data) => {
   const {
     status,
@@ -206,7 +208,7 @@ module.exports = {
        // Initialize printer
     const printer = new ThermalPrinter({
       type: PrinterTypes.EPSON,
-      interface: 'printer_address_here',
+      interface: 'tcp://192.168.1.100:9100', // IP address and port for the printer
     });
 
     // Print Company Logo

@@ -8,7 +8,7 @@ import {
   MessageOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
-
+import { FaCheckCircle } from 'react-icons/fa';
 
 
 const OrderItem = () => {
@@ -42,13 +42,25 @@ const OrderItem = () => {
 };
 
 const OrderDetails = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handlePrint = () => {
+    window.print(); // Trigger print functionality
+  };
+
+  const handleDownload = () => {
+    // Handle download logic here
+    alert('Download functionality is not implemented yet.');
+  };
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h3 className="text-2xl font-bold mb-4 border-b pb-2">
-          Payment Details
-        </h3>
-
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2">Payment Details</h3>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Invoice Number</h4>
@@ -60,8 +72,7 @@ const OrderDetails = () => {
           </div>
           <div>
             <h4 className="font-semibold">Notes</h4>
-            <p>WhatsAppOrder</p>{" "}
-            {/* Ensure orderType is available in the order object */}
+            <p>WhatsAppOrder</p>
           </div>
           <div>
             <h4 className="font-semibold">Date & Time</h4>
@@ -77,7 +88,7 @@ const OrderDetails = () => {
           </div>
           <div>
             <h4 className="font-semibold">Total Amount</h4>
-            <p>inr</p>
+            <p>INR</p>
           </div>
           <div>
             <h4 className="font-semibold">Payment Method</h4>
@@ -87,10 +98,7 @@ const OrderDetails = () => {
       </div>
 
       <div className="mb-8">
-        <h3 className="text-2xl font-bold mb-4 border-b pb-2">
-          Customer Details
-        </h3>
-
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2">Customer Details</h3>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Name</h4>
@@ -111,36 +119,45 @@ const OrderDetails = () => {
         </div>
       </div>
 
-      {/* Pay Outstanding Button */}
       <div className="mb-8 text-center">
         <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
           Pay Outstanding
         </button>
       </div>
 
-      {/* Transaction Synced SVG */}
-      <div className="flex justify-center items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="w-6 h-6 text-green-500 mr-2"
+      <div className="mb-8 text-center relative">
+        <button
+          onClick={toggleDropdown}
+          className="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-900"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 8v4l3 3m-3-7a7 7 0 11-4.68 11.32A7 7 0 0112 3v1"
-          />
-        </svg>
-        <span className="text-green-500 font-semibold">
-          Transaction Synced
-        </span>
+          Invoice Options
+        </button>
+        {dropdownOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded shadow-lg z-10">
+            <button
+              onClick={handlePrint}
+              className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+            >
+              Print
+            </button>
+            <button
+              onClick={handleDownload}
+              className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+            >
+              Download
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-center items-center">
+        <FaCheckCircle className="w-6 h-6 text-green-500 mr-2" />
+        <span className="text-green-500 font-semibold">Transaction Synced</span>
       </div>
     </div>
   );
 };
+
 
 const CartSection = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
