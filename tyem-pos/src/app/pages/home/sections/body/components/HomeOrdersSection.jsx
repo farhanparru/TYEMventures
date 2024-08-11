@@ -273,6 +273,7 @@ const CartSection = ({
   orders,
   onOrderAccept, // New prop
   rejectedOrders,
+  updateRejectedOrders
 }) => {
 
 
