@@ -283,7 +283,7 @@ const CartSection = ({
   const [isAssigned,setIsAssigned] = useState(false)
   const [showPlaceModal,setShowPlaceModal] = useState(false)
   const [showActions, setShowActions] = useState(true); // New state for button visibility
-  // const [isRejected, setIsRejected] = useState(false);
+  const [Rejected, setIsRejected] = useState(false);
 
 
   const { updateOrderStatus, getOrderStatuses } = useOrderStatus();
@@ -424,7 +424,7 @@ const CartSection = ({
     }
   };
   
-  const isRejected = rejectedOrders?.includes(order._id);
+  // const Rejected = rejectedOrders?.includes(order._id);
 
   if (!order) {
     return (
@@ -469,8 +469,9 @@ const CartSection = ({
             {order.orderDetails[0]?.product_currency}
           </span>
         </div>
+
   
-        {showActions && !isRejected && (
+        {showActions && !Rejected && (
           <div className="flex justify-between items-center gap-4 mt-6">
             {isAssigned ? (
               <>
