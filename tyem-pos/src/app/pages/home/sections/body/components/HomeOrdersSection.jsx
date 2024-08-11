@@ -344,7 +344,7 @@ const CartSection = ({
     setIsReady(false);
     setIsAssigned(false);
     onComplete(orderId); // Call the onComplete function if needed
-    // onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
+   
     sendMessage(); // Send WhatsApp message
     updatePaymentStatus(orderId, "Confirmed"); // Update payment status
     updateOrderStatus(orderId, "isAccepted", true);
@@ -400,7 +400,9 @@ const CartSection = ({
 
   // Status History Data
   
-  const handlePrintReceipt = async (orderData) => {
+  const handlePrintReceipt = async (orderData,orderId) => {
+ onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
+ 
     console.log(orderData);
     
     try {

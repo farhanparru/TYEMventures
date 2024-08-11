@@ -41,6 +41,10 @@ const OrderItem = () => {
   );
 };
 
+
+
+
+
 const OrderDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -247,6 +251,44 @@ const CartSection = () => {
 };
 
 const Salesssection = () => {
+
+
+  const [orders, setOrders] = useState([]);
+
+  // Example of using WebSocket for real-time updates
+  useEffect(() => {
+    const ws = new WebSocket('wss://tyem.invenro.site');
+
+    ws.onmessage = (event) => {
+      const newOrder = JSON.parse(event.data);
+      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  // Example of using polling for real-time updates
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
+        setOrders(response.data);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    };
+
+    console.log(response,"kk");
+    
+
+    // Polling every 5 seconds
+    const intervalId = setInterval(fetchOrders, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className=" flex h-screen">
       <div
