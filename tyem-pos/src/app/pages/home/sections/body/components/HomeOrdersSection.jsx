@@ -369,6 +369,7 @@ const CartSection = ({
     updatePaymentStatus(orderId, "Completed"); // Update payment status
     updateOrderStatus(order._id, "showPlaceModal", true);
     onComplete(order._id); // Call the completion handler
+    onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
   };
 
   const handleReject = (orderId) => {
@@ -401,8 +402,8 @@ const CartSection = ({
   // Status History Data
   
   const handlePrintReceipt = async (orderData,orderId) => {
- onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
- 
+  
+
     console.log(orderData);
     
     try {
