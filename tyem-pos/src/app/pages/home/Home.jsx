@@ -25,7 +25,7 @@ import { getStoreCustomers } from "./store/customerSlice";
 import { useNavigate } from 'react-router-dom';
 import EditCart from "./sections/editCart";
 import ChatBot from "../../layout/navbar/ChatBotComponent"; // Import the ChatBot component
-import { connectWebSocket,} from "../../../services/apiService.js";
+import { connectWebSocket,fetchOrders} from "../../../services/apiService.js";
 import notificationSound from '../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3'
 import { useOrderContext } from "./sections/body/components/OrderContext.jsx";
 
@@ -117,23 +117,27 @@ const Home = () => {
 
   // WebSocket connection to receive new orders
   useEffect(() => {
+    const fetchAndSetOrders = async () => {
+      try {
+        const data = await fetchOrders();
+        setOrders(data); // Set the fetched orders to state
+        setTotalOrders(data.length); // Update context value
+      } catch (error) {
+        console.error("Error fetching initial orders:", error);
+      }
+    };
+
+    fetchAndSetOrders();
+
     const socket = connectWebSocket((newOrder) => {
-      console.log("New Order Received:", newOrder);
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
-      setTotalOrders(updatedOrders.length); // Update context value
-      setSoundPlaying(true); // Play sound when a new order is received
+      setOrders((prevOrders) => {
+        const updatedOrders = [newOrder, ...prevOrders]; // Add new order to the top
+        setTotalOrders(updatedOrders.length); // Update context value
+        setSoundPlaying(true); // Play sound when a new order is received
+        return updatedOrders;
+      });
     });
 
-    socket.onopen = () => {
-      console.log('WebSocket connection established');
-    };
-
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-  
-
-    // Cleanup
     return () => {
       socket.close();
       if (audio) {
