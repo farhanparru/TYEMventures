@@ -304,7 +304,7 @@ const CartSection = ({
   const [isAssigned,setIsAssigned] = useState(false)
   const [showPlaceModal,setShowPlaceModal] = useState(false)
   const [showActions, setShowActions] = useState(true); // New state for button visibility
-
+  const [isRejected, setIsRejected] = useState(false);
 
 
    
@@ -375,6 +375,7 @@ const CartSection = ({
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
+    setIsRejected(true); // Update the state to indicate the order is rejected
     updatePaymentStatus(orderId, "Reject"); // Update payment status
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
     updateOrderStatus(orderId, "isRejected", true);
@@ -463,7 +464,7 @@ const CartSection = ({
         </div>
   
         {/* Action Buttons */}
-        {showActions && (
+        {showActions && !isRejected && (
         <div className="flex justify-between items-center gap-4 mt-6">
           {isAssigned ? (
             <>
