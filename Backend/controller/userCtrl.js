@@ -499,7 +499,36 @@ module.exports = {
 },
 
 
-// Online Add customer
+// paymentStatus update
+
+paymentStatus:async(req,res)=>{
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    // Validate the status if necessary
+    const validStatuses = ['Pending', 'Accepted', 'Ready', 'Assigned', 'Complete', 'Rejected', 'Cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    // Update the payment status in the database
+    const updatedOrder = await OnlineOrder.findByIdAndUpdate(
+      id,
+      { 'orderMeta.paymentStatus': status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
 
  
 

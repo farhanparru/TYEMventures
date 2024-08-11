@@ -27,7 +27,8 @@ import { useCompletedOrders } from "./CompletedOrdersContext.jsx";
 
 // OrderItem component
 const OrderItem = ({ order, onClick, selected }) => {
-  const { paymentStatus } = usePaymentStatus(); // Get payment status from context
+  const [orderStatus, setOrderStatus] = useState(order.orderMeta.paymentStatus);
+
   const totalQuantity = order.orderDetails.reduce(
     (sum, item) => sum + item.product_quantity,
     0
@@ -39,11 +40,24 @@ const OrderItem = ({ order, onClick, selected }) => {
     Assigned: "bg-blue-200 text-blue-800",
     Completed: "bg-purple-200 text-purple-800",
     Pending: "bg-gray-200 text-gray-800",
-    Reject:"bg-red-500 text-red-300"
+    Rejected: "bg-red-200 text-red-800",
+    Cancelled: "bg-gray-500 text-gray-200"
   };
 
 
-
+  // Function to handle status update
+  const updateStatus = async (newStatus) => {
+    try {
+      const response = await axios.patch(
+        `https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`,
+        { status: newStatus }
+      );
+      setOrderStatus(newStatus);
+      console.log('Order status updated:', response.data);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
   // Convert UTC to IST
   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
@@ -78,8 +92,8 @@ const OrderItem = ({ order, onClick, selected }) => {
         </p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${statusColors[paymentStatus[order._id]] || statusColors.Pending}`}>
-            {paymentStatus[order._id] || "Pending"}
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${statusColors[orderStatus] || statusColors.Pending}`}>
+            {orderStatus || "Pending"}
           </span>
 
 
@@ -275,9 +289,18 @@ const CartSection = ({
   onOrderAccept, // New prop
 }) => {
 
+  const updatePaymentStatus = async (orderId, statusKey, statusValue) => {
+    try {
+      await axios.patch(`https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`, {
+        [statusKey]: statusValue,
+      });
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
+  
 
   const { updateOrderStatus, getOrderStatuses } = useOrderStatus();
-  const { updatePaymentStatus } = usePaymentStatus(); // Get update function from context
   const [paymentMethods, setpaymentMethods] = useState([]);
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state.cart);
@@ -338,6 +361,8 @@ const CartSection = ({
 
  
 
+
+
   const handleAccept = (orderId) => {
   
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
@@ -345,31 +370,28 @@ const CartSection = ({
     setIsReady(false);
     setIsAssigned(false);
     onComplete(orderId); // Call the onComplete function if needed
-   
-    sendMessage(); // Send WhatsApp message
-    updatePaymentStatus(orderId, "Confirmed"); // Update payment status
+    sendMessage()
+    updatePaymentStatus(orderId, "isAccepted", true)
     updateOrderStatus(orderId, "isAccepted", true);
-    updateOrderStatus(orderId, "confirmedDate", now);
+    updateOrderStatus(orderId, "confirmedDate", new Date().toISOString());
     onComplete(order._id); // Call the completion handler
     updateOrderStatus(orderId, "isRejected", false); // Ensure rejected is false
   };
 
   const handleReady = (orderId) => {
+    updatePaymentStatus(orderId, "isReady", true);
     updateOrderStatus(order._id, "isReady", true);
     setIsReady(true);
     setIsAssigned(false);
-    updatePaymentStatus(orderId, "Ready"); // Update payment status
+   
   };
 
    const { addCompletedOrder } = useCompletedOrders();
 
-  const handleComplete = (orderId) => {
+   const handleComplete = async (orderId) => {
     setShowPlaceModal(true);
-    // setIsAccepted(false);
-    // setIsReady(false);
-    // setIsAssigned(false);
-    onComplete(orderId);  
-    updatePaymentStatus(orderId, "Completed"); // Update payment status
+    await updatePaymentStatus(orderId, "showPlaceModal", true);
+    await onComplete(orderId);
     updateOrderStatus(order._id, "showPlaceModal", true);
     onComplete(order._id); // Call the completion handler
 
@@ -386,7 +408,7 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     setIsRejected(true); // Update the state to indicate the order is rejected
-    updatePaymentStatus(orderId, "Reject"); // Update payment status
+    updatePaymentStatus(orderId, "isReject", true);
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
     updateOrderStatus(orderId, "isRejected", true);
    
@@ -396,7 +418,8 @@ const CartSection = ({
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
-    updatePaymentStatus(orderId, "Cancel"); // Update payment status
+    onCancel(orderId)
+    updatePaymentStatus(orderId, "isCancel", true);
   
   };
 
@@ -404,7 +427,7 @@ const CartSection = ({
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
     setIsReady(false);
-    updatePaymentStatus(orderId, "Assigned"); // Update payment status
+    updatePaymentStatus(orderId, "isAssigned", true);
     updateOrderStatus(order._id, "isAssigned", true);
   };
 
@@ -488,7 +511,7 @@ const CartSection = ({
                 </button>
                 <button
                   className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                  onClick={() => handleReject(order._id)}
+                  onClick={() => handlecancle(order._id)}
                 >
                   Cancel
                 </button>
@@ -503,7 +526,7 @@ const CartSection = ({
                 </button>
                 <button
                   className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                  onClick={() => handleReject(order._id)}
+                  onClick={() => handlecancle(order._id)}
                 >
                   Cancel
                 </button>
@@ -518,7 +541,7 @@ const CartSection = ({
                 </button>
                 <button
                   className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                  onClick={() => handleCancel(order._id)}
+                  onClick={() => handlecancle(order._id)}
                 >
                   Cancel
                 </button>
