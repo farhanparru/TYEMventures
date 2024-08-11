@@ -3,7 +3,7 @@ import "tailwindcss/tailwind.css";
 import { Element } from "react-scroll";
 import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
 import { FaTruck } from "react-icons/fa";
-import axios from "axios";
+import axios from 'axios';
 import {
   fetchOrders,
   connectWebSocket,
@@ -44,22 +44,30 @@ const OrderItem = ({ order, onClick, selected }) => {
   };
 
 
-  const updateStatus = async (newStatus) => {
-    try {
-      const response = await axios.patch(
-        `https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`,
-        { status: newStatus }
-      );
-      if (response.status === 200) {
-        setOrderStatus(newStatus);
-        console.log('Order status updated:', response.data);
-      } else {
-        console.error('Failed to update order status:', response.statusText);
+
+const updateStatus = async (newStatus) => {
+  try {
+    const response = await axios.patch(
+      `https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`,
+      { status: newStatus },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
       }
-    } catch (error) {
-      console.error('Error updating order status:', error.message || error);
+    );
+    if (response.status === 200) {
+      setOrderStatus(newStatus);
+      console.log('Order status updated:', response.data);
+    } else {
+      console.error('Failed to update order status:', response.statusText);
     }
-  };
+  } catch (error) {
+    console.error('Error updating order status:', error.message || error);
+  }
+};
+
   // Convert UTC to IST
   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");

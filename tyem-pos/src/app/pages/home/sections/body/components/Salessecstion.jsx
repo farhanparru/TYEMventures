@@ -17,15 +17,19 @@ const OrderItem = ({ order }) => {
   return (
     <div
       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
-        ${order.status === 'Completed' ? 'bg-green-100' : 'bg-white'}`}
+        ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100' : 'bg-white'}`}
     >
       <div>
-        <h3 className="text-lg font-semibold">{order.orderId}</h3>
-        <p className="text-sm">{order.totalAmount} {order.currency}</p>
+        <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId}</h3>
+        <p className="text-sm">
+          {order.totalQuantity} Item{order.totalQuantity > 1 ? 's' : ''} | 
+          {order.orderMeta?.paymentTendered} {order.orderDetails[0]?.product_currency} | 
+          {order.orderMeta?.orderType}
+        </p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
-            {order.status}
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+            {order.orderMeta.paymentStatus}
           </span>
         </div>
       </div>
@@ -36,6 +40,7 @@ const OrderItem = ({ order }) => {
     </div>
   );
 };
+
 
 
 
@@ -258,7 +263,7 @@ const Salesssection = () => {
       const newOrder = JSON.parse(event.data);
       console.log('New WebSocket Order:', newOrder); // Log new WebSocket order
   
-      if (newOrder.orderMeta.paymentStatus === 'Complete') {
+      if (newOrder.orderMeta.paymentStatus === 'Completed') {
         setOrders((prevOrders) => [newOrder, ...prevOrders]);
       }
     };
@@ -276,7 +281,7 @@ const Salesssection = () => {
 
         if (Array.isArray(response.data)) {
           // Adjust filter condition based on your actual 'completed' status
-          const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Complete');
+          const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Completed');
           console.log('Filtered Completed Orders:', completedOrders); // Log filtered orders
 
           setOrders(completedOrders);

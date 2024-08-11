@@ -506,7 +506,7 @@ paymentStatus:async(req,res)=>{
   const { status } = req.body;
   try {
     // Validate the status if necessary
-    const validStatuses = ['Pending', 'Accepted', 'Ready', 'Assigned', 'Complete', 'Rejected', 'Cancelled'];
+    const validStatuses = ['Pending', 'Accepted', 'Ready', 'Assigned', 'Completed', 'Rejected', 'Cancelled'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
     }
