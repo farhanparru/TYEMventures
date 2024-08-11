@@ -523,6 +523,8 @@ paymentStatus:async(req,res)=>{
     }
 
     res.status(200).json(updatedOrder);
+    console.log(updatedOrder,"updatedOrder");
+    
   } catch (error) {
     console.log(error);
     

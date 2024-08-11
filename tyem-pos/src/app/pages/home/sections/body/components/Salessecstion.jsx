@@ -258,7 +258,7 @@ const Salesssection = () => {
       const newOrder = JSON.parse(event.data);
       console.log('New WebSocket Order:', newOrder); // Log new WebSocket order
   
-      if (newOrder.orderMeta.paymentStatus === 'Pending') {
+      if (newOrder.orderMeta.paymentStatus === 'Complete') {
         setOrders((prevOrders) => [newOrder, ...prevOrders]);
       }
     };
@@ -276,7 +276,7 @@ const Salesssection = () => {
 
         if (Array.isArray(response.data)) {
           // Adjust filter condition based on your actual 'completed' status
-          const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Pending');
+          const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Complete');
           console.log('Filtered Completed Orders:', completedOrders); // Log filtered orders
 
           setOrders(completedOrders);
