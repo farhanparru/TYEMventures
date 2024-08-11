@@ -252,17 +252,17 @@ const CartSection = () => {
 };
 
 const Salesssection = () => {
-
-
   const [orders, setOrders] = useState([]);
 
-  // Example of using WebSocket for real-time updates
+  // WebSocket for real-time updates
   useEffect(() => {
     const ws = new WebSocket('wss://tyem.invenro.site');
 
     ws.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-      setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      if (newOrder.status === "Complete") { // Check for complete status
+        setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      }
     };
 
     return () => {
@@ -270,20 +270,17 @@ const Salesssection = () => {
     };
   }, []);
 
-  // Example of using polling for real-time updates
+  // Polling for real-time updates
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
-        
-    console.log(response,"kk");
-        setOrders(response.data);
+        const completeOrders = response.data.filter(order => order.status === "Complete"); // Filter complete orders
+        setOrders(completeOrders);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
-
-    
 
     // Polling every 5 seconds
     const intervalId = setInterval(fetchOrders, 5000);
@@ -292,21 +289,21 @@ const Salesssection = () => {
   }, []);
 
   return (
-    <div className=" flex h-screen">
+    <div className="flex h-screen">
       <div
         id="order-list"
         className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
       >
-        <OrderItem />
+        {orders.map((order) => (
+          <OrderItem key={order._id} order={order} />
+        ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         <OrderDetails />
-
         <p className="text-gray-500">Select an order to view details.</p>
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection />
-
         <p className="text-gray-500">Select an order to view the cart.</p>
       </div>
     </div>

@@ -369,6 +369,8 @@ const CartSection = ({
     updatePaymentStatus(orderId, "Completed"); // Update payment status
     updateOrderStatus(order._id, "showPlaceModal", true);
     onComplete(order._id); // Call the completion handler
+
+    
     onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
   };
 
@@ -889,11 +891,10 @@ const HomeOrdersSection = () => {
   };
 
 
-  const handleCountAccept = (orderId) => {
-    setOrders((prevOrders) =>
-      prevOrders.filter((order) => order._id !== orderId)
-    );
-    setTotalOrders((prevCount) => prevCount - 1); // Decrease the badge count
+  const handlecomplete = (orderId) => {
+    // Your order completion logic
+    setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+    setTotalOrders((prevCount) => prevCount - 1);
   };
 
 
@@ -934,7 +935,7 @@ const HomeOrdersSection = () => {
             pauseNotificationSound={pauseNotificationSound}
             orders={orders}
             // updateOrderStatus={handleOrderAccept} // Pass the updated handler
-            onOrderAccept={handleCountAccept}
+            onOrderAccept={handlecomplete}
           />
         ) : (
           <p className="text-gray-500">Select an order to view the cart.</p>
