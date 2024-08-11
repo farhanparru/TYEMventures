@@ -7,6 +7,7 @@ const WebSocket = require("ws");
 const moment = require("moment-timezone");
 const ThermalPrinter = require('node-thermal-printer').printer;
 const PrinterTypes = require("node-thermal-printer").types;
+const customerOnline = require('../Model/OnlineCustomer')
 const path = require('path');
 require("dotenv").config();
 
@@ -166,6 +167,50 @@ module.exports = {
       res.status(500).send("Internal Server Error");
     }
   },
+
+
+
+  onlineCustomer:async(req,res)=>{
+
+    try {
+      const { Location } = req.body;
+  
+      // Update or create new order data in MongoDB
+      const orderData = await customerOnline.findOneAndUpdate(
+        { _id: "some_order_id" }, // Replace with actual identifier
+        { "customerDetails.Location": Location },
+        { new: true, upsert: true } // `upsert: true` creates a new document if none is found
+      );
+  
+      if (!orderData) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+  
+
+       console.log(orderData,"orderData");
+       
+      // const order = new customerOnline(orderData);
+      // await order.save();
+
+      // Broadcast the new order to all WebSocket clients
+      const wss = req.app.get("wss"); // Ensure WebSocket server is available
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(orderData));
+        }
+      });
+  
+      res.status(200).json({ message: "Order processed successfully", orderData });
+    } catch (error) {
+      console.error("Error processing order:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
+ 
+
+    
+
 
  // node thermal printer
 
@@ -412,4 +457,52 @@ module.exports = {
       res.status(500).send("Server error");
     }
   },
-};
+
+ // google sheet data update
+
+
+  ItemsUpdate:async (req, res) => {
+  try {
+    // Extract `id` and `description` from the request body
+    const { id } = req.body;
+
+    console.log(req.body);
+    
+    // Construct the URL with the dynamic `id`
+    const url = `https://script.google.com/macros/s/AKfycbygNbw5aqZvf7t59UUX275UaiszFRz_Grcp3yYYEvkRgiEBs_aBvvyX1nKTdqfVM_b-mg/exec?gid=1028792536&id=${id}`;
+
+    // Use `fetch` to send a PATCH request
+    const response = await fetch(url, {
+      method: 'PATCH', // Set the method to PATCH
+      headers: {
+        'Content-Type': 'application/json',     
+      },
+      body: JSON.stringify({ description,id }), // Send description in the body
+    });
+    
+    if (!response.ok) {    
+      throw new Error('Network response was not ok');
+    }
+    
+    const data = await response.json(); // Assuming the data is in JSON format
+    
+    console.log(data); // Process the data here
+    
+    // Send a response to the client with the fetched data
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    
+    // Send an error response to the client
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+},
+
+
+// Online Add customer
+
+ 
+
+  
+
+}

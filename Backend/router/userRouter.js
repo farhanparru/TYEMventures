@@ -15,6 +15,8 @@ router.post('/Expense', userCtrl.expense)
 router.post('/addCustomer', userCtrl.addCustomer)
 router.put('/orders/:id/status',userCtrl.statusUpdate)
 router.post('/printreceipt', userCtrl.handleReciptprinter)
+router.patch('/Googlesheet',userCtrl.ItemsUpdate)
+router.post('/Onlinecustomer',userCtrl.onlineCustomer)
 
 
      
