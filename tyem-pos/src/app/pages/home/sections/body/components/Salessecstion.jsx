@@ -16,9 +16,8 @@ import axios from "axios";
 const OrderItem = ({ order }) => {
   return (
     <div
-      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
-        ${order.status === 'Completed' ? 'bg-green-100' : 'bg-white'}`
-      }
+      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
+        ${order.status === 'Completed' ? 'bg-green-100' : 'bg-white'}`}
     >
       <div>
         <h3 className="text-lg font-semibold">{order.orderId}</h3>
@@ -37,6 +36,7 @@ const OrderItem = ({ order }) => {
     </div>
   );
 };
+
 
 
 
@@ -256,7 +256,7 @@ const Salesssection = () => {
 
     ws.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-      if (newOrder.status === "Complete") { // Check for complete status
+      if (newOrder.status === "Completed") { // Check for complete status
         setOrders((prevOrders) => [newOrder, ...prevOrders]);
       }
     };
@@ -266,26 +266,31 @@ const Salesssection = () => {
     };
   }, []);
 
-  // Polling for real-time updates
+  // Fetch completed orders from the API
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
-        const completeOrders = response.data.filter(order => order.status === "Complete"); // Filter complete orders
-        console.log(completeOrders,"completeOrders");
-        
-        setOrders(completeOrders);
+        console.log('API Response:', response.data); // Check the full response
+  
+        // If the API response has orders, filter for completed orders
+        const completedOrders = response.data.filter(order => order.status === 'Completed');
+        console.log('Filtered Completed Orders:', completedOrders);
+  
+        setOrders(completedOrders);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
-
-    // Polling every 5 seconds
-    const intervalId = setInterval(fetchOrders, 5000);
-
+  
+    fetchOrders();
+    // Uncomment the line below to enable polling
+    // const intervalId = setInterval(fetchOrders, 5000); // Polling every 5 seconds
+  
     return () => clearInterval(intervalId);
   }, []);
 
+  
   return (
     <div className="flex h-screen">
       <div
@@ -307,5 +312,6 @@ const Salesssection = () => {
     </div>
   );
 };
+
 
 export default Salesssection;

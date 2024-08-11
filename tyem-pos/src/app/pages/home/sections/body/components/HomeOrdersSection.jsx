@@ -21,6 +21,7 @@ import { useOrderContext } from "./OrderContext.jsx";
 import { useOrderStatus } from "../../../components/StatusContext.jsx";
 import { FaCalendar, FaClock } from 'react-icons/fa'; // Adjust the import according to your icon library
 import { usePaymentStatus } from "../../../components/PaymentStatusContext.jsx";
+import { useCompletedOrders } from "./CompletedOrdersContext.jsx";
 
 
 
@@ -360,6 +361,8 @@ const CartSection = ({
     updatePaymentStatus(orderId, "Ready"); // Update payment status
   };
 
+   const { addCompletedOrder } = useCompletedOrders();
+
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
     // setIsAccepted(false);
@@ -370,7 +373,11 @@ const CartSection = ({
     updateOrderStatus(order._id, "showPlaceModal", true);
     onComplete(order._id); // Call the completion handler
 
-    
+       // Add completed order to the context
+    const completedOrder = orders.find(order => order._id === orderId);
+    addCompletedOrder(completedOrder);
+
+    onComplete(orderId); // Optionally notify parent
     onOrderAccept(orderId); // Decrease the badge count in HomeOrdersSection
   };
 
