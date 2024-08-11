@@ -285,7 +285,7 @@ const Salesssection = () => {
   
     fetchOrders();
     // Uncomment the line below to enable polling
-    // const intervalId = setInterval(fetchOrders, 5000); // Polling every 5 seconds
+     const intervalId = setInterval(fetchOrders, 5000); // Polling every 5 seconds
   
     return () => clearInterval(intervalId);
   }, []);
