@@ -277,6 +277,14 @@ const CartSection = ({
 
 
 
+  const [isAccepted,setIsAccepted] = useState(false)
+  const [isReady,setIsReady] = useState(false)
+  const [isAssigned,setIsAssigned] = useState(false)
+  const [showPlaceModal,setShowPlaceModal] = useState(false)
+  const [showActions, setShowActions] = useState(true); // New state for button visibility
+  // const [isRejected, setIsRejected] = useState(false);
+
+
   const { updateOrderStatus, getOrderStatuses } = useOrderStatus();
   const { updatePaymentStatus } = usePaymentStatus(); // Get update function from context
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -299,14 +307,6 @@ const CartSection = ({
       break;
   }
 
-
-
-  const [isAccepted,setIsAccepted] = useState(false)
-  const [isReady,setIsReady] = useState(false)
-  const [isAssigned,setIsAssigned] = useState(false)
-  const [showPlaceModal,setShowPlaceModal] = useState(false)
-  const [showActions, setShowActions] = useState(true); // New state for button visibility
-  const [Rejected, setIsRejected] = useState(false);
 
 
    
@@ -377,7 +377,11 @@ const CartSection = ({
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
-    setIsRejected(true); // Update the state to indicate the order is rejected
+     // Update the rejectedOrders state to include the rejected order's ID
+     if (!rejectedOrders.includes(orderId)) {
+      updateRejectedOrders((prevRejectedOrders) => [...prevRejectedOrders, orderId]);
+    }
+
     updatePaymentStatus(orderId, "Reject"); // Update payment status
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
     updateOrderStatus(orderId, "isRejected", true);
@@ -945,7 +949,7 @@ const HomeOrdersSection = () => {
             orders={orders}
             // updateOrderStatus={handleOrderAccept} // Pass the updated handler
             onOrderAccept={handleCountAccept}
-            rejectedOrders={rejectedOrders}
+            updateRejectedOrders={setRejectedOrders}
           />
         ) : (
           <p className="text-gray-500">Select an order to view the cart.</p>
