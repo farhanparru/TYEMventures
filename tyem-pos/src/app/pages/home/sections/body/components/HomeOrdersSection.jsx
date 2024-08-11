@@ -299,23 +299,16 @@ const CartSection = ({
 
 
 
-
-   // node thermal printer
-
-
-
-
-
-  
- 
-  // send Message for Whtsapp
-
   const [isAccepted,setIsAccepted] = useState(false)
   const [isReady,setIsReady] = useState(false)
   const [isAssigned,setIsAssigned] = useState(false)
   const [showPlaceModal,setShowPlaceModal] = useState(false)
+  const [showActions, setShowActions] = useState(true); // New state for button visibility
 
 
+
+   
+  // send Message for Whtsapp
   const sendMessage = async () => {
     try {
       const apiToken = "6894%7C7kBhTBNwO631guYWt9Nq3ayMOUIa752Ax8SdDZdl";
@@ -470,6 +463,7 @@ const CartSection = ({
         </div>
   
         {/* Action Buttons */}
+        {showActions && (
         <div className="flex justify-between items-center gap-4 mt-6">
           {isAssigned ? (
             <>
@@ -534,6 +528,7 @@ const CartSection = ({
             </>
           )}
         </div>
+      )}
       </div>
 
 
