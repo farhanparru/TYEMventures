@@ -253,44 +253,45 @@ const Salesssection = () => {
   // WebSocket for real-time updates
   useEffect(() => {
     const ws = new WebSocket('wss://tyem.invenro.site');
-
+  
     ws.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-      if (newOrder.status === "Completed") { // Check for complete status
+      console.log('New WebSocket Order:', newOrder); // Log new WebSocket order
+  
+      if (newOrder.orderMeta.paymentStatus === 'Pending') {
         setOrders((prevOrders) => [newOrder, ...prevOrders]);
       }
     };
-
+  
     return () => {
       ws.close();
     };
   }, []);
-
   // Fetch completed orders from the API
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
-        console.log('API Response:', response.data); // Check the full response
-  
-        // If the API response has orders, filter for completed orders
-        const completedOrders = response.data.filter(order => order.status === 'Completed');
-        console.log('Filtered Completed Orders:', completedOrders);
-  
-        setOrders(completedOrders);
+        console.log('API Response:', response.data); // Log full response
+
+        if (Array.isArray(response.data)) {
+          // Adjust filter condition based on your actual 'completed' status
+          const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Pending');
+          console.log('Filtered Completed Orders:', completedOrders); // Log filtered orders
+
+          setOrders(completedOrders);
+        } else {
+          console.error('Unexpected API response format:', response.data);
+        }
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
-  
+
     fetchOrders();
-    // Uncomment the line below to enable polling
-     const intervalId = setInterval(fetchOrders, 5000); // Polling every 5 seconds
-  
-    return () => clearInterval(intervalId);
+    // Optionally, you can use polling or WebSocket for real-time updates
   }, []);
 
-  
   return (
     <div className="flex h-screen">
       <div
