@@ -463,73 +463,73 @@ const CartSection = ({
           </span>
         </div>
   
-        {/* Action Buttons */}
-        {showActions && !isRejected && (
-        <div className="flex justify-between items-center gap-4 mt-6">
-          {isAssigned ? (
-            <>
-              <button
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                onClick={() => handleComplete(order._id)}
-              >
-                Complete
-              </button>
-              <button
-                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                onClick={() => handleReject(order._id)}
-              >
-                Cancel
-              </button>
-            </>
-          ) : isReady ? (
-            <>
-              <button
-                className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
-                onClick={() => handleAssigned(order._id)}
-              >
-                Assigned
-              </button>
-              <button
-                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                onClick={() => handleReject(order._id)}
-              >
-                Cancel
-              </button>
-            </>
-          ) : isAccepted ? (
-            <>
-              <button
-                className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
-                onClick={() => handleReady(order._id)}
-              >
-                Ready
-              </button>
-              <button
-                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                onClick={() => handlecancle(order._id)}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
-                onClick={() => handleAccept(order._id)}
-              >
-                Accept
-              </button>
-  
-              <button
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
-                onClick={() => handleReject(order._id)}
-              >
-                Reject
-              </button>
-            </>
-          )}
-        </div>
-      )}
+       {/* Action Buttons */}
+       {showActions && !isRejected && (
+          <div className="flex justify-between items-center gap-4 mt-6">
+            {isAssigned ? (
+              <>
+                <button
+                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                  onClick={() => handleComplete(order._id)}
+                >
+                  Complete
+                </button>
+                <button
+                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                  onClick={() => handleReject(order._id)}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : isReady ? (
+              <>
+                <button
+                  className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
+                  onClick={() => handleAssigned(order._id)}
+                >
+                  Assigned
+                </button>
+                <button
+                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                  onClick={() => handleReject(order._id)}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : isAccepted ? (
+              <>
+                <button
+                  className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
+                  onClick={() => handleReady(order._id)}
+                >
+                  Ready
+                </button>
+                <button
+                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                  onClick={() => handleCancel(order._id)}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+                  onClick={() => handleAccept(order._id)}
+                >
+                  Accept
+                </button>
+
+                <button
+                  className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+                  onClick={() => handleReject(order._id)}
+                >
+                  Reject
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
 
