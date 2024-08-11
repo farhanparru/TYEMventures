@@ -301,14 +301,14 @@ const CartSection = ({
 
   const updatePaymentStatus = async (orderId, statusKey, statusValue) => {
     try {
-      await axios.patch(`https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`, {
-        [statusKey]: statusValue,
-      });
+        await axios.patch(`https://tyem.invenro.site/api/user/PaymentStatus/${orderId}`, {
+            [statusKey]: statusValue,
+        });
     } catch (error) {
-      console.error('Error updating order status:', error);
+        console.error('Error updating payment status:', error.response ? error.response.data : error.message);
     }
-  };
-  
+};
+
 
   const { updateOrderStatus, getOrderStatuses } = useOrderStatus();
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -381,7 +381,7 @@ const CartSection = ({
     setIsAssigned(false);
     onComplete(orderId); // Call the onComplete function if needed
     sendMessage()
-    updatePaymentStatus(orderId, "isAccepted", true)
+    updatePaymentStatus(orderId, "status", "Accepted");
     updateOrderStatus(orderId, "isAccepted", true);
     updateOrderStatus(orderId, "confirmedDate", new Date().toISOString());
     onComplete(order._id); // Call the completion handler
@@ -400,7 +400,7 @@ const CartSection = ({
 
    const handleComplete = async (orderId) => {
     setShowPlaceModal(true);
-    await updatePaymentStatus(orderId, "showPlaceModal", true);
+    updatePaymentStatus(orderId, "status", "Completed");
     await onComplete(orderId);
     updateOrderStatus(order._id, "showPlaceModal", true);
     onComplete(order._id); // Call the completion handler
@@ -418,7 +418,7 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     setIsRejected(true); // Update the state to indicate the order is rejected
-    updatePaymentStatus(orderId, "isReject", true);
+    updatePaymentStatus(orderId, "status", "Rejected");
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
     updateOrderStatus(orderId, "isRejected", true);
    
@@ -429,15 +429,14 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
     onCancel(orderId)
-    updatePaymentStatus(orderId, "isCancel", true);
-  
+    updatePaymentStatus(orderId, "status", "Cancelled");
   };
 
 
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
     setIsReady(false);
-    updatePaymentStatus(orderId, "isAssigned", true);
+    updatePaymentStatus(orderId, "status", "Assigned");
     updateOrderStatus(order._id, "isAssigned", true);
   };
 
