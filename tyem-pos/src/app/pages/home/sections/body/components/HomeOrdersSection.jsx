@@ -73,7 +73,7 @@ const OrderItem = ({ order, onClick, selected }) => {
         <p className="text-sm">
           {totalQuantity} Item{totalQuantity > 1 ? "s" : ""} |
           {order.orderMeta?.paymentTendered}{" "}
-          {order.orderDetails[0].product_currency} | {order.orderMeta.orderType}
+          {order.orderDetails[0]?.product_currency} | {order.orderMeta.orderType}
         </p>
 
         <div className="flex items-center mt-2">
