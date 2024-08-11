@@ -4,9 +4,10 @@ const Category = require("../Model/Categorymodel");
 const expenseSchema = require("../Model/expensemodel");
 const Customer = require("../Model/Customermodel");
 const WebSocket = require("ws");
-const axios = require('axios');
-const moment = require('moment-timezone');
-const {sendWhatsAppMessage} = require("../utlis/xpressBotService");
+const moment = require("moment-timezone");
+const ThermalPrinter = require('node-thermal-printer').printer;
+const PrinterTypes = require("node-thermal-printer").types;
+const path = require('path');
 require("dotenv").config();
 
 const validateOrderData = (data) => {
@@ -102,85 +103,182 @@ module.exports = {
     }
   },
 
-// Webhook endpoint to handle incoming orders
-onlineOrder: async (req, res) => {
-  try {
-    const {
-      order_id,
-      catalog_id,
-      payment_method,
-      cart_total,
-      customer_name,
-      customer_phone_number,
-      payment_status,
-      item_lines, // Extract item_lines from the request body
-    } = req.body;
+  // Webhook endpoint to handle incoming orders
+  onlineOrder: async (req, res) => {
+    try {
+      const {
+        order_id,
+        catalog_id,
+        payment_method,
+        cart_total,
+        customer_name,
+        customer_phone_number,
+        payment_status,
+        item_lines, // Extract item_lines from the request body
+      } = req.body;
 
- 
-// Map item_lines to orderDetails structure
-const orderDetails = item_lines.map((item) => ({
-  product_name: item.product_name,
-  product_quantity: item.product_quantity,
-  product_currency: item.product_currency,
-  unit_price: item.unit_price,
-}));
+      // Map item_lines to orderDetails structure
+      const orderDetails = item_lines.map((item) => ({
+        product_name: item.product_name,
+        product_quantity: item.product_quantity,
+        product_currency: item.product_currency,
+        unit_price: item.unit_price,
+      }));
 
-    
+      // Convert current date and time to IST
+      const orderDate = moment().tz("Asia/Kolkata").format();
+      // Construct order data
+      const orderData = {
+        orderDetails: orderDetails, // Store all products
+        orderMeta: {
+          posOrderId: order_id,
+          orderType: catalog_id,
+          paymentMethod: payment_method,
+          paymentTendered: cart_total,
+          orderDate: orderDate, // Save in IST
+          paymentStatus: payment_status,
+        },
 
-       // Convert current date and time to IST
-       const orderDate = moment().tz('Asia/Kolkata').format();
+        customer: {
+          name: customer_name,
+          phone: customer_phone_number,
+        },
+      };
+
+      // console.log(orderData);
+      // Save order to database
+      const order = new OnlineOrder(orderData);
+      await order.save();
+      
+      // Broadcast the new order to all WebSocket clients
+      const wss = req.app.get("wss"); // Ensure WebSocket server is available
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(orderData));
+        }
+      });
+
+      res.status(200).send("Order received");
+    } catch (error) {
+      console.error("Error processing order:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
+ // node thermal printer
+
+
+
+ handleReciptprinter:async(req,res)=>{
+  console.log(orderData,"orderData");
+  
+    try {
+      const { order_id, catalog_id, payment_method, cart_total, customer_name, customer_phone_number, payment_status, item_lines } = req.body;
+
+  
+    // Map item_lines to orderDetails structure
+    const orderDetails = item_lines ? item_lines.map((item) => ({
+      product_name: item.product_name,
+      product_quantity: item.product_quantity,
+      product_currency: item.product_currency,
+      unit_price: item.unit_price,
+    })) : [];
+
+    const orderDate = moment().tz("Asia/Kolkata").format();
+
     // Construct order data
     const orderData = {
-      orderDetails: orderDetails, // Store all products
+      orderDetails: orderDetails,
       orderMeta: {
         posOrderId: order_id,
         orderType: catalog_id,
         paymentMethod: payment_method,
         paymentTendered: cart_total,
-        orderDate: orderDate, // Save in IST
+        orderDate: orderDate,
         paymentStatus: payment_status,
       },
-      
       customer: {
         name: customer_name,
         phone: customer_phone_number,
       },
-    
     };
 
-    // console.log(orderData);
-    // Save order to database
-    const order = new OnlineOrder(orderData);
-    await order.save();
-    // Broadcast the new order to all WebSocket clients
-    const wss = req.app.get('wss'); // Ensure WebSocket server is available
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(orderData));
-      }
+       // Initialize printer
+    const printer = new ThermalPrinter({
+      type: PrinterTypes.EPSON,
+      interface: 'printer_address_here',
     });
 
-    res.status(200).send('Order received');
-  } catch (error) {
-    console.error("Error processing order:", error);
-    res.status(500).send("Internal Server Error");
+    // Print Company Logo
+    const logoPath = path.join(__dirname, "../../tyem-pos/src/assets/Logo.png");
+    printer.alignCenter();
+    printer.printImage(logoPath, function(done) {
+      console.log("Logo printed");
+    });
+    printer.newLine();
+
+    printer.bold(true);
+    printer.println(`Order ID: ${order_id}`);
+    printer.println(`Date: ${orderDate}`);
+    printer.println(`Customer: ${customer_name}`);
+    printer.newLine();
+
+    // Ensure orderDetails has at least one item before accessing [0]
+    if (orderDetails.length > 0) {
+      orderDetails.forEach((item) => {
+        printer.println(`${item.product_name} x${item.product_quantity}`);
+        printer.println(`${item.product_currency}${item.unit_price}`);
+        printer.drawLine();
+      });
+      
+      printer.newLine();
+      printer.bold(true);
+      printer.println(`Total: ${orderDetails[0].product_currency}${orderData.orderMeta.paymentTendered}`);
+      printer.bold(false);
+      printer.println(`Payment Method: ${orderData.orderMeta.paymentMethod}`);
+      printer.println(`Payment Status: ${orderData.orderMeta.paymentStatus}`);
+      printer.newLine();
+
+      // Print QR Code
+      const qrCodeData = `Order ID: ${order_id}\nDate: ${orderDate}\nTotal: ${orderDetails[0].product_currency}${orderData.orderMeta.paymentTendered}`;
+      printer.alignCenter();
+      printer.printQR(qrCodeData, {cellSize: 6});
+      printer.newLine();
+      printer.cut();
+    } else {
+      printer.println("No order details available.");
+    }
+
+    // Check if the printer is connected
+    const isConnected = await printer.isPrinterConnected();      
+    // console.log(isConnected);
+       
+    if (isConnected) {
+      await printer.execute(); 
+      console.log("Receipt printed successfully.");
+    } else {
+      console.error("Printer is not connected.");
+    }
+
+    res.send('Receipt printed successfully');
+  } catch (printError) {
+    console.error("Error printing receipt:", printError);
+    res.status(500).send("Error printing receipt");
   }
 },
 
   // Fetch Orders Endpoint
 
-   fetchOnlineOrder:async(req,res)=>{  
+  fetchOnlineOrder: async (req, res) => {
     try {
-      const orders = await OnlineOrder.find()
+      const orders = await OnlineOrder.find();
       res.json(orders);
       console.log(orders);
     } catch (error) {
-      console.error('Error fetching orders:', error);
-      res.status(500).json({ message: 'Error fetching orders', error });
+      console.error("Error fetching orders:", error);
+      res.status(500).json({ message: "Error fetching orders", error });
     }
-   },
-
-
+  },
 
   // Add category
 
@@ -256,9 +354,9 @@ const orderDetails = item_lines.map((item) => ({
 
   // Add Customer
 
-  addCustomer:async (req, res) => {
+  addCustomer: async (req, res) => {
     const { fullName, Email, phoneNo, TaxNo, Address, language } = req.body;
-  
+
     try {
       const newCustomer = new Customer({
         fullName,
@@ -266,33 +364,36 @@ const orderDetails = item_lines.map((item) => ({
         phoneNo,
         TaxNo,
         Address,
-        language
+        language,
       });
-  
+
       await newCustomer.save();
       try {
         // await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
         // newCustomer.messageSent = true;
         await newCustomer.save();
-        res.status(201).json({ message: 'Customer added and message sent successfully' });
+        res
+          .status(201)
+          .json({ message: "Customer added and message sent successfully" });
       } catch (error) {
-       console.log(error);
-        res.status(500).json({ error: 'Customer added but failed to send WhatsApp message' });
+        console.log(error);
+        res
+          .status(500)
+          .json({
+            error: "Customer added but failed to send WhatsApp message",
+          });
       }
-  
     } catch (error) {
-      console.error('Error adding customer:', error.message);
+      console.error("Error adding customer:", error.message);
       res.status(500).json({ error: error.message });
     }
   },
 
-
-  statusUpdate:async(req,res)=>{
-  
-    const {status} = req.body
+  // payment status
+  statusUpdate: async (req, res) => {
+    const { status } = req.body;
 
     try {
-      
       const order = await OnlineOrder.findByIdAndUpdate(
         req.params.id,
         { paymentStatus: status },
@@ -308,15 +409,5 @@ const orderDetails = item_lines.map((item) => ({
       console.error(error);
       res.status(500).send("Server error");
     }
-    
-
   },
-
-  
-  
-  }
-
-
-
-  
- 
+};

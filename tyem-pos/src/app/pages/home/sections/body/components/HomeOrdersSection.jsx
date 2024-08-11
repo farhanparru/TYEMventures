@@ -299,6 +299,13 @@ const CartSection = ({
 
 
 
+
+   // node thermal printer
+
+
+
+
+
   
  
   // send Message for Whtsapp
@@ -333,7 +340,7 @@ const CartSection = ({
 
 
  // Retrieve order statuses for the current order
- const orderStatuses = getOrderStatuses(order._id);
+//  const orderStatuses = getOrderStatuses(order._id);
 
  
 
@@ -362,9 +369,9 @@ const CartSection = ({
 
   const handleComplete = (orderId) => {
     setShowPlaceModal(true);
-    setIsAccepted(false);
-    setIsReady(false);
-    setIsAssigned(false);
+    // setIsAccepted(false);
+    // setIsReady(false);
+    // setIsAssigned(false);
     onComplete(orderId);  
     updatePaymentStatus(orderId, "Completed"); // Update payment status
     updateOrderStatus(order._id, "showPlaceModal", true);
@@ -399,6 +406,23 @@ const CartSection = ({
 
   // Status History Data
   
+  const handlePrintReceipt = async (orderData) => {
+    console.log(orderData);
+    
+    try {
+      // Sending the order data to the backend for printing
+      await axios.post("https://tyem.invenro.site/api/print/printreceipt", orderData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      alert("Receipt printed successfully.");
+    } catch (error) {
+      console.error("Error printing receipt:", error);
+      alert("Failed to print receipt.");
+    }
+  };
+  
 
 
   if (!order) {
@@ -432,7 +456,7 @@ const CartSection = ({
           <span className="font-semibold">Subtotal</span>
           <span>
             {order.orderMeta.paymentTendered}{" "}
-            {order.orderDetails[0].product_currency}
+            {order.orderDetails[0]?.product_currency}
           </span>
         </div>
   
@@ -441,7 +465,7 @@ const CartSection = ({
           <span className="font-semibold">Total</span>
           <span>
             {order.orderMeta.paymentTendered}{" "}
-            {order.orderDetails[0].product_currency}
+            {order.orderDetails[0]?.product_currency}
           </span>
         </div>
   
@@ -534,7 +558,7 @@ const CartSection = ({
                 <div className="flex items-center w-full justify-end">
                   <h3 className="text-lg font-medium">Payable Amount :</h3>
                   <h2 className="text-2xl font-extrabold text-green-500 ml-10">
-                    ₹ {cartState.totalPayableAmount}
+                    ₹ {order.orderMeta.paymentTendered}
                   </h2>
                 </div>
               </div>
@@ -699,7 +723,7 @@ const CartSection = ({
                     Grand Total
                   </div>
                   <div className="text-black text-lg font-bold">
-                    ₹ {cartState?.totalPayableAmount.toFixed(3)}
+                    ₹ {order.orderMeta.paymentTendered}
                   </div>
                 </div>
 
@@ -721,16 +745,7 @@ const CartSection = ({
                   </button>
                   <button
                     className="bg-blue-500 mt-5 hover:bg-blue-400 p-2 flex gap-2 justify-center items-center text-white w-32 h-10"
-                    onClick={() => {
-                      let table = {
-                        id: 1,
-                        name: "T1",
-                        status: "READYTOBILL",
-                        floor: "BASEMENT",
-                      };
-                      dispatch(setselectedTable(table));
-                      setTimeout(() => placeOrder(2), 200);
-                    }}
+                    onClick={handlePrintReceipt}
                   >
                     Receipt
                   </button>

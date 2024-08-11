@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended:true}))
 // Use the userRouter for handling routes
 app.use('/api/user', userRouter);
 app.use('/api/tyem', userRouter);  // Use webhookRouter for handling webhook routes
-
+app.use('/api/print',userRouter) // node thermal printer
 
 
    
