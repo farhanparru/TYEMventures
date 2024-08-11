@@ -272,18 +272,7 @@ const CartSection = ({
   pauseNotificationSound,
   orders,
   onOrderAccept, // New prop
-  rejectedOrders,
-  updateRejectedOrders
 }) => {
-
-
-
-  const [isAccepted,setIsAccepted] = useState(false)
-  const [isReady,setIsReady] = useState(false)
-  const [isAssigned,setIsAssigned] = useState(false)
-  const [showPlaceModal,setShowPlaceModal] = useState(false)
-  const [showActions, setShowActions] = useState(true); // New state for button visibility
-  const [Rejected, setIsRejected] = useState(false);
 
 
   const { updateOrderStatus, getOrderStatuses } = useOrderStatus();
@@ -308,6 +297,14 @@ const CartSection = ({
       break;
   }
 
+
+
+  const [isAccepted,setIsAccepted] = useState(false)
+  const [isReady,setIsReady] = useState(false)
+  const [isAssigned,setIsAssigned] = useState(false)
+  const [showPlaceModal,setShowPlaceModal] = useState(false)
+  const [showActions, setShowActions] = useState(true); // New state for button visibility
+  const [isRejected, setIsRejected] = useState(false);
 
 
    
@@ -378,11 +375,7 @@ const CartSection = ({
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
-     // Update the rejectedOrders state to include the rejected order's ID
-     if (!rejectedOrders?.includes(orderId)) {
-      updateRejectedOrders((prevRejectedOrders) => [...prevRejectedOrders, orderId]);
-    }
-
+    setIsRejected(true); // Update the state to indicate the order is rejected
     updatePaymentStatus(orderId, "Reject"); // Update payment status
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
     updateOrderStatus(orderId, "isRejected", true);
@@ -424,7 +417,7 @@ const CartSection = ({
     }
   };
   
-  // const Rejected = rejectedOrders?.includes(order._id);
+
 
   if (!order) {
     return (
@@ -469,9 +462,9 @@ const CartSection = ({
             {order.orderDetails[0]?.product_currency}
           </span>
         </div>
-
   
-        {showActions && !Rejected && (
+       {/* Action Buttons */}
+        {showActions && !isRejected && (
           <div className="flex justify-between items-center gap-4 mt-6">
             {isAssigned ? (
               <>
@@ -789,14 +782,10 @@ const HomeOrdersSection = () => {
   const [selectedOrder, setSelectedOrder] = useState(
     orders.length > 0 ? orders[0] : null
   );
-  const [rejectedOrders, setRejectedOrders] = useState([]);
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [audio, setAudio] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null); // Manage status here
   const { totalOrders, setTotalOrders } = useOrderContext(); // Access context values
-
-
-
 
   useEffect(() => {
     if (orders.length > 0) {
@@ -892,18 +881,10 @@ const HomeOrdersSection = () => {
   const mostRecentOrder = sortedOrders[0]; // Assuming the first item is the most recent after sorting
 
 
- 
   const onOrderClick = (order) => {
     setSelectedOrder(order);
-    setRejectedOrders((prevRejected) =>
-      prevRejected.filter((id) => id !== order._id)
-    );
-  }
-
-  const handleReject = (orderId) => {
-    setRejectedOrders((prevRejected) => [...prevRejected, orderId]);
-    // Additional logic for handling rejection
   };
+
 
   const handleCountAccept = (orderId) => {
     setOrders((prevOrders) =>
@@ -946,12 +927,11 @@ const HomeOrdersSection = () => {
           <CartSection
             order={selectedOrder} // Always render CartSection
             onComplete={handleComplete}
-            onCancel={handleReject}
+            onCancel={handleCancel}
             pauseNotificationSound={pauseNotificationSound}
             orders={orders}
             // updateOrderStatus={handleOrderAccept} // Pass the updated handler
             onOrderAccept={handleCountAccept}
-            updateRejectedOrders={setRejectedOrders}
           />
         ) : (
           <p className="text-gray-500">Select an order to view the cart.</p>
