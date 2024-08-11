@@ -20,7 +20,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useOrderContext } from "./OrderContext.jsx";
 import { useOrderStatus } from "../../../components/StatusContext.jsx";
 import { FaCalendar, FaClock } from 'react-icons/fa'; // Adjust the import according to your icon library
-import { usePaymentStatus } from "../../../components/PaymentStatusContext.jsx";
 import { useCompletedOrders } from "./CompletedOrdersContext.jsx";
 
 
