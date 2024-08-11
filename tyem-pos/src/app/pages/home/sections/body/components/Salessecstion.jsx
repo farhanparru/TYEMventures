@@ -274,13 +274,14 @@ const Salesssection = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
+        
+    console.log(response,"kk");
         setOrders(response.data);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
 
-    console.log(response,"kk");
     
 
     // Polling every 5 seconds
