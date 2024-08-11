@@ -27,6 +27,8 @@ import EditCart from "./sections/editCart";
 import ChatBot from "../../layout/navbar/ChatBotComponent"; // Import the ChatBot component
 import { connectWebSocket,} from "../../../services/apiService.js";
 import notificationSound from '../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3'
+import { useOrderContext } from "./sections/body/components/OrderContext.jsx";
+
 
 const Home = () => {
   const selectedCategory = useSelector(getSelectedCategory);
@@ -40,6 +42,7 @@ const Home = () => {
   const [audio, setAudio] = useState(null);
   const [orders, setOrders] = useState([]); // State to manage orders
   const audioRef = useRef(null); // Use ref to manage audio object
+  const { totalOrders, setTotalOrders } = useOrderContext(); // Access context values
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -117,6 +120,7 @@ const Home = () => {
     const socket = connectWebSocket((newOrder) => {
       console.log("New Order Received:", newOrder);
       setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      setTotalOrders(updatedOrders.length); // Update context value
       setSoundPlaying(true); // Play sound when a new order is received
     });
 
