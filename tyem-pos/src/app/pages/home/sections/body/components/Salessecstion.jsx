@@ -12,31 +12,27 @@ import { FaCheckCircle } from 'react-icons/fa';
 import axios from "axios";
 
 
-const OrderItem = () => {
+
+const OrderItem = ({ order }) => {
   return (
     <div
       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
-       `}
+        ${order.status === 'Completed' ? 'bg-green-100' : 'bg-white'}`
+      }
     >
       <div>
-        <h3 className="text-lg font-semibold">98888888</h3>
-        <p className="text-sm">10 20 INR</p>
+        <h3 className="text-lg font-semibold">{order.orderId}</h3>
+        <p className="text-sm">{order.totalAmount} {order.currency}</p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded `}></span>
-
-          <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
-            New
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+            {order.status}
           </span>
         </div>
       </div>
       <div className="text-right">
-        <h1 className="text-md  text-black">
-          <h1>Date</h1>
-        </h1>
-        <h2 className="text-sm  text-black">
-          <h1>tIME</h1>
-        </h2>
+        <h1 className="text-md text-black">{order.date}</h1>
+        <h2 className="text-sm text-black">{order.time}</h2>
       </div>
     </div>
   );
@@ -276,6 +272,8 @@ const Salesssection = () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
         const completeOrders = response.data.filter(order => order.status === "Complete"); // Filter complete orders
+        console.log(completeOrders,"completeOrders");
+        
         setOrders(completeOrders);
       } catch (error) {
         console.error('Error fetching orders:', error);
