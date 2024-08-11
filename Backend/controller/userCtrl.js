@@ -170,7 +170,7 @@ module.exports = {
 
 
    // Online Customer
-   
+
    onlineCustomer:async (req, res) => {
     try {
       const { customerName, phoneNumber, Location } = req.body;
