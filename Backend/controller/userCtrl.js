@@ -170,46 +170,46 @@ module.exports = {
 
 
 
-  onlineCustomer:async(req,res)=>{
-
+  onlineCustomer:async (req, res) => {
     try {
-      const { Location } = req.body;
+      const { customerName, phoneNumber, Location } = req.body;
+
+      console.log(req.body);
+      
   
       // Update or create new order data in MongoDB
       const orderData = await customerOnline.findOneAndUpdate(
-        { _id: "some_order_id" }, // Replace with actual identifier
-        { "customerDetails.Location": Location },
-        { new: true, upsert: true } // `upsert: true` creates a new document if none is found
+        { "customerDetails.phoneNumber": phoneNumber }, // Using phoneNumber as a unique identifier
+        {
+          $set: {
+            "customerDetails.customerName": customerName,
+            "customerDetails.phoneNumber": phoneNumber,
+            "customerDetails.Location": Location,
+          },
+        },
+        { new: true, upsert: true } // Return the updated document or create a new one if it doesn't exist
       );
   
-      if (!orderData) {
-        return res.status(404).json({ message: "Order not found" });
-      }
+      console.log(orderData, "orderData");
   
-
-       console.log(orderData,"orderData");
-       
-      // const order = new customerOnline(orderData);
-      // await order.save();
-
       // Broadcast the new order to all WebSocket clients
       const wss = req.app.get("wss"); // Ensure WebSocket server is available
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(orderData));
-        }
-      });
+      if (wss) {
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(orderData));
+          }
+        });
+      }
   
+      // Send a success response
       res.status(200).json({ message: "Order processed successfully", orderData });
     } catch (error) {
       console.error("Error processing order:", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
-
- 
-
-    
+  
 
 
  // node thermal printer
