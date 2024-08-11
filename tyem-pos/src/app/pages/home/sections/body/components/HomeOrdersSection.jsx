@@ -378,7 +378,7 @@ const CartSection = ({
     setIsAssigned(false);
     setIsReady(false);
      // Update the rejectedOrders state to include the rejected order's ID
-     if (!rejectedOrders.includes(orderId)) {
+     if (!rejectedOrders?.includes(orderId)) {
       updateRejectedOrders((prevRejectedOrders) => [...prevRejectedOrders, orderId]);
     }
 
@@ -423,7 +423,7 @@ const CartSection = ({
     }
   };
   
-  const isRejected = rejectedOrders.includes(order._id);
+  const isRejected = rejectedOrders?.includes(order._id);
 
   if (!order) {
     return (
