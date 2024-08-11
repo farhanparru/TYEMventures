@@ -44,17 +44,20 @@ const OrderItem = ({ order, onClick, selected }) => {
   };
 
 
-  // Function to handle status update
   const updateStatus = async (newStatus) => {
     try {
       const response = await axios.patch(
         `https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`,
         { status: newStatus }
       );
-      setOrderStatus(newStatus);
-      console.log('Order status updated:', response.data);
+      if (response.status === 200) {
+        setOrderStatus(newStatus);
+        console.log('Order status updated:', response.data);
+      } else {
+        console.error('Failed to update order status:', response.statusText);
+      }
     } catch (error) {
-      console.error('Error updating order status:', error);
+      console.error('Error updating order status:', error.message || error);
     }
   };
   // Convert UTC to IST
