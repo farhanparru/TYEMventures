@@ -169,7 +169,8 @@ module.exports = {
   },
 
 
-
+   // Online Customer
+   
    onlineCustomer:async (req, res) => {
     try {
       const { customerName, phoneNumber, Location } = req.body;
@@ -185,6 +186,12 @@ module.exports = {
   
       const savedCustomer = await newCustomer.save();
   
+       console.log(savedCustomer,"savedCustomer");
+       
+       
+      // (Optional) Send acknowledgment back to XpressBot if needed
+      // await axios.post('XpressBot API URL', { ...response });
+  
       // Broadcast the new order to all WebSocket clients
       const wss = req.app.get("wss"); 
       if (wss) {
@@ -195,13 +202,13 @@ module.exports = {
         });
       }
   
-      // Respond with success and the saved data
       res.status(200).json({ message: "Customer data processed successfully", savedCustomer });
     } catch (error) {
       console.error("Error processing customer data:", error);
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
+
 
 
   
