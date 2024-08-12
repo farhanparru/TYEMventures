@@ -12,6 +12,8 @@ import { FaCheckCircle } from 'react-icons/fa';
 import { FaCalendar, FaClock } from "react-icons/fa"; // Adjust the import according to your icon library
 import axios from "axios";
 import { DateTime } from "luxon";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 
 const OrderItem = ({ order, onSelect }) => {
@@ -24,8 +26,9 @@ const OrderItem = ({ order, onSelect }) => {
   return (
     <div
       onClick={onSelect} // Trigger the onSelect function when clicked
-      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
-        ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100' : 'bg-white'}`}
+      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer transition duration-200
+        ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100' : 'bg-white'}
+        hover:bg-gray-200`} // Hover effect
     >
       <div>
         <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId}</h3>
@@ -42,11 +45,11 @@ const OrderItem = ({ order, onSelect }) => {
         </div>
       </div>
       <div className="text-right">
-        <h1 className="text-md  text-black">
+        <h1 className="text-md text-black">
           <FaCalendar className="inline mr-1" />
           {formattedDate}
         </h1>
-        <h2 className="text-sm  text-black">
+        <h2 className="text-sm text-black">
           <FaClock className="inline mr-1" />
           {formattedTime}
         </h2>
@@ -62,7 +65,8 @@ const OrderItem = ({ order, onSelect }) => {
 
 
 
-const OrderDetails = () => {
+
+const OrderDetails = ({ order }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -74,9 +78,47 @@ const OrderDetails = () => {
   };
 
   const handleDownload = () => {
-    // Handle download logic here
-    alert('Download functionality is not implemented yet.');
+    const doc = new jsPDF();
+
+    // Add title and date
+    doc.text("Order Details", 20, 20);
+    doc.text(`Date: ${formattedDate}`, 20, 30);
+    doc.text(`Time: ${formattedTime}`, 20, 40);
+
+    // Add order details
+    doc.autoTable({
+      startY: 50,
+      head: [['Invoice Number', 'Notes', 'Subtotal', 'Delivery Charge', 'Total Amount', 'Payment Method']],
+      body: [
+        [
+          order.orderMeta?.posOrderId,
+          "WhatsAppOrder",
+          `${order.orderDetails.unit_price} INR`,
+          "98 INR",
+          `${order.orderMeta?.paymentTendered} ${order.orderDetails[0].product_currency}`,
+          "Cash",
+        ],
+      ],
+    });
+
+    // Add customer details
+    doc.text("Customer Details", 20, doc.lastAutoTable.finalY + 20);
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 30,
+      head: [['Name', 'Phone Number', 'Place', 'Order Outstanding']],
+      body: [
+        ["KK", "9072937703", "Kasaragod", ""],
+      ],
+    });
+
+    // Save the PDF
+    doc.save(`order_${order.orderMeta?.posOrderId}.pdf`);
   };
+
+  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
+  const zonedDate = utcDate.setZone("Asia/Kolkata");
+  const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+  const formattedTime = zonedDate.toFormat("hh:mm:ss a");
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
@@ -85,35 +127,37 @@ const OrderDetails = () => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Invoice Number</h4>
-            <p>#39</p>
-          </div>
-          <div>
-            <h4 className="font-semibold">Payment Method</h4>
-            <p>28</p>
+            <p>#{order.orderMeta?.posOrderId}</p>
           </div>
           <div>
             <h4 className="font-semibold">Notes</h4>
             <p>WhatsAppOrder</p>
           </div>
-          <div>
-            <h4 className="font-semibold">Date & Time</h4>
-            <p>100</p>
+          <div className="text-right">
+            <h1 className="text-md text-black">
+              <FaCalendar className="inline mr-1" />
+              {formattedDate}
+            </h1>
+            <h2 className="text-sm text-black">
+              <FaClock className="inline mr-1" />
+              {formattedTime}
+            </h2>
           </div>
           <div>
             <h4 className="font-semibold">Subtotal</h4>
-            <p>INR</p>
+            <p>{order.orderDetails.unit_price} INR</p>
           </div>
           <div>
             <h4 className="font-semibold flex items-center">Delivery Charge</h4>
-            <p>98</p>
+            <p>98 INR</p>
           </div>
           <div>
             <h4 className="font-semibold">Total Amount</h4>
-            <p>INR</p>
+            <p>{order.orderMeta?.paymentTendered} {order.orderDetails[0].product_currency}</p>
           </div>
           <div>
             <h4 className="font-semibold">Payment Method</h4>
-            <p>Null</p>
+            <p>Cash</p>
           </div>
         </div>
       </div>
@@ -331,11 +375,11 @@ const Salesssection = () => {
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
         <OrderDetails order={selectedOrder} />
-        {!selectedOrder && <p className="text-gray-500">Select an order to view details.</p>}
+     
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
         <CartSection order={selectedOrder} />
-        {!selectedOrder && <p className="text-gray-500">Select an order to view the cart.</p>}
+       
       </div>
     </div>
   );
