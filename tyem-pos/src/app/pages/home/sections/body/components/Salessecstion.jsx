@@ -9,13 +9,21 @@ import {
   WhatsAppOutlined,
 } from "@ant-design/icons";
 import { FaCheckCircle } from 'react-icons/fa';
+import { FaCalendar, FaClock } from "react-icons/fa"; // Adjust the import according to your icon library
 import axios from "axios";
 
 
 
-const OrderItem = ({ order }) => {
+const OrderItem = ({ order, onSelect }) => {
+  // Convert UTC to IST
+  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
+  const zonedDate = utcDate.setZone("Asia/Kolkata");
+  const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+  const formattedTime = zonedDate.toFormat("hh:mm:ss a");
+
   return (
     <div
+      onClick={onSelect} // Trigger the onSelect function when clicked
       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
         ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100' : 'bg-white'}`}
     >
@@ -28,18 +36,25 @@ const OrderItem = ({ order }) => {
         </p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-red-200 text-red-800'}`}>
             {order.orderMeta.paymentStatus}
           </span>
         </div>
       </div>
       <div className="text-right">
-        <h1 className="text-md text-black">{order.date}</h1>
-        <h2 className="text-sm text-black">{order.time}</h2>
+        <h1 className="text-md  text-black">
+          <FaCalendar className="inline mr-1" />
+          {formattedDate}
+        </h1>
+        <h2 className="text-sm  text-black">
+          <FaClock className="inline mr-1" />
+          {formattedTime}
+        </h2>
       </div>
     </div>
   );
 };
+
 
 
 
@@ -165,8 +180,9 @@ const OrderDetails = () => {
 };
 
 
-const CartSection = () => {
+const CartSection = ({ order }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
+
   const menu = (
     <Menu>
       <Menu.Item key="1" icon={<FaPrint />}>
@@ -187,43 +203,43 @@ const CartSection = () => {
     </Menu>
   );
 
-  // if (!order) {
-  //   return (
-  //     <div className="p-6 bg-gray-100 text-gray-500 rounded-lg">
-  //       Select an order to view cart items.
-  //     </div>
-  //   );
-  // }
+  if (!order) {
+    return (
+      <div className="p-6 bg-gray-100 text-gray-500 rounded-lg">
+        Select an order to view cart items.
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
-      {/* Cart Items */}
       <div className="flex-grow overflow-auto max-h-96">
-        <div className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
-          <span className="font-semibold">FARHAN</span>
-          <span>88</span>
-          <span>pp</span>
-          <span>INR</span>
-        </div>
+        {order.orderDetails.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+          >
+            <span className="font-semibold">{item.product_name}</span>
+            <span>{item.product_quantity}</span>
+            <span>{item.unit_price}</span>
+            <span>{item.product_currency}</span>
+          </div>
+        ))}
       </div>
 
       {/* Summary and Actions */}
-      <div
-        className="mt-auto p-4 bg-gray-700 text-white rounded-lg"
-        style={{ marginBottom: "42px" }}
-      >
-        
+      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg" style={{ marginBottom: "42px" }}>
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
           <span>
-            <h1>helo</h1>
+            {order.orderMeta.paymentTendered} {order.orderDetails[0]?.product_currency}
           </span>
         </div>
 
-        {/* Total */}
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold">Total</span>
           <span>
-            <h1>hh</h1>
+            <h1>{/* Display total price if needed */}</h1>
           </span>
         </div>
 
@@ -252,8 +268,10 @@ const CartSection = () => {
   );
 };
 
-const Salesssection = () => {
+
+const SalesSection = () => {
   const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null); // State for selected order
 
   // WebSocket for real-time updates
   useEffect(() => {
@@ -261,7 +279,7 @@ const Salesssection = () => {
   
     ws.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-      console.log('New WebSocket Order:', newOrder); // Log new WebSocket order
+      console.log('New WebSocket Order:', newOrder);
   
       if (newOrder.orderMeta.paymentStatus === 'Completed') {
         setOrders((prevOrders) => [newOrder, ...prevOrders]);
@@ -272,17 +290,17 @@ const Salesssection = () => {
       ws.close();
     };
   }, []);
+
   // Fetch completed orders from the API
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
-        console.log('API Response:', response.data); // Log full response
+        console.log('API Response:', response.data);
 
         if (Array.isArray(response.data)) {
-          // Adjust filter condition based on your actual 'completed' status
           const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Completed');
-          console.log('Filtered Completed Orders:', completedOrders); // Log filtered orders
+          console.log('Filtered Completed Orders:', completedOrders);
 
           setOrders(completedOrders);
         } else {
@@ -294,8 +312,12 @@ const Salesssection = () => {
     };
 
     fetchOrders();
-    // Optionally, you can use polling or WebSocket for real-time updates
   }, []);
+
+  // Handler for when an order is selected
+  const handleOrderSelect = (order) => {
+    setSelectedOrder(order);
+  };
 
   return (
     <div className="flex h-screen">
@@ -304,20 +326,21 @@ const Salesssection = () => {
         className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
       >
         {orders.map((order) => (
-          <OrderItem key={order._id} order={order} />
+          <OrderItem key={order._id} order={order} onSelect={() => handleOrderSelect(order)} />
         ))}
       </div>
       <div className="w-1/3 h-full p-4 bg-white overflow-auto">
-        <OrderDetails />
-        <p className="text-gray-500">Select an order to view details.</p>
+        <OrderDetails order={selectedOrder} />
+        {!selectedOrder && <p className="text-gray-500">Select an order to view details.</p>}
       </div>
       <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
-        <CartSection />
-        <p className="text-gray-500">Select an order to view the cart.</p>
+        <CartSection order={selectedOrder} />
+        {!selectedOrder && <p className="text-gray-500">Select an order to view the cart.</p>}
       </div>
     </div>
   );
 };
+
 
 
 export default Salesssection;

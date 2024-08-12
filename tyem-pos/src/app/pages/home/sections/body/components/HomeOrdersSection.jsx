@@ -3,7 +3,7 @@ import "tailwindcss/tailwind.css";
 import { Element } from "react-scroll";
 import notificationSound from "../../../../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3";
 import { FaTruck } from "react-icons/fa";
-import axios from 'axios';
+import axios from "axios";
 import {
   fetchOrders,
   connectWebSocket,
@@ -19,10 +19,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useOrderContext } from "./OrderContext.jsx";
 import { useOrderStatus } from "../../../components/StatusContext.jsx";
-import { FaCalendar, FaClock } from 'react-icons/fa'; // Adjust the import according to your icon library
+import { FaCalendar, FaClock } from "react-icons/fa"; // Adjust the import according to your icon library
 import { useCompletedOrders } from "./CompletedOrdersContext.jsx";
-
-
 
 // OrderItem component
 const OrderItem = ({ order, onClick, selected }) => {
@@ -40,42 +38,38 @@ const OrderItem = ({ order, onClick, selected }) => {
     Completed: "bg-purple-200 text-purple-800",
     Pending: "bg-gray-200 text-gray-800",
     Rejected: "bg-red-200 text-red-800",
-    Cancelled: "bg-gray-500 text-gray-200"
+    Cancelled: "bg-gray-500 text-gray-200",
+    Accepted: "bg-green-300 text-green-900", // Added 'Accepted' status
   };
 
-
-
-const updateStatus = async (newStatus) => {
-  try {
-    const response = await axios.patch(
-      `https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`,
-      { status: newStatus },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+  const updateStatus = async (newStatus) => {
+    try {
+      const response = await axios.patch(
+        `https://tyem.invenro.site/api/user/PaymentStatus/${order._id}`,
+        { status: newStatus },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
         }
+      );
+      if (response.status === 200) {
+        setOrderStatus(newStatus);
+        console.log("Order status updated:", response.data);
+      } else {
+        console.error("Failed to update order status:", response.statusText);
       }
-    );
-    if (response.status === 200) {
-      setOrderStatus(newStatus);
-      console.log('Order status updated:', response.data);
-    } else {
-      console.error('Failed to update order status:', response.statusText);
+    } catch (error) {
+      console.error("Error updating order status:", error.message || error);
     }
-  } catch (error) {
-    console.error('Error updating order status:', error.message || error);
-  }
-};
+  };
 
   // Convert UTC to IST
   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
   const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
-
-
-  ;
 
   return (
     <div
@@ -98,14 +92,18 @@ const updateStatus = async (newStatus) => {
         <p className="text-sm">
           {totalQuantity} Item{totalQuantity > 1 ? "s" : ""} |
           {order.orderMeta?.paymentTendered}{" "}
-          {order.orderDetails[0]?.product_currency} | {order.orderMeta.orderType}
+          {order.orderDetails[0]?.product_currency} |{" "}
+          {order.orderMeta.orderType}
         </p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${statusColors[orderStatus] || statusColors.Pending}`}>
+          <span
+            className={`px-2 py-1 text-xs font-semibold rounded ${
+              statusColors[orderStatus] || statusColors.Pending
+            }`}
+          >
             {orderStatus || "Pending"}
           </span>
-
 
           {order.new && (
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded">
@@ -115,16 +113,15 @@ const updateStatus = async (newStatus) => {
         </div>
       </div>
       <div className="text-right">
-  <h1 className="text-md  text-black">
-    <FaCalendar className="inline mr-1" /> 
-    {formattedDate}
-  </h1>
-  <h2 className="text-sm  text-black">
-    <FaClock className="inline mr-1" /> 
-    {formattedTime}
-  </h2>
-</div>
-
+        <h1 className="text-md  text-black">
+          <FaCalendar className="inline mr-1" />
+          {formattedDate}
+        </h1>
+        <h2 className="text-sm  text-black">
+          <FaClock className="inline mr-1" />
+          {formattedTime}
+        </h2>
+      </div>
     </div>
   );
 };
@@ -132,39 +129,34 @@ const updateStatus = async (newStatus) => {
 const OrderStatusHistory = ({ order }) => {
   const { statuses } = useOrderStatus();
 
-    // Define a color mapping for the status
-    const statusColors = {
-      Confirmed: "bg-green-500",
-      Ready: "bg-yellow-500",
-      Assigned: "bg-blue-500",
-      Completed: "bg-purple-500",
-      Rejected: "bg-red-500", // Add color for Rejected
-    };
+  // Define a color mapping for the status
+  const statusColors = {
+    Confirmed: "bg-green-500",
+    Ready: "bg-yellow-500",
+    Assigned: "bg-blue-500",
+    Completed: "bg-purple-500",
+    Rejected: "bg-red-500", // Add color for Rejected
+  };
 
-    // Assuming you have a way to filter the statuses based on the selected order
-    const orderStatuses = statuses(order._id); 
+  // Assuming you have a way to filter the statuses based on the selected order
+  const orderStatuses = statuses(order._id);
 
-  console.log(orderStatuses,"gg");
-  
+  console.log(orderStatuses, "gg");
 
-    return (
-      <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
-        <div className="flex items-center justify-between">
-          {orderStatuses?.map((status, index) => (
-            <div key={index} className="flex flex-col items-center">
+  return (
+    <div className="p-6 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
+      <div className="flex items-center justify-between">
+        {orderStatuses?.map((status, index) => (
+          <div key={index} className="flex flex-col items-center">
+            {/* Status Icon */}
+            <div
+              className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                status.completed ? statusColors[status.label] : "bg-gray-300"
+              }`}
+            >
+              {status.icon}
+            </div>
 
-         
-              {/* Status Icon */}
-              <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                  status.completed ? statusColors[status.label] : "bg-gray-300"
-                }`}
-              >
-                {status.icon}
-              </div>
-  
-             
-          
             {/* Connector Line */}
             {index < orderStatuses.length - 1 && (
               <div
@@ -175,16 +167,22 @@ const OrderStatusHistory = ({ order }) => {
                 }`}
               ></div>
             )}
-  
+
             {/* Status Details */}
             <div className="mt-2 text-center">
-              <span className={`block text-sm font-semibold ${status.completed ? "text-gray-700" : "text-gray-400"}`}>
+              <span
+                className={`block text-sm font-semibold ${
+                  status.completed ? "text-gray-700" : "text-gray-400"
+                }`}
+              >
                 {status.label}
               </span>
               <h3 className="text-lg font-semibold">{status.label}</h3>
               {status.date && (
                 <p className="text-sm text-gray-600">
-                  {`Date: ${DateTime.fromISO(status.date).toFormat("MMM dd, yyyy hh:mm:ss a")}`}
+                  {`Date: ${DateTime.fromISO(status.date).toFormat(
+                    "MMM dd, yyyy hh:mm:ss a"
+                  )}`}
                 </p>
               )}
               {status.employee && (
@@ -194,16 +192,14 @@ const OrderStatusHistory = ({ order }) => {
               )}
             </div>
           </div>
-          ))}
-        </div>
+        ))}
       </div>
-    );
-  };
-  
+    </div>
+  );
+};
 
 // OrderDetails component
 const OrderDetails = ({ order }) => {
-
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
@@ -253,7 +249,6 @@ const OrderDetails = ({ order }) => {
           <div>
             <h4 className="font-semibold">Payment Method</h4>
             <p>Null</p>{" "}
-          
           </div>
         </div>
       </div>
@@ -298,17 +293,21 @@ const CartSection = ({
   orders,
   onOrderAccept, // New prop
 }) => {
-
   const updatePaymentStatus = async (orderId, statusKey, statusValue) => {
     try {
-        await axios.patch(`https://tyem.invenro.site/api/user/PaymentStatus/${orderId}`, {
-            [statusKey]: statusValue,
-        });
+      await axios.patch(
+        `https://tyem.invenro.site/api/user/PaymentStatus/${orderId}`,
+        {
+          [statusKey]: statusValue,
+        }
+      );
     } catch (error) {
-        console.error('Error updating payment status:', error.response ? error.response.data : error.message);
+      console.error(
+        "Error updating payment status:",
+        error.response ? error.response.data : error.message
+      );
     }
-};
-
+  };
 
   const { updateOrderStatus, getOrderStatuses } = useOrderStatus();
   const [paymentMethods, setpaymentMethods] = useState([]);
@@ -331,21 +330,17 @@ const CartSection = ({
       break;
   }
 
-
-
-  const [isAccepted,setIsAccepted] = useState(false)
-  const [isReady,setIsReady] = useState(false)
-  const [isAssigned,setIsAssigned] = useState(false)
-  const [showPlaceModal,setShowPlaceModal] = useState(false)
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [isAssigned, setIsAssigned] = useState(false);
+  const [showPlaceModal, setShowPlaceModal] = useState(false);
   const [showActions, setShowActions] = useState(true); // New state for button visibility
   const [isRejected, setIsRejected] = useState(false);
 
-
-   
   // send Message for Whtsapp
   const sendMessage = async () => {
     try {
-      const apiToken = "6894%7C7kBhTBNwO631guYWt9Nq3ayMOUIa752Ax8SdDZdl";
+      const apiToken = "6916%7CTkrkgYrXFqr6MdA1uQfdNOPcLwDXtrQyoHTxPlft";
       const phoneNumberId = "301969286337576";
       const templateId = "95869";
       const templateVariables = {
@@ -365,23 +360,18 @@ const CartSection = ({
     }
   };
 
-
- // Retrieve order statuses for the current order
-//  const orderStatuses = getOrderStatuses(order._id);
-
- 
-
-
+  // Retrieve order statuses for the current order
+  //  const orderStatuses = getOrderStatuses(order._id);
 
   const handleAccept = (orderId) => {
-  
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);
     setIsAssigned(false);
     onComplete(orderId); // Call the onComplete function if needed
-    sendMessage()
+    sendMessage();
     updatePaymentStatus(orderId, "status", "Accepted");
+
     updateOrderStatus(orderId, "isAccepted", true);
     updateOrderStatus(orderId, "confirmedDate", new Date().toISOString());
     onComplete(order._id); // Call the completion handler
@@ -393,20 +383,19 @@ const CartSection = ({
     updateOrderStatus(order._id, "isReady", true);
     setIsReady(true);
     setIsAssigned(false);
-   
   };
 
-   const { addCompletedOrder } = useCompletedOrders();
+  const { addCompletedOrder } = useCompletedOrders();
 
-   const handleComplete = async (orderId) => {
+  const handleComplete = async (orderId) => {
     setShowPlaceModal(true);
     updatePaymentStatus(orderId, "status", "Completed");
     await onComplete(orderId);
     updateOrderStatus(order._id, "showPlaceModal", true);
     onComplete(order._id); // Call the completion handler
 
-       // Add completed order to the context
-    const completedOrder = orders.find(order => order._id === orderId);
+    // Add completed order to the context
+    const completedOrder = orders.find((order) => order._id === orderId);
     addCompletedOrder(completedOrder);
 
     onComplete(orderId); // Optionally notify parent
@@ -421,17 +410,15 @@ const CartSection = ({
     updatePaymentStatus(orderId, "status", "Rejected");
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
     updateOrderStatus(orderId, "isRejected", true);
-   
   };
 
   const handlecancle = (orderId) => {
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
-    onCancel(orderId)
+    onCancel(orderId);
     updatePaymentStatus(orderId, "status", "Cancelled");
   };
-
 
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
@@ -441,27 +428,27 @@ const CartSection = ({
   };
 
   // Status History Data
-  
-  const handlePrintReceipt = async (orderData,orderId) => {
-  
 
+  const handlePrintReceipt = async (orderData, orderId) => {
     console.log(orderData);
-    
+
     try {
       // Sending the order data to the backend for printing
-      await axios.post("https://tyem.invenro.site/api/print/printreceipt", orderData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      await axios.post(
+        "https://tyem.invenro.site/api/print/printreceipt",
+        orderData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       alert("Receipt printed successfully.");
     } catch (error) {
       console.error("Error printing receipt:", error);
       alert("Failed to print receipt.");
     }
   };
-  
-
 
   if (!order) {
     return (
@@ -486,9 +473,12 @@ const CartSection = ({
           </div>
         ))}
       </div>
-  
+
       {/* Summary and Actions */}
-      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg" style={{marginBottom:"42px"}}>
+      <div
+        className="mt-auto p-4 bg-gray-700 text-white rounded-lg"
+        style={{ marginBottom: "42px" }}
+      >
         {/* Subtotal */}
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
@@ -497,7 +487,7 @@ const CartSection = ({
             {order.orderDetails[0]?.product_currency}
           </span>
         </div>
-  
+
         {/* Total */}
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold">Total</span>
@@ -506,8 +496,8 @@ const CartSection = ({
             {order.orderDetails[0]?.product_currency}
           </span>
         </div>
-  
-       {/* Action Buttons */}
+
+        {/* Action Buttons */}
         {showActions && !isRejected && (
           <div className="flex justify-between items-center gap-4 mt-6">
             {isAssigned ? (
@@ -575,7 +565,6 @@ const CartSection = ({
           </div>
         )}
       </div>
-
 
       {showPlaceModal && (
         <CustomModal
@@ -820,6 +809,8 @@ const CartSection = ({
   );
 };
 
+
+
 // Main HomeOrdersSection component
 const HomeOrdersSection = () => {
   const [orders, setOrders] = useState([]);
@@ -860,8 +851,6 @@ const HomeOrdersSection = () => {
     }
   };
 
-
-
   // Fetch orders and set up WebSocket
   useEffect(() => {
     const fetchAndSetOrders = async () => {
@@ -900,9 +889,6 @@ const HomeOrdersSection = () => {
     }
   }, [soundPlaying]);
 
-
-
-
   const handleComplete = (orderId) => {
     console.log(`Order ${orderId} accepted`);
     setOrderStatus("Completed");
@@ -924,19 +910,17 @@ const HomeOrdersSection = () => {
   const sortedOrders = sortOrdersByPosOrderId(orders);
   const mostRecentOrder = sortedOrders[0]; // Assuming the first item is the most recent after sorting
 
-
   const onOrderClick = (order) => {
     setSelectedOrder(order);
   };
 
-
   const handlecomplete = (orderId) => {
     // Your order completion logic
-    setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order._id !== orderId)
+    );
     setTotalOrders((prevCount) => prevCount - 1);
   };
-
-
 
   return (
     <div className=" flex h-screen">
@@ -959,7 +943,8 @@ const HomeOrdersSection = () => {
         {selectedOrder ? (
           <>
             <OrderDetails order={selectedOrder} />
-            <OrderStatusHistory order={selectedOrder} /> {/* Add OrderStatusHistory */}
+            <OrderStatusHistory order={selectedOrder} />{" "}
+            {/* Add OrderStatusHistory */}
           </>
         ) : (
           <p className="text-gray-500">Select an order to view details.</p>
