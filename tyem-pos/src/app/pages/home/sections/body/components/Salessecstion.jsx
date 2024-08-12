@@ -157,7 +157,7 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Invoice Number</h4>
-            <p>Order #{order?.orderMeta?.posOrderId} | INV# {order._id}</p>
+            <p>Order #{order?.orderMeta?.posOrderId} | INV# {order?._id}</p>
           </div>
           <div>
             <h4 className="font-semibold">Notes</h4>
