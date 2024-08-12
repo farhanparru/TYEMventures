@@ -366,7 +366,7 @@ const CartSection = ({
       const apiToken = "6916|TkrkgYrXFqr6MdA1uQfdNOPcLwDXtrQyoHTxPlft";
       const phoneNumberId = "301969286337576";
       const templateVariables = {
-        customfields: { posOrderId: order.orderMeta.posOrderId },
+        customfields:'123456789',
         phoneNumber: "919895639688",
       };
   
