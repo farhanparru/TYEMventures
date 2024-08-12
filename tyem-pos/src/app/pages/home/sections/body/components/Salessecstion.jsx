@@ -278,7 +278,7 @@ const CartSection = ({ order }) => {
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
           <span>
-            {order.orderMeta.paymentTendered} {order.orderDetails[0]?.product_currency}
+            {order?.orderMeta.paymentTendered} {order.orderDetails[0]?.product_currency}
           </span>
         </div>
 
