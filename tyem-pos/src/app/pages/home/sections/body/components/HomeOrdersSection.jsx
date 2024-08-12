@@ -360,6 +360,31 @@ const CartSection = ({
     }
   };
 
+
+
+  const sendcustome = async () => {
+    try {
+      const apiToken = "6916|TkrkgYrXFqr6MdA1uQfdNOPcLwDXtrQyoHTxPlft";
+      const phoneNumberId = "301969286337576";
+      const templateVariables = {
+        customfields: `${order.orderMeta.posOrderId}`,
+        phoneNumber:`919895639688`,
+      };
+
+      const url = `https://app.xpressbot.org/api/v1/whatsapp/subscriber/chat/assign-custom-fields?apiToken=${apiToken}&phone_number_id=${phoneNumberId}&phone_number=${templateVariables.phoneNumber}&custom_fields=${templateVariables.customfields}`;
+
+      await axios.post(url);
+      toast.success(`Message sent successfully to ${order.customer.phone}!`);
+    } catch (error) {
+      console.error("Error sending message:", error.response || error.message);
+      toast.error("Failed to send message.");
+    }
+  };
+
+
+  
+
+
   // Retrieve order statuses for the current order
   //  const orderStatuses = getOrderStatuses(order._id);
 
@@ -369,7 +394,8 @@ const CartSection = ({
     setIsReady(false);
     setIsAssigned(false);
     onComplete(orderId); // Call the onComplete function if needed
-    sendMessage();
+    // sendMessage();
+    sendcustome()
     updatePaymentStatus(orderId, "status", "Accepted");
 
     updateOrderStatus(orderId, "isAccepted", true);
