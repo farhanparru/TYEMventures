@@ -371,10 +371,10 @@ const Salesssection = () => {
   return (
     <div className="flex h-screen">
   <div
-        id="order-list"
-        className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
-      >
-      
+         id="order-list"
+  className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100"
+>
+
       {orders.map((order) => (
         <OrderItem
           key={order._id}
