@@ -91,12 +91,12 @@ const OrderDetails = ({ order }) => {
       head: [['Invoice Number', 'Notes', 'Subtotal', 'Delivery Charge', 'Total Amount', 'Payment Method']],
       body: [
         [
-          order.orderMeta?.posOrderId,
+          order?.orderMeta?.posOrderId || 'N/A',
           "WhatsAppOrder",
-          `${order.orderDetails.unit_price} INR`,
+          `${order?.orderDetails?.[0]?.unit_price || '0'} INR`,
           "98 INR",
-          `${order.orderMeta?.paymentTendered} ${order.orderDetails[0].product_currency}`,
-          "Cash",
+          `${order?.orderMeta?.paymentTendered || '0'} ${order?.orderDetails?.[0]?.product_currency || 'INR'}`,
+          order?.orderMeta?.paymentMethod || 'Cash',
         ],
       ],
     });
@@ -107,15 +107,15 @@ const OrderDetails = ({ order }) => {
       startY: doc.lastAutoTable.finalY + 30,
       head: [['Name', 'Phone Number', 'Place', 'Order Outstanding']],
       body: [
-        ["KK", "9072937703", "Kasaragod", ""],
+        [order?.customer?.name || 'N/A', order?.customer?.phone || 'N/A', "Kasaragod", ""],
       ],
     });
 
     // Save the PDF
-    doc.save(`order_${order.orderMeta?.posOrderId}.pdf`);
+    doc.save(`order_${order?.orderMeta?.posOrderId}.pdf`);
   };
 
-  const utcDate = DateTime.fromISO(order?.orderMeta.orderDate, { zone: "utc" });
+  const utcDate = DateTime.fromISO(order?.orderMeta?.orderDate || new Date().toISOString(), { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
   const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
@@ -127,7 +127,7 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Invoice Number</h4>
-            <p>#{order?.orderMeta?.posOrderId}</p>
+            <p>#{order?.orderMeta?.posOrderId || 'N/A'}</p>
           </div>
           <div>
             <h4 className="font-semibold">Notes</h4>
@@ -145,7 +145,7 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Subtotal</h4>
-            <p>{order.orderDetails.unit_price} INR</p>
+            <p>{order?.orderDetails?.[0]?.unit_price || '0'} INR</p>
           </div>
           <div>
             <h4 className="font-semibold flex items-center">Delivery Charge</h4>
@@ -153,11 +153,11 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Total Amount</h4>
-            <p>{order.orderMeta?.paymentTendered} {order.orderDetails[0].product_currency}</p>
+            <p>{order?.orderMeta?.paymentTendered || '0'} {order?.orderDetails?.[0]?.product_currency || 'INR'}</p>
           </div>
           <div>
             <h4 className="font-semibold">Payment Method</h4>
-            <p>Cash</p>
+            <p>{order?.orderMeta?.paymentMethod || 'Cash'}</p>
           </div>
         </div>
       </div>
@@ -167,11 +167,11 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Name</h4>
-            <p>KK</p>
+            <p>{order?.customer?.name || 'N/A'}</p>
           </div>
           <div>
             <h4 className="font-semibold">Phone Number</h4>
-            <p>9072937703</p>
+            <p>{order?.customer?.phone || 'N/A'}</p>
           </div>
           <div>
             <h4 className="font-semibold">Place</h4>
@@ -222,6 +222,7 @@ const OrderDetails = ({ order }) => {
     </div>
   );
 };
+
 
 
 const CartSection = ({ order }) => {
