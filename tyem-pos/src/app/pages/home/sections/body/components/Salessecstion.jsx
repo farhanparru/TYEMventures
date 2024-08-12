@@ -269,7 +269,7 @@ const CartSection = ({ order }) => {
 };
 
 
-const SalesSection = () => {
+const Salesssection = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null); // State for selected order
 
