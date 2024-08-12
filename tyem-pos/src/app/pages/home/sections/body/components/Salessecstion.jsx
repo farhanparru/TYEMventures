@@ -260,7 +260,7 @@ const CartSection = ({ order }) => {
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
       <div className="flex-grow overflow-auto max-h-96">
-        {order.orderDetails.map((item, index) => (
+        {order?.orderDetails.map((item, index) => (
           <div
             key={index}
             className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
