@@ -115,7 +115,7 @@ const OrderDetails = ({ order }) => {
     doc.save(`order_${order.orderMeta?.posOrderId}.pdf`);
   };
 
-  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
+  const utcDate = DateTime.fromISO(order?.orderMeta.orderDate, { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
   const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
