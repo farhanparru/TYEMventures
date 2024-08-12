@@ -2,7 +2,7 @@ import React, { useState ,useEffect} from "react";
 import { FaCheckCircle, FaCalendar, FaClock, FaChevronDown } from 'react-icons/fa';
 import { Dropdown, Menu } from "antd";
 import { FaPrint, FaDownload,FaUndoAlt } from 'react-icons/fa'; // Ensure correct imports
-import { MailOutlined, MessageOutlined, WhatsAppOutlined } from '@ant-design/icons'; // Import from @ant-design/icons
+import { MailOutlined, MessageOutlined, WhatsAppOutlined , UpOutlined, DownOutlined } from '@ant-design/icons'; // Import from @ant-design/icons
 
 import axios from "axios";
 import { DateTime } from "luxon";
