@@ -366,7 +366,8 @@ const CartSection = ({
       const apiToken = "6916|TkrkgYrXFqr6MdA1uQfdNOPcLwDXtrQyoHTxPlft";
       const phoneNumberId = "301969286337576";
       const phoneNumber = "919895639688";
-      const customFieldValue = "12345"; // Your custom field value
+      const customFieldname = 'BillNumber'; // Your custom field value
+      const customeFieldValue = "12345678"
   
       const url = `https://app.xpressbot.org/api/v1/whatsapp/subscriber/chat/assign-custom-fields`;
   
@@ -375,9 +376,12 @@ const CartSection = ({
         phone_number_id: phoneNumberId,
         phone_number: phoneNumber,
         custom_fields: {
-          custom_field_name: customFieldValue // Replace 'custom_field_name' with the actual field name expected by the API
+          custom_field_name: customFieldname,
+          custom_field_value: customeFieldValue,
         }
       });
+
+      
   
       toast.success(`Custom field sent successfully to ${phoneNumber}!`);
     } catch (error) {
