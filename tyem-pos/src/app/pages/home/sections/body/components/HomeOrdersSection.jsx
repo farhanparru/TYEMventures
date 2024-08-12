@@ -497,11 +497,9 @@ const CartSection = ({
           </span>
         </div>
 
-        {/* Action Buttons */}
-        {showActions && !isRejected && (
+   
           <div className="flex justify-between items-center gap-4 mt-6">
-            {isAssigned ? (
-              <>
+          
                 {/* <button
                   className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                   onClick={() => handleComplete(order._id)}
@@ -514,9 +512,7 @@ const CartSection = ({
                 >
                   Cancel
                 </button> */}
-              </>
-            ) : isReady ? (
-              <>
+              
                 {/* <button
                   className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
                   onClick={() => handleAssigned(order._id)}
@@ -529,9 +525,7 @@ const CartSection = ({
                 >
                   Cancel
                 </button> */}
-              </>
-            ) : isAccepted ? (
-              <>
+            
                 {/* <button
                   className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
                   onClick={() => handleReady(order._id)}
@@ -544,9 +538,7 @@ const CartSection = ({
                 >
                   Cancel
                 </button> */}
-              </>
-            ) : (
-              <>
+          
                 <button
                   className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
                   onClick={() => handleAccept(order._id)}
@@ -560,10 +552,10 @@ const CartSection = ({
                 >
                   Reject
                 </button>
-              </>
-            )}
+              
+           
           </div>
-        )}
+        
       </div>
 
       {showPlaceModal && (
