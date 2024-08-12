@@ -502,7 +502,7 @@ const CartSection = ({
           <div className="flex justify-between items-center gap-4 mt-6">
             {isAssigned ? (
               <>
-                <button
+                {/* <button
                   className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                   onClick={() => handleComplete(order._id)}
                 >
@@ -513,11 +513,11 @@ const CartSection = ({
                   onClick={() => handlecancle(order._id)}
                 >
                   Cancel
-                </button>
+                </button> */}
               </>
             ) : isReady ? (
               <>
-                <button
+                {/* <button
                   className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
                   onClick={() => handleAssigned(order._id)}
                 >
@@ -528,11 +528,11 @@ const CartSection = ({
                   onClick={() => handlecancle(order._id)}
                 >
                   Cancel
-                </button>
+                </button> */}
               </>
             ) : isAccepted ? (
               <>
-                <button
+                {/* <button
                   className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
                   onClick={() => handleReady(order._id)}
                 >
@@ -543,7 +543,7 @@ const CartSection = ({
                   onClick={() => handlecancle(order._id)}
                 >
                   Cancel
-                </button>
+                </button> */}
               </>
             ) : (
               <>

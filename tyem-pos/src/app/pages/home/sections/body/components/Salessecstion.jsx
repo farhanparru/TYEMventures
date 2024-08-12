@@ -249,13 +249,13 @@ const CartSection = ({ order }) => {
     </Menu>
   );
 
-  if (!order) {
-    return (
-      <div className="p-6 bg-gray-100 text-gray-500 rounded-lg">
-        Select an order to view cart items.
-      </div>
-    );
-  }
+  // if (!order) {
+  //   return (
+  //     <div className="p-6 bg-gray-100 text-gray-500 rounded-lg">
+  //       Select an order to view cart items.
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
