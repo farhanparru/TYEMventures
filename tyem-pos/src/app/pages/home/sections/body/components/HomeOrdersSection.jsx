@@ -381,6 +381,7 @@ const CartSection = ({
         }
       });
 
+      console.log(url,"check");
       
   
       toast.success(`Custom field sent successfully to ${phoneNumber}!`);
