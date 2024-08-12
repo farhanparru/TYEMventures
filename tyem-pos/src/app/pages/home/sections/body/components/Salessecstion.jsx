@@ -16,7 +16,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 
-const OrderItem = ({ order, onSelect }) => {
+const OrderItem = ({  order, onClick, selected }) => {
   // Convert UTC to IST
   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
@@ -25,10 +25,17 @@ const OrderItem = ({ order, onSelect }) => {
 
   return (
     <div
-      onClick={onSelect} // Trigger the onSelect function when clicked
-      className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer transition duration-200
-        ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100' : 'bg-white'}
-        hover:bg-gray-200`} // Hover effect
+       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
+        ${
+          selected
+            ? "bg-blue-500 border-blue-500 text-white"
+            : "bg-white border-gray-200"
+        }
+        ${selected ? "" : "hover:bg-blue-100 hover:border-blue-300"}
+       
+      `}
+      onClick={() => onClick(order)}
+      aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
       <div>
         <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId}</h3>
@@ -124,16 +131,41 @@ const OrderDetails = ({ order }) => {
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4 border-b pb-2">Payment Details</h3>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="relative mb-8">
+          <button
+            onClick={toggleDropdown}
+            className="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-900 flex items-center"
+          >
+            Invoice Options
+            <FaChevronDown className="ml-2" />
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded shadow-lg z-10">
+              <button
+                onClick={handlePrint}
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+              >
+                Print
+              </button>
+              <button
+                onClick={handleDownload}
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+              >
+                Download
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Invoice Number</h4>
-            <p>#{order?.orderMeta?.posOrderId || 'N/A'}</p>
+            <p>Order #{order.orderMeta?.posOrderId} | INV# {order._id}</p>
           </div>
           <div>
             <h4 className="font-semibold">Notes</h4>
             <p>WhatsAppOrder</p>
           </div>
-          <div className="text-right">
+          <div className="text-right md:text-left">
             <h1 className="text-md text-black">
               <FaCalendar className="inline mr-1" />
               {formattedDate}
@@ -148,7 +180,7 @@ const OrderDetails = ({ order }) => {
             <p>{order?.orderDetails?.[0]?.unit_price || '0'} INR</p>
           </div>
           <div>
-            <h4 className="font-semibold flex items-center">Delivery Charge</h4>
+            <h4 className="font-semibold">Delivery Charge</h4>
             <p>98 INR</p>
           </div>
           <div>
@@ -164,7 +196,7 @@ const OrderDetails = ({ order }) => {
 
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4 border-b pb-2">Customer Details</h3>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Name</h4>
             <p>{order?.customer?.name || 'N/A'}</p>
@@ -188,31 +220,6 @@ const OrderDetails = ({ order }) => {
         <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
           Pay Outstanding
         </button>
-      </div>
-
-      <div className="mb-8 text-center relative">
-        <button
-          onClick={toggleDropdown}
-          className="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-900"
-        >
-          Invoice Options
-        </button>
-        {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded shadow-lg z-10">
-            <button
-              onClick={handlePrint}
-              className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-            >
-              Print
-            </button>
-            <button
-              onClick={handleDownload}
-              className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-            >
-              Download
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="flex justify-center items-center">
@@ -316,7 +323,9 @@ const CartSection = ({ order }) => {
 
 const Salesssection = () => {
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null); // State for selected order
+  const [selectedOrder, setSelectedOrder] = useState(
+    orders.length > 0 ? orders[0] : null
+  );
 
   // WebSocket for real-time updates
   useEffect(() => {
@@ -360,29 +369,34 @@ const Salesssection = () => {
   }, []);
 
   // Handler for when an order is selected
-  const handleOrderSelect = (order) => {
+  const onOrderClick = (order) => {
     setSelectedOrder(order);
   };
 
+
   return (
     <div className="flex h-screen">
-      <div
-        id="order-list"
-        className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto"
-      >
-        {orders.map((order) => (
-          <OrderItem key={order._id} order={order} onSelect={() => handleOrderSelect(order)} />
-        ))}
-      </div>
-      <div className="w-1/3 h-full p-4 bg-white overflow-auto">
-        <OrderDetails order={selectedOrder} />
-     
-      </div>
-      <div className="w-1/3 h-full p-4 border-l border-gray-300 bg-white">
-        <CartSection order={selectedOrder} />
-       
-      </div>
+    <div
+      id="order-list"
+      className="w-full md:w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100"
+    >
+      {orders.map((order) => (
+        <OrderItem
+          key={order._id}
+          order={order}
+          onClick={onOrderClick}
+          selected={selectedOrder?._id === order._id}
+        />
+      ))}
     </div>
+    <div className="hidden md:block w-1/3 h-full p-4 bg-white overflow-auto">
+      <OrderDetails order={selectedOrder} />
+    </div>
+    <div className="hidden md:block w-1/3 h-full p-4 border-l border-gray-300 bg-white">
+      <CartSection order={selectedOrder} />
+    </div>
+  </div>
+  
   );
 };
 
