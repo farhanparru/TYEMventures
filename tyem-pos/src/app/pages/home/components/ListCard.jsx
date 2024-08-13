@@ -4,6 +4,8 @@ import ItemCard from '../../../pages/home/components/ItemCard'
 
 const ListCard = () => {
   const [items, setItems] = useState([]);
+  console.log(items,"items");
+  
 //   const [showToggle, setShowToggle] = useState(true); // Control whether to show the toggle switch
 
   useEffect(() => {
