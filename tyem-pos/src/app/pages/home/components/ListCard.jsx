@@ -10,7 +10,7 @@ const ListCard = () => {
     axios.get('https://tyem.invenro.site/api/user/ExcelItems') // Adjust your API endpoint
       .then((response) => {
         console.log(response,"hai");
-        setItems(response.data);
+        setItems(response.data.items); // Adjust according to your API response
       })
 
       
