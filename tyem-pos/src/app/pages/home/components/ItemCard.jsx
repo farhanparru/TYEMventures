@@ -14,7 +14,6 @@ const ItemCard = () => {
       .then((response) => {
         if (response.data && Array.isArray(response.data)) {
           setItems(response.data);
-          console.log(response.data);
         } else {
           setItems([]);
         }
@@ -31,28 +30,22 @@ const ItemCard = () => {
     dispatch(addToCart(item));
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="text-center text-lg">Loading...</div>;
+  if (error) return <div className="text-center text-lg text-red-600">{error}</div>;
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
       {items.map((item) => (
         <div
           key={item._id}
           onClick={() => onItemClick(item)}
-          className="block rounded-lg bg-white p-6 text-surface shadow-secondary-1 dark:bg-surface-dark dark:text-white cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
-          style={{ height: '120px' }}
+          className="flex flex-col bg-white text-gray-900 p-4 rounded-lg shadow-lg cursor-pointer transition-transform transform hover:scale-105 hover:shadow-2xl"
+          style={{ height: '250px', maxWidth: '300px' }} // Adjust height and maxWidth if needed
         >
-          <h5 className="mb-2 text-xl font-medium leading-tight capitalize">{item.ItemName}</h5>
-          <p className="mb-4 text-base font-semibold">₹ {item.Price.toFixed(2)}</p>
-          <button
-            type="button"
-            className="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
-            data-twe-ripple-init
-            data-twe-ripple-color="light"
-          >
-            Button
-          </button>
+          <div className="flex-1 flex flex-col justify-between">
+            <h3 className="text-lg font-semibold mb-2 truncate">{item.ItemName}</h3>
+            <p className="text-xl font-bold text-green-600">₹ {item.Price.toFixed(2)}</p>
+          </div>
         </div>
       ))}
     </div>
