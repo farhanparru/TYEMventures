@@ -103,6 +103,9 @@ const Item = () => {
             <button className="p-2 bg-purple-500 text-white rounded">More Filters</button>
             <button className="p-2 bg-purple-500 text-white rounded" onClick={openItemModal}>Create Item</button>
             <button className="p-2 bg-purple-500 text-white rounded" onClick={openCategoryModal}>Add Category</button>
+            <button className="p-2 bg-purple-500 text-white rounded" onClick={openExcelModal}>
+              Import Excel
+            </button>
           </div>
 
           <table className="min-w-full bg-white border">
