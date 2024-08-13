@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const userCtrl = require('../controller/userCtrl')
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
 
 
 
@@ -18,6 +20,8 @@ router.post('/printreceipt', userCtrl.handleReciptprinter)
 router.patch('/Googlesheet',userCtrl.ItemsUpdate)
 router.post('/Onlinecustomer',userCtrl.onlineCustomer)
 router.patch('/PaymentStatus/:id', userCtrl.paymentStatus);
+router.post('/importexcel', upload.single('file'),userCtrl.ImportExcel);
+router.get('/ExcelItems',userCtrl.SheetDataGet)
 
 
      

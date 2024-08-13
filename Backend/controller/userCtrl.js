@@ -9,6 +9,8 @@ const ThermalPrinter = require('node-thermal-printer').printer;
 const PrinterTypes = require("node-thermal-printer").types;
 const customerOnline = require('../Model/OnlineCustomer')
 const path = require('path');
+const excelSheetDatas = require('../Model/ItemsModal')
+const XLSX = require('xlsx');
 require("dotenv").config();
 
 
@@ -530,10 +532,46 @@ paymentStatus:async(req,res)=>{
     
     res.status(500).json({ message: 'Internal Server Error' });
   }
+},
+
+
+// ExcelSheet datas
+
+
+ImportExcel:async(req,res)=>{
+
+  try {
+    if (!req.file) return res.status(400).send('No file uploaded.');
+
+    // Read the uploaded file
+    const workbook = XLSX.readFile(req.file.path);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    // Save data to database
+    for (const item of data) {
+      await excelSheetDatas.create(item);
+    }
+
+    res.status(200).send('File processed and data saved.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error processing file.');
+  }
+},
+
+
+// getExcelSheet datas
+
+SheetDataGet:async(req,res)=>{
+  try {
+    const items = await excelSheetDatas.find();
+    res.status(200).json(items);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving items.');
+  }
+
 }
-
- 
-
-  
 
 }
