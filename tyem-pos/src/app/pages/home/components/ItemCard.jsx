@@ -1,36 +1,30 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import axios from "axios";
 import { addToCart } from "../store/cartSlice";
-import { Switch } from "antd";
 
-import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
-
-
-const ItemCard = ({ item, show_toggle }) => {
-  console.log(item,"hh");
-  
+const ItemCard = ({ Id }) => {
+  const [item, setItem] = useState(null);
   const dispatch = useDispatch();
-  // const store_user = useSelector(getStoreUserData);
 
-  // const [active, setActive] = useState(item?.is_inactive)
+  useEffect(() => {
+    axios.get(`https://tyem.invenro.site/api/user/ExcelItems/${Id}`)
+      .then((response) => {
+        setItem(response.data.item); // Adjust based on your API response structure
+      })
+      .catch((error) => {
+        console.error('There was an error fetching the item!', error);
+      });
+  }, [itemId]);
 
   const onItemClick = () => {
-    dispatch(addToCart(item));
+    if (item) {
+      dispatch(addToCart(item));
+    }
   };
 
-  
-  // function onChange(checked) {
-  //   console.log(`switch to ${checked}`);
-  //   setActive(checked)
-  //   const headers = {
-  //     "Authorization": `Bearer ${store_user?.accessToken}`,
-  //     "Content-Type": "application/json",
-  //     "Accept": "application/json",
-  //   };
+  if (!item) return <div>Loading...</div>; // Or some loading spinner
 
-  //   // Cash Register Does Not Exist.
-   
-  // }
   return (
     <div
       onClick={onItemClick}
@@ -39,7 +33,9 @@ const ItemCard = ({ item, show_toggle }) => {
       <h3 className="text-sm font-bold capitalize">
         {item.ItemName}
       </h3>
-      <h3 className="text-xs font-medium">₹ {parseFloat(item.product_variations[0].variations[0].sell_price_inc_tax).toFixed(2)}</h3>
+      <h3 className="text-xs font-medium">
+        ₹ {parseFloat(item.product_variations[0].variations[0].sell_price_inc_tax || 0).toFixed(2)}
+      </h3>
     </div>
   );
 };
