@@ -34,34 +34,31 @@ const ItemCard = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex">
-      <div className="w-1/4 p-4">
-        
-      </div>
-
-      <div className="grid grid-cols-3 gap-4 w-3/4 p-4">
-        {items.map((item) => (
-          <div
-            key={item._id}
-            onClick={() => onItemClick(item)}
-            className="flex flex-col justify-between bg-teal-600 text-white p-4 rounded-lg shadow-lg cursor-pointer transition-transform duration-200 hover:bg-teal-700 hover:scale-105"
-            style={{ height: '120px' }}
-          >
-            <div>
-              <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
-            </div>
-            <div className="mt-2">
-              {item.Price ? (
-                <p className="text-md font-semibold">
-                  ₹ {item.Price.toFixed(2)}
-                </p>
-              ) : (
-                <p className="text-md font-semibold">Price not available</p>
-              )}
-            </div>
+    <div className="grid grid-cols-3 gap-4">
+      {items.map((item) => (
+        <div
+          key={item._id}
+          onClick={() => onItemClick(item)}
+          className="home__item flex flex-col justify-between bg-teal-600 text-white p-4 rounded-lg shadow-lg cursor-pointer transition-transform duration-200 hover:bg-teal-700 hover:scale-105"
+          style={{ height: '140px' }} // Adjust the height to fit the content
+        >
+          <div>
+            <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
+            {Example && <p className="text-xs mt-1">SKU: Example</p>}
           </div>
-        ))}
-      </div>
+          <div className="mt-2">
+            {item.Price ? (
+              <p className="text-md font-semibold">
+                {item.Price.length} Prices
+              </p>
+            ) : (
+              <p className="text-md font-semibold">
+                ₹ {item.Price.toFixed(2)}
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
