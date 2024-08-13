@@ -1,32 +1,34 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from './actions'; // Adjust the import path as needed
-import { getStoreUserData } from './selectors'; // Adjust the import path as needed
-import Switch from 'react-switch'; // Make sure this is correctly installed and imported
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../store/cartSlice";
+import { Switch } from "antd";
+
+import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
+
 
 const ItemCard = ({ item, show_toggle }) => {
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
 
-  const [active, setActive] = useState(item?.is_inactive);
+  const [active, setActive] = useState(item?.is_inactive)
 
   const onItemClick = () => {
     dispatch(addToCart(item));
   };
 
-  const onChange = (checked) => {
-    console.log(`Switch to ${checked}`);
-    setActive(checked);
-
+  
+  function onChange(checked) {
+    console.log(`switch to ${checked}`);
+    setActive(checked)
     const headers = {
       "Authorization": `Bearer ${store_user?.accessToken}`,
       "Content-Type": "application/json",
       "Accept": "application/json",
     };
 
-    // Add your logic to handle the state change here, such as updating the item in the backend
-  };
-
+    // Cash Register Does Not Exist.
+   
+  }
   return (
     <div
       onClick={onItemClick}
@@ -42,5 +44,4 @@ const ItemCard = ({ item, show_toggle }) => {
     </div>
   );
 };
-
 export default ItemCard;
