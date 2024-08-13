@@ -105,7 +105,7 @@ const Item = () => {
     <div className="p-4 flex flex-col h-screen">
       <Header OpenSidebar={OpenSidebar} />
       <div className="flex flex-grow">
-        <Sidebar openSidebarToggle={setOpenSidebar} OpenSidebar={OpenSidebar} />
+      <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
         <div className="flex flex-col flex-grow p-4">
           <div className="flex justify-between items-center mb-4">
             <input type="text" placeholder="Filter by Item Name" className="p-2 border rounded" />
