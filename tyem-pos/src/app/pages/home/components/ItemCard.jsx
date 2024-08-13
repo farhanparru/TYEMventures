@@ -41,7 +41,7 @@ const ItemCard = () => {
           key={item._id}
           onClick={onItemClick}
           className="home__item flex flex-col gap-2 justify-around bg-ch-headers-500 text-white p-3 rounded-md shadow-xl cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
-          style={{ height: '120px' }} // Adjust the height as per your design
+          style={{ height: '120px' }} 
         >
           <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
           <p className="text-md font-semibold">₹ {item.Price.toFixed(2)}</p>
