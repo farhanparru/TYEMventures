@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import ExcelImportModal from  './ExcelModel'
 import Header from './Headr'; // Import your Header component
 import Sidebar from './Sidebar'; // Import your Sidebar component
 import Modal from 'react-modal';
 import AddCategory from './AddCategory'; // Import the AddCategory component
 import axios from 'axios';
-import * as XLSX from 'xlsx';
-import { AiFillFileExcel } from 'react-icons/ai';
 
 Modal.setAppElement('#root');
 
@@ -16,18 +14,18 @@ const Item = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [itemModalIsOpen, setItemModalIsOpen] = useState(false);
   const [categoryModalIsOpen, setCategoryModalIsOpen] = useState(false);
-  const [items, setItems] = useState([]); // Assuming you have items data
+  const [excelModalIsOpen, setExcelModalIsOpen] = useState(false);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
 
-  // const items = [
-  //   { name: 'ABOOD', variation: '89', category: 'ROYAL SPECIAL SHAKE', stock: '2', price: '₹100.00', mrp: '₹0.00' },
-  //   { name: 'AFGANI TIKKA (8 PCS)', variation: '335', category: 'Tandoor STARTER', stock: '0', price: '₹270.00', mrp: '₹0.00', low: true },
-  //   { name: 'ALFAHAM', variation: '2 Variations', category: 'ARABIC', stock: '0', price: '₹220.00 - ₹390.00', mrp: '₹0.00', low: true },
-  //   // Add more items here
-  // ];
+  const items = [
+    { name: 'ABOOD', variation: '89', category: 'ROYAL SPECIAL SHAKE', stock: '2', price: '₹100.00', mrp: '₹0.00' },
+    { name: 'AFGANI TIKKA (8 PCS)', variation: '335', category: 'Tandoor STARTER', stock: '0', price: '₹270.00', mrp: '₹0.00', low: true },
+    { name: 'ALFAHAM', variation: '2 Variations', category: 'ARABIC', stock: '0', price: '₹220.00 - ₹390.00', mrp: '₹0.00', low: true },
+    // Add more items here
+  ];
 
   const openItemModal = () => {
     setItemModalIsOpen(true);
@@ -58,32 +56,16 @@ const Item = () => {
     }
   };
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-
-      // Assuming the first sheet is the one you want to process
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-
-      // Convert sheet to JSON format
-      const sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-      console.log('Sheet Data:', sheetData);
-
-      // Process the data as needed, for example:
-      // setItems(sheetData);
-    };
-
-    reader.readAsArrayBuffer(file);
-  };
-
-
   
+  const openExcelModal = () => setExcelModalIsOpen(true);
+  const closeExcelModal = () => setExcelModalIsOpen(false);
+
+
+  const handleExcelUpload = (data) => {
+    console.log('Uploaded Excel Data:', data);
+    // Process the data as needed, for example:
+    // setItems(data);
+  };
 
 
   // get Categrioes
@@ -105,7 +87,7 @@ const Item = () => {
     <div className="p-4 flex flex-col h-screen">
       <Header OpenSidebar={OpenSidebar} />
       <div className="flex flex-grow">
-      <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
+        <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
         <div className="flex flex-col flex-grow p-4">
           <div className="flex justify-between items-center mb-4">
             <input type="text" placeholder="Filter by Item Name" className="p-2 border rounded" />
@@ -159,7 +141,6 @@ const Item = () => {
           </table>
         </div>
       </div>
-
       <Modal isOpen={itemModalIsOpen} onRequestClose={closeItemModal} contentLabel="Create Item Modal" style={customStyles}>
         <h2>Create Item</h2>
         <form>
@@ -169,27 +150,26 @@ const Item = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700">Category *</label>
-            <select
-              className="p-2 border rounded w-full"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.categoryName}
-                </option>
-              ))}
-            </select>
-          </div>
+          <label className="block text-gray-700">Category *</label>
+          <select
+            className="p-2 border rounded w-full"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
 
           <div className="mb-4">
             <label className="block text-gray-700">Alternate Name</label>
             <input type="text" className="p-2 border rounded w-full" placeholder="Alternate Name" />
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-700">Brand</label>
             <select className="p-2 border rounded w-full">
@@ -197,33 +177,24 @@ const Item = () => {
               {/* Add brands here */}
             </select>
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-700">Position</label>
             <input type="text" className="p-2 border rounded w-full" placeholder="Position" />
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-700">Description</label>
             <textarea className="p-2 border rounded w-full" placeholder="Enter a description of this item. Describe details like features, options and measurements." />
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-700">Image</label>
             <input type="file" className="p-2 border rounded w-full" />
           </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700">Import Excel Sheet <AiFillFileExcel className="inline-block text-green-500" /></label>
-            <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} className="p-2 border rounded w-full" />
-          </div>
-
           <button type="button" onClick={closeItemModal} className="p-2 bg-purple-500 text-white rounded mr-2">Cancel</button>
           <button type="submit" className="p-2 bg-purple-500 text-white rounded">Save</button>
         </form>
       </Modal>
-
       <AddCategory modalIsOpen={categoryModalIsOpen} closeModal={closeCategoryModal} />
+      <ExcelImportModal modalIsOpen={excelModalIsOpen} closeModal={closeExcelModal} onUpload={handleExcelUpload} />
     </div>
   );
 };
