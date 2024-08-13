@@ -35,17 +35,18 @@ const ItemCard = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div
-      onClick={onItemClick}
-        className="home__item flex flex-col gap-2 justify-around bg-ch-headers-500 text-white p-3 rounded-md shadow-xl cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
-      style={{ height: '300px', overflowY: 'auto' }} // Set the height and enable vertical scroll
-    >
+    <div className="grid grid-cols-3 gap-4">
       {items.map((item) => (
-        <div key={item._id} >
+        <div
+          key={item._id}
+          onClick={onItemClick}
+          className="home__item flex flex-col gap-2 justify-around bg-ch-headers-500 text-white p-3 rounded-md shadow-xl cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
+          style={{ height: '120px' }} // Adjust the height as per your design
+        >
           <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
           <p className="text-md font-semibold">₹ {item.Price.toFixed(2)}</p>
         </div>
-      ))
+      ))}
     </div>
   );
 };
