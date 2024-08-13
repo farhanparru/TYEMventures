@@ -36,14 +36,7 @@ const ItemCard = () => {
   return (
     <div className="flex">
       <div className="w-1/4 p-4">
-        <ul className="space-y-2">
-          <li className="p-2 bg-teal-600 text-white rounded-lg text-center cursor-pointer">All</li>
-          {["Arabian", "ARABIAN", "BROAST", "CHICKEN (INDIAN)", "CHINESE", "FISH ITEMS", "FRIED CHICKEN", "FRIED RICE & NOODLES", "GOLDEN STARTERS", "JUICES", "MILK SHAKE", "MUTTON", "PIZZA", "RICE & BIRIYANI"].map((category, index) => (
-            <li key={index} className="p-2 bg-white text-teal-600 border border-teal-600 rounded-lg text-center cursor-pointer">
-              {category}
-            </li>
-          ))}
-        </ul>
+        
       </div>
 
       <div className="grid grid-cols-3 gap-4 w-3/4 p-4">
