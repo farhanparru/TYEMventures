@@ -2,6 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { addToCart } from "../store/cartSlice";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Typography,
+  Button,
+} from "@material-tailwind/react";
 
 const ItemCard = () => {
   const [items, setItems] = useState([]);
@@ -10,18 +17,20 @@ const ItemCard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    axios.get('https://tyem.invenro.site/api/user/ExcelItems')
+    axios
+      .get("https://tyem.invenro.site/api/user/ExcelItems") // Adjust your API endpoint
       .then((response) => {
         if (response.data && Array.isArray(response.data)) {
           setItems(response.data);
+          console.log(response.data);
         } else {
           setItems([]);
         }
         setLoading(false);
       })
       .catch((error) => {
-        console.error('There was an error fetching the items!', error);
-        setError('Error fetching items');
+        console.error("There was an error fetching the items!", error);
+        setError("Error fetching items");
         setLoading(false);
       });
   }, []);
@@ -36,28 +45,25 @@ const ItemCard = () => {
   return (
     <div className="grid grid-cols-3 gap-4">
       {items.map((item) => (
-        <div
+        <Card
           key={item._id}
           onClick={() => onItemClick(item)}
-          className="home__item flex flex-col justify-between bg-teal-600 text-white p-4 rounded-lg shadow-lg cursor-pointer transition-transform duration-200 hover:bg-teal-700 hover:scale-105"
-          style={{ height: '140px' }} // Adjust the height to fit the content
+          className="mt-6 w-full cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
         >
-          <div>
-            <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
-            {Example && <p className="text-xs mt-1">SKU: Example</p>}
-          </div>
-          <div className="mt-2">
-            {item.Price ? (
-              <p className="text-md font-semibold">
-                {item.Price.length} Prices
-              </p>
-            ) : (
-              <p className="text-md font-semibold">
-                ₹ {item.Price.toFixed(2)}
-              </p>
-            )}
-          </div>
-        </div>
+          <CardBody>
+            <Typography variant="h5" color="blue-gray" className="mb-2">
+              {item.ItemName}
+            </Typography>
+            <Typography>
+              ₹ {item.Price.toFixed(2)}
+            </Typography>
+          </CardBody>
+          <CardFooter className="pt-0">
+            <Button color="blue-gray" onClick={() => onItemClick(item)}>
+              Add to Cart
+            </Button>
+          </CardFooter>
+        </Card>
       ))}
     </div>
   );
