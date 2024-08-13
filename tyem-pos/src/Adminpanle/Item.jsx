@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar"; // Import your Sidebar component
 import Modal from "react-modal";
 import AddCategory from "./AddCategory"; // Import the AddCategory component
 import axios from "axios";
+import { AiFillFileExcel } from 'react-icons/ai';
 
 Modal.setAppElement("#root");
 
