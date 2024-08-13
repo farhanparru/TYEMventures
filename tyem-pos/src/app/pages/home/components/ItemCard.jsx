@@ -45,7 +45,7 @@ const ItemCard = () => {
           <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
           <p className="text-md font-semibold">₹ {item.Price.toFixed(2)}</p>
         </div>
-      ))}
+      ))
     </div>
   );
 };
