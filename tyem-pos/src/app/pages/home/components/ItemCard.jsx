@@ -26,7 +26,7 @@ const ItemCard = () => {
     }
   };
 
-  if (!item) return <div>Loading...</div>; // Or some loading spinner
+  // if (!item) return <div>Loading...</div>; // Or some loading spinner
 
   return (
     <div
