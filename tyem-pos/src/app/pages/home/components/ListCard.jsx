@@ -9,8 +9,11 @@ const ListCard = () => {
   useEffect(() => {
     axios.get('https://tyem.invenro.site/api/user/ExcelItems') // Adjust your API endpoint
       .then((response) => {
+        console.log(response,"hai");
         setItems(response.data);
       })
+
+      
       .catch((error) => {
         console.error('There was an error fetching the items!', error);
       });
