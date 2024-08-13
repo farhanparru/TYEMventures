@@ -36,9 +36,7 @@ const ItemCard = () => {
       <h3 className="text-sm font-bold capitalize">
         {item?.ItemName}
       </h3>
-      <h3 className="text-xs font-medium">
-        ₹ {parseFloat(item.product_variations[0].variations[0].sell_price_inc_tax || 0).toFixed(2)}
-      </h3>
+      <p className="text-md">₹ {item?.Price.toFixed(2)}</p>
     </div>
   );
 };
