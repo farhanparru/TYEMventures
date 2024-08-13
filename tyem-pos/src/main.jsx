@@ -10,7 +10,7 @@ import { persistStore } from "redux-persist";
 import {BrowserRouter} from 'react-router-dom'
 import { OrderProvider } from "./app/pages/home/sections/body/components/OrderContext";
 import { OrderStatusProvider } from "./app/pages/home/components/StatusContext";
-
+import { ThemeProvider } from '@material-tailwind/react'; // Example provider
 import { CompletedOrdersProvider } from "./app/pages/home/sections/body/components/CompletedOrdersContext";
 
 // Tailwind css
@@ -23,9 +23,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
       <OrderProvider>
       <OrderStatusProvider>
-      
+     
       <CompletedOrdersProvider>
+      <ThemeProvider>
         <App />
+        </ThemeProvider>
         </CompletedOrdersProvider>
        
         </OrderStatusProvider>
