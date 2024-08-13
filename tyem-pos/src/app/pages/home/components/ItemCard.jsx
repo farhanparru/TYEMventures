@@ -3,19 +3,22 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { addToCart } from "../store/cartSlice";
 
-const ItemCard = ({ Id }) => {
+const ItemCard = () => {
   const [item, setItem] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    axios.get(`https://tyem.invenro.site/api/user/ExcelItems/${Id}`)
+    axios.get('https://tyem.invenro.site/api/user/ExcelItems') // Adjust your API endpoint
       .then((response) => {
-        setItem(response.data.item); // Adjust based on your API response structure
+        console.log(response,"hai");
+        setItem(response.data.item); // Adjust according to your API response
       })
+
+      
       .catch((error) => {
-        console.error('There was an error fetching the item!', error);
+        console.error('There was an error fetching the items!', error);
       });
-  }, [Id]);
+  }, []);
 
   const onItemClick = () => {
     if (item) {
