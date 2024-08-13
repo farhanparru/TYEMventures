@@ -10,6 +10,7 @@ import { AiFillFileExcel } from 'react-icons/ai';
 Modal.setAppElement("#root");
 
 const Item = () => {
+  const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -21,36 +22,7 @@ const Item = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
 
-  const items = [
-    {
-      name: "ABOOD",
-      variation: "89",
-      category: "ROYAL SPECIAL SHAKE",
-      stock: "2",
-      price: "₹100.00",
-      mrp: "₹0.00",
-    },
-    {
-      name: "AFGANI TIKKA (8 PCS)",
-      variation: "335",
-      category: "Tandoor STARTER",
-      stock: "0",
-      price: "₹270.00",
-      mrp: "₹0.00",
-      low: true,
-    },
-    {
-      name: "ALFAHAM",
-      variation: "2 Variations",
-      category: "ARABIC",
-      stock: "0",
-      price: "₹220.00 - ₹390.00",
-      mrp: "₹0.00",
-      low: true,
-    },
-    // Add more items here
-  ];
-
+  
   const openItemModal = () => {
     setItemModalIsOpen(true);
   };
@@ -92,6 +64,19 @@ const Item = () => {
   // get Categrioes
 
   useEffect(() => {
+    axios.get('https://tyem.invenro.site/api/user/ExcelItems') // Adjust your API endpoint
+      .then((response) => {
+        setItems(response.data);
+      })
+      .catch((error) => {
+        console.error('There was an error fetching the items!', error);
+      });
+  }, []);
+
+
+
+
+  useEffect(() => {
     if (itemModalIsOpen) {
       axios
         .get("http://localhost:8000/api/user/getCategory")
@@ -121,6 +106,11 @@ const Item = () => {
             />
             <select className="p-2 border rounded">
               <option>Select Categories</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.categoryName}
+                </option>
+              ))}
             </select>
             <select className="p-2 border rounded">
               <option>Select Brand</option>
@@ -150,9 +140,8 @@ const Item = () => {
               <AiFillFileExcel
                 className="mr-2"
                 size={20}
-                style={{ color: "gray" }}
-              />{" "}
-              {/* Set icon color to gray */}
+                style={{ color: 'gray' }}
+              /> 
               Import Excel
             </button>
           </div>
@@ -160,37 +149,19 @@ const Item = () => {
           <table className="min-w-full bg-white border">
             <thead>
               <tr>
-                <th className="py-2 px-4 border-b">Item</th>
-                <th className="py-2 px-4 border-b">Variation</th>
+                <th className="py-2 px-4 border-b">ItemId</th>
+                <th className="py-2 px-4 border-b">ItemName</th>
                 <th className="py-2 px-4 border-b">Category</th>
-                <th className="py-2 px-4 border-b">In Stock</th>
                 <th className="py-2 px-4 border-b">Price</th>
-                <th className="py-2 px-4 border-b">Position</th>
-                <th className="py-2 px-4 border-b">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item, index) => (
                 <tr key={index} className="hover:bg-gray-100">
-                  <td className="py-2 px-4 border-b">{item.name}</td>
-                  <td className="py-2 px-4 border-b">{item.variation}</td>
+                  <td className="py-2 px-4 border-b">{item.Id}</td>
+                  <td className="py-2 px-4 border-b">{item.ItemName}</td>
                   <td className="py-2 px-4 border-b">{item.category}</td>
-                  <td className="py-2 px-4 border-b">
-                    {item.stock}
-                    {item.low && (
-                      <span className="text-yellow-500 ml-2">LOW</span>
-                    )}
-                  </td>
-                  <td className="py-2 px-4 border-b">
-                    {item.price}
-                    <div className="text-gray-500 text-sm">{item.mrp}</div>
-                  </td>
-                  <td className="py-2 px-4 border-b">-</td>
-                  <td className="py-2 px-4 border-b">
-                    <button className="p-2 bg-purple-500 text-white rounded">
-                      View
-                    </button>
-                  </td>
+                  <td className="py-2 px-4 border-b">{item.Price}</td>
                 </tr>
               ))}
             </tbody>
@@ -292,5 +263,6 @@ const Item = () => {
     </div>
   );
 };
+
 
 export default Item;
