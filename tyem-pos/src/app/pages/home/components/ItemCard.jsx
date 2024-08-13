@@ -35,7 +35,7 @@ const ItemCard = ({ item, show_toggle }) => {
       className="home__item flex flex-col gap-2 justify-around bg-ch-headers-500 text-white p-3 rounded-md shadow-xl cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
     >
       <h3 className="text-sm font-bold capitalize">
-        {/* {item.name} */}
+        {item.ItemName}
       </h3>
       <h3 className="text-xs font-medium">₹ {parseFloat(item.product_variations[0].variations[0].sell_price_inc_tax).toFixed(3)}</h3>
       {show_toggle &&
