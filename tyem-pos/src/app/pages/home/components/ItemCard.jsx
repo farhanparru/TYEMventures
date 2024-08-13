@@ -7,6 +7,8 @@ import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 
 const ItemCard = ({ item, show_toggle }) => {
+  console.log(item,"hh");
+  
   const dispatch = useDispatch();
   // const store_user = useSelector(getStoreUserData);
 
@@ -17,18 +19,18 @@ const ItemCard = ({ item, show_toggle }) => {
   };
 
   
-  function onChange(checked) {
-    console.log(`switch to ${checked}`);
-    setActive(checked)
-    const headers = {
-      "Authorization": `Bearer ${store_user?.accessToken}`,
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    };
+  // function onChange(checked) {
+  //   console.log(`switch to ${checked}`);
+  //   setActive(checked)
+  //   const headers = {
+  //     "Authorization": `Bearer ${store_user?.accessToken}`,
+  //     "Content-Type": "application/json",
+  //     "Accept": "application/json",
+  //   };
 
-    // Cash Register Does Not Exist.
+  //   // Cash Register Does Not Exist.
    
-  }
+  // }
   return (
     <div
       onClick={onItemClick}
@@ -37,11 +39,9 @@ const ItemCard = ({ item, show_toggle }) => {
       <h3 className="text-sm font-bold capitalize">
         {item.ItemName}
       </h3>
-      <h3 className="text-xs font-medium">₹ {parseFloat(item.product_variations[0].variations[0].sell_price_inc_tax).toFixed(3)}</h3>
-      {show_toggle &&
-        <Switch checked={active} onChange={onChange} className={`w-10 ${!active ? 'bg-red-500' : 'bg-green-500'}`} />
-      }
+      <h3 className="text-xs font-medium">₹ {parseFloat(item.product_variations[0].variations[0].sell_price_inc_tax).toFixed(2)}</h3>
     </div>
   );
 };
+
 export default ItemCard;

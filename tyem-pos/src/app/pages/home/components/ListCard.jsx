@@ -4,7 +4,7 @@ import ItemCard from '../../../pages/home/components/ItemCard'
 
 const ListCard = () => {
   const [items, setItems] = useState([]);
-  const [showToggle, setShowToggle] = useState(true); // Control whether to show the toggle switch
+//   const [showToggle, setShowToggle] = useState(true); // Control whether to show the toggle switch
 
   useEffect(() => {
     axios.get('https://tyem.invenro.site/api/user/ExcelItems') // Adjust your API endpoint
@@ -24,7 +24,7 @@ const ListCard = () => {
   return (
     <div className="item-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
       {items.map((item) => (
-        <ItemCard key={item.id} item={item} show_toggle={showToggle} />
+        <ItemCard key={item.id} item={item} />
       ))}
     </div>
   );
