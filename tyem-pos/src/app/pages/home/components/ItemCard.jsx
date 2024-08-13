@@ -8,9 +8,9 @@ import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 const ItemCard = ({ item, show_toggle }) => {
   const dispatch = useDispatch();
-  const store_user = useSelector(getStoreUserData);
+  // const store_user = useSelector(getStoreUserData);
 
-  const [active, setActive] = useState(item?.is_inactive)
+  // const [active, setActive] = useState(item?.is_inactive)
 
   const onItemClick = () => {
     dispatch(addToCart(item));
