@@ -15,7 +15,7 @@ const ItemCard = ({ Id }) => {
       .catch((error) => {
         console.error('There was an error fetching the item!', error);
       });
-  }, [itemId]);
+  }, [Id]);
 
   const onItemClick = () => {
     if (item) {
