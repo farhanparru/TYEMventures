@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { AiFillFileExcel } from 'react-icons/ai';
+import axios from 'axios';
 
 
 const ExcelModel = ({ modalIsOpen, closeModal, onUpload }) => {
