@@ -35,12 +35,15 @@ const ItemCard = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="item-card-container overflow-y-auto max-h-[500px] p-4">
+    <div
+    onClick={onItemClick}
+    className="home__item flex flex-col gap-2 justify-around bg-ch-headers-500 text-white p-3 rounded-md shadow-xl cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
+  >
       {items.map((item) => (
         <div
           key={item._id} // Use _id as the key
           onClick={() => onItemClick(item)}
-          className="home__item flex flex-col gap-2 justify-around bg-ch-headers-500 text-white p-3 rounded-md shadow-xl cursor-pointer transition-transform duration-300 hover:bg-slate-300 hover:scale-95 hover:shadow-sm mb-2"
+         
         >
           <h3 className="text-sm font-bold capitalize">
             {item.ItemName}
