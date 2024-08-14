@@ -46,7 +46,7 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-4 p-12">
         {col2.map((item, index) => (
           <div
             key={index}
@@ -60,7 +60,7 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-4 p-12">
         {col3.map((item, index) => (
           <div
             key={index}

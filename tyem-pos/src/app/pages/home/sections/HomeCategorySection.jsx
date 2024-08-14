@@ -26,7 +26,7 @@ const CategoryItem = ({ item, active }) => {
     `}
         onClick={filterItems}
       >
-        {item.name}
+        {/* {item.name} */}
       </h3>
       <hr/>
     </>
