@@ -24,20 +24,55 @@ const ItemCard = () => {
   const onItemClick = (item) => {
     dispatch(addToCart(item));
   };
+
+  // Split the items into three columns
+  const col1 = items.filter((_, index) => index % 3 === 0);
+  const col2 = items.filter((_, index) => index % 3 === 1);
+  const col3 = items.filter((_, index) => index % 3 === 2);
+
   return (
-    <div className="grid grid-cols-3 p-4" style={{ gap: '13rem' }}>
-     {items.map((item, index) => (
-        <div
-          onClick={onItemClick}
-           key={index}
-          className="bg-teal-600 text-black p-4 rounded-md shadow-md flex flex-col justify-between"
-          style={{ width: '200px', height: '120px' }}
-        >
-          <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
-          {/* {item.sku && <p className="text-xs">SKU: {item.sku}</p>} */}
-          <h3 className="text-md font-medium">{parseFloat(item.Price).toFixed(2)}</h3>
-        </div>
-      ))}
+    <div className="flex p-4 space-x-4">
+      <div className="flex flex-col space-y-4">
+        {col1.map((item, index) => (
+          <div
+            key={index}
+            onClick={() => onItemClick(item)}
+            className="bg-teal-600 text-white p-4 rounded-md shadow-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            style={{ width: '200px', height: '150px' }}
+          >
+            <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
+            <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-col space-y-4">
+        {col2.map((item, index) => (
+          <div
+            key={index}
+            onClick={() => onItemClick(item)}
+            className="bg-teal-600 text-white p-4 rounded-md shadow-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            style={{ width: '200px', height: '150px' }}
+          >
+            <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
+            <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-col space-y-4">
+        {col3.map((item, index) => (
+          <div
+            key={index}
+            onClick={() => onItemClick(item)}
+            className="bg-teal-600 text-white p-4 rounded-md shadow-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            style={{ width: '200px', height: '150px' }}
+          >
+            <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
+            <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
