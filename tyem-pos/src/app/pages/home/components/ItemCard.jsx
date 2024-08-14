@@ -37,7 +37,7 @@ const ItemCard = () => {
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-4 rounded-md shadow-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            className="bg-teal-600 text-white p-4 rounded-md  flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '200px', height: '150px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
@@ -51,7 +51,7 @@ const ItemCard = () => {
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-4 rounded-md shadow-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            className="bg-teal-600 text-white p-4 rounded-md  flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '200px', height: '150px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
@@ -65,7 +65,7 @@ const ItemCard = () => {
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-4 rounded-md shadow-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            className="bg-teal-600 text-white p-4 rounded-md  flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '200px', height: '150px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
