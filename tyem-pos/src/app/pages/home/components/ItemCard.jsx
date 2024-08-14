@@ -34,13 +34,13 @@ const ItemCard = () => {
           className="bg-teal-600 text-black p-4 rounded-md shadow-md flex flex-col justify-between"
           style={{ width: '100%', height: '200px' }} // Ensures the card takes full width of its grid cell
         >
-          <img 
+          {/* <img 
             src={item.imageUrl} // Assuming your API provides an 'imageUrl' field
             alt={item.ItemName}
             className="w-full h-24 object-cover rounded-md mb-2"
-          />
+          /> */}
           <h3 className="text-lg font-bold capitalize">{item.ItemName}</h3>
-          {SKU && <p className="text-xs">SKU:</p>}
+          {/* {SKU && <p className="text-xs">SKU:</p>} */}
           <h3 className="text-xl font-semibold">
             ₹{parseFloat(item.Price).toFixed(2)}
           </h3>
