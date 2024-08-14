@@ -31,45 +31,66 @@ const ItemCard = () => {
   const col3 = items.filter((_, index) => index % 3 === 2);
 
   return (
-    <div className="flex justify-between gap-x-2 p-2"> {/* Adjusted the gap-x and padding */}
-      <div className="flex flex-col space-y-2"> {/* Adjusted space-y */}
+    <div className="flex justify-between gap-x-10 p-6"> {/* Increased gap-x for max spacing */}
+      <div className="flex flex-col space-y-6"> {/* Increased space-y for max spacing */}
         {col1.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-4 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }} 
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
-            <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
+           
+              <p className="text-sm mt-2"> Prices</p>
+           
+              <>
+                <p className="text-sm mt-2">SKU</p>
+                <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
+              </>
+           
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col space-y-2 p-2">
+      <div className="flex flex-col space-y-6"> {/* Increased space-y for max spacing */}
         {col2.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-4 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
-            <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
+           
+              <p className="text-sm mt-2"> Prices</p>
+          
+              <>
+                <p className="text-sm mt-2">SKU</p>
+                <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
+              </>
+           
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col space-y-2 p-2">
+      <div className="flex flex-col space-y-6"> {/* Increased space-y for max spacing */}
         {col3.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-4 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
-            <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
+           
+              <p className="text-sm mt-2"> Prices</p>
+            
+              <>
+                <p className="text-sm mt-2">SKU</p>
+                <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
+              </>
+            
           </div>
         ))}
       </div>
