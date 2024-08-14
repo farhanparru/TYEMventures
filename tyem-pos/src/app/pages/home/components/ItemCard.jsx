@@ -49,7 +49,7 @@ const ItemCard = ({ item, show_toggle }) => {
     >
      {items.map((item,index)=>{
       <><h3  key={index} className="text-sm font-bold text-transform: capitalize">
-         {item.Itemname}
+         {item.ItemName}
        </h3><h3 className="text-xs font-medium">₹ {parseFloat(item.Price).toFixed(3)}</h3></>
       {show_toggle == true &&
         <Switch checked={active} onChange={onChange} className={`w-10 ${!active ? 'bg-red-500' : 'bg-green-500'}`} />
