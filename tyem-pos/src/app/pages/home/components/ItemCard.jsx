@@ -27,18 +27,18 @@ const ItemCard = ({ show_toggle }) => {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-3 gap-4 p-4">  {/* Adjust grid layout to 3 columns */}
       {items.map((item, index) => (
         <div
           key={index}
           onClick={() => onItemClick(item)}
-          className="flex flex-col justify-center items-center bg-teal-600 text-white p-4 rounded-md shadow-md cursor-pointer transition-all ease-in-out hover:bg-teal-500 hover:scale-105 hover:shadow-lg"
+          className="flex flex-col justify-between bg-teal-600 text-black p-4 rounded-md shadow-md cursor-pointer transition-all ease-in-out hover:bg-teal-500 hover:scale-105 hover:shadow-lg"
           style={{ width: '200px', height: '120px' }}  // Fixed width and height
         >
-          <h3 className="text-lg font-bold capitalize text-center">{item.ItemName}</h3>
-          <h3 className="text-xl font-bold text-center">₹ {parseFloat(item.Price).toFixed(2)}</h3>
+          <h3 className="text-sm font-bold capitalize text-center">{item.ItemName}</h3>
+          <h3 className="text-md font-medium text-center">₹ {parseFloat(item.Price).toFixed(2)}</h3>
           {show_toggle && (
-            <div className="mt-2">
+            <div className="flex justify-center mt-2">
               <Switch
                 checked={item.is_active}
                 onChange={(checked) => console.log(`Switch to ${checked}`)}
