@@ -1,7 +1,8 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { categoriesList } from "../constants";
 import { getCategoryList, selectCategory } from "../store/homeSlice";
+import { useState } from "react";
 
 const CategoryItem = ({ item, active }) => {
   const dispatch = useDispatch();
