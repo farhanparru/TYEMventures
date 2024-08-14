@@ -31,7 +31,7 @@ const ItemCard = () => {
   const col3 = items.filter((_, index) => index % 3 === 2);
 
   return (
-    <div className="flex justify-between p-4">
+    <div className="flex justify-between p-12">
       <div className="flex flex-col space-y-4">
         {col1.map((item, index) => (
           <div
