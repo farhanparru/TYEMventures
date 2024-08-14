@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../store/cartSlice";
-import { Switch } from "antd";
 import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
@@ -27,16 +26,19 @@ const ItemCard = ({ show_toggle }) => {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-4">  {/* Adjust grid layout to 3 columns */}
+    <div className="grid grid-cols-3 gap-2 p-4">  {/* Grid layout with 3 columns */}
       {items.map((item, index) => (
         <div
           key={index}
           onClick={() => onItemClick(item)}
-          className="flex flex-col justify-between bg-teal-600 text-black p-4 rounded-md shadow-md cursor-pointer transition-all ease-in-out hover:bg-teal-500 hover:scale-105 hover:shadow-lg"
-          style={{ width: '200px', height: '120px' }}  // Fixed width and height
+          className="flex flex-col justify-center bg-teal-600 text-white p-4 rounded-md shadow-md cursor-pointer transition-all ease-in-out hover:bg-teal-500"
+          style={{ width: '180px', height: '120px' }}  // Fixed width and height to match the provided image
         >
-          <h3 className="text-sm font-bold capitalize text-center">{item.ItemName}</h3>
-          <h3 className="text-md font-medium text-center">₹ {parseFloat(item.Price).toFixed(2)}</h3>
+          <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
+          <div className="mt-2">
+            {/* {item.sku && <p className="text-xs">SKU: {item.}</p>} */}
+            <h3 className="text-md font-medium">₹ {parseFloat(item.Price).toFixed(2)}</h3>
+          </div>
           {show_toggle && (
             <div className="flex justify-center mt-2">
               <Switch
