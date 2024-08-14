@@ -31,8 +31,8 @@ const ItemCard = () => {
   const col3 = items.filter((_, index) => index % 3 === 2);
 
   return (
-    <div className="flex p-4 space-x-4">
-      <div className="flex flex-col space-y-8">
+    <div className="flex p-4 space-x-12">
+      <div className="flex flex-col space-y-12">
         {col1.map((item, index) => (
           <div
             key={index}
@@ -46,7 +46,7 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-12">
         {col2.map((item, index) => (
           <div
             key={index}
@@ -60,7 +60,7 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-12">
         {col3.map((item, index) => (
           <div
             key={index}
