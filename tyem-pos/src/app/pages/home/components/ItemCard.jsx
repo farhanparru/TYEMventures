@@ -19,7 +19,7 @@ const items = [
 
 const ItemCard = () => {
   return (
-    <div className="grid grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-3 p-4" style={{ gap: '13rem' }}>
       {items.map((item) => (
         <div
           key={item.id}
