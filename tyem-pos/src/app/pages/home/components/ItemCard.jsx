@@ -31,14 +31,14 @@ const ItemCard = () => {
   const col3 = items.filter((_, index) => index % 3 === 2);
 
   return (
-    <div className="flex justify-between gap-x-8 p-12">
-      <div className="flex flex-col space-y-4">
+    <div className="flex justify-between gap-x-2 p-2"> {/* Adjusted the gap-x and padding */}
+      <div className="flex flex-col space-y-2"> {/* Adjusted space-y */}
         {col1.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-12 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
-            style={{ width: '200px', height: '150px' }}
+            className="bg-teal-600 text-white p-4 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            style={{ width: '180px', height: '120px' }} 
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
@@ -46,13 +46,13 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-4 p-12">
+      <div className="flex flex-col space-y-2 p-2">
         {col2.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-12 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
-            style={{ width: '200px', height: '150px' }}
+            className="bg-teal-600 text-white p-4 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            style={{ width: '180px', height: '120px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
@@ -60,13 +60,13 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-4 p-12">
+      <div className="flex flex-col space-y-2 p-2">
         {col3.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
-            className="bg-teal-600 text-white p-12 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
-            style={{ width: '200px', height: '150px' }}
+            className="bg-teal-600 text-white p-4 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+            style={{ width: '180px', height: '120px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-2">{parseFloat(item.Price).toFixed(2)}</h3>
