@@ -32,7 +32,7 @@ const ItemCard = () => {
 
   return (
     <div className="flex justify-between gap-x-10 p-6"> {/* Increased gap-x for max spacing */}
-      <div className="flex flex-col space-y-6"> {/* Increased space-y for max spacing */}
+      <div className="flex flex-col space-y-9"> {/* Increased space-y for max spacing */}
         {col1.map((item, index) => (
           <div
             key={index}
@@ -46,7 +46,7 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-6"> {/* Increased space-y for max spacing */}
+      <div className="flex flex-col space-y-9"> {/* Increased space-y for max spacing */}
         {col2.map((item, index) => (
           <div
             key={index}
@@ -60,7 +60,7 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-6"> {/* Increased space-y for max spacing */}
+      <div className="flex flex-col space-y-9"> {/* Increased space-y for max spacing */}
         {col3.map((item, index) => (
           <div
             key={index}

@@ -399,6 +399,7 @@ const CartSection = ({
   //  const orderStatuses = getOrderStatuses(order._id);
 
   const handleAccept = (orderId) => {
+    setShowPlaceModal(true);
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);

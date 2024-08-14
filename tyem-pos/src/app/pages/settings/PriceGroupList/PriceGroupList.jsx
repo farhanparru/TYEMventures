@@ -23,7 +23,22 @@ const PriceGroupList = () => {
         };
 
         // // Cash Register Does Not Exist.
-        
+        axios
+            .post(WEBSITE_API_URL + "/price-category-toggle", {
+                id: item?.id,
+
+            }, { headers }).then((result) => {
+                dispatch(getPriceGroups(store_user?.accessToken)).then((result) => {
+                    setloading(false)
+
+                }).catch((err) => {
+
+                });
+
+                // window.location.reload();
+            }).catch((err) => {
+
+            });;
     }
     return (
         <div>
