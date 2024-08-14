@@ -12,7 +12,6 @@ const PriceGroupList = () => {
     const store_user = useSelector(getStoreUserData);
 
     const [loading, setloading] = useState(false)
-
     function onChange(e, item) {
         setloading(true)
         console.log(`switch to ${item}`);
@@ -24,19 +23,7 @@ const PriceGroupList = () => {
         };
 
         // // Cash Register Does Not Exist.
-      
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); // Adjust your API endpoint
-        setItems(response.data);
-      } catch (error) {
-        console.error('There was an error fetching the items!', error);
-      }
-    };
-    fetchItems();
-  }, []);
-
+        
     }
     return (
         <div>
