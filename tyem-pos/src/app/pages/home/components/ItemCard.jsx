@@ -40,7 +40,7 @@ const ItemCard = ({ item, show_toggle }) => {
       "Accept": "application/json",
     };
 
-    // Perform your API call or other actions here if needed.
+    // Perform your API call or other actions here
   };
 
   return (
