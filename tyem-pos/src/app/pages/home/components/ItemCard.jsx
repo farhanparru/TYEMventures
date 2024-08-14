@@ -24,26 +24,18 @@ const ItemCard = () => {
   const onItemClick = (item) => {
     dispatch(addToCart(item));
   };
-
   return (
-    <div className="grid grid-cols-3 gap-6 p-4">
-      {items.map((item, index) => (
+    <div className="grid grid-cols-3 p-4" style={{ gap: '13rem' }}>
+     {items.map((item, index) => (
         <div
-          key={index}
-          onClick={() => onItemClick(item)}
+          onClick={onItemClick}
+           key={index}
           className="bg-teal-600 text-black p-4 rounded-md shadow-md flex flex-col justify-between"
-          style={{ width: '100%', height: '200px' }} // Ensures the card takes full width of its grid cell
+          style={{ width: '200px', height: '120px' }}
         >
-          {/* <img 
-            src={item.imageUrl} // Assuming your API provides an 'imageUrl' field
-            alt={item.ItemName}
-            className="w-full h-24 object-cover rounded-md mb-2"
-          /> */}
-          <h3 className="text-lg font-bold capitalize">{item.ItemName}</h3>
-          {/* {SKU && <p className="text-xs">SKU:</p>} */}
-          <h3 className="text-xl font-semibold">
-            ₹{parseFloat(item.Price).toFixed(2)}
-          </h3>
+          <h3 className="text-sm font-bold capitalize">{item.ItemName}</h3>
+          {/* {item.sku && <p className="text-xs">SKU: {item.sku}</p>} */}
+          <h3 className="text-md font-medium">{parseFloat(item.Price).toFixed(2)}</h3>
         </div>
       ))}
     </div>
