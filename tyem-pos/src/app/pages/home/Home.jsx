@@ -155,16 +155,7 @@ const Home = () => {
     }, [soundPlaying]);
   
 
-
-
-   
-
-
-
-
-
-  
-
+    
   return (
     <div className="flex items-stretch h-full bg-white">
       <div className="w-full h-full">

@@ -468,7 +468,7 @@ module.exports = {
     // Extract `id` and `description` from the request body
     const { id } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
     
     // Construct the URL with the dynamic `id`
     const url = `https://script.google.com/macros/s/AKfycbygNbw5aqZvf7t59UUX275UaiszFRz_Grcp3yYYEvkRgiEBs_aBvvyX1nKTdqfVM_b-mg/exec?gid=1028792536&id=${id}`;

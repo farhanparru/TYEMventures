@@ -20,22 +20,19 @@ const initialState = {
 export const cartSlice = createSlice({
   name: "cart",
   initialState: initialState,
+  
   reducers: {
     addToCart: (state, action) => {
       const { orderitems, totalAmount } = state;
       let currentTotal = totalAmount;
-
-      // console.log(action.payload);
-
+      // console.log(action.payload)
       if (action.payload.isUpdateProduct == true) {
         
         // console.log(action.payload, 'll');
 
         const product_id = action.payload.item.id ?? action.payload?.id;
         const variation_id = action.payload.item.variation_id ?? action.payload?.product_variations[0]?.id;
-        const item = orderitems.find(
-          (item) => item.id === product_id && item.variation_id === variation_id
-        );
+        const item = orderitems.find( (item) => item.id === product_id && item.variation_id === variation_id);
         if (item) {
           item.quantity += 1;
           item.totalPrice = (item.price * item.quantity).toFixed(3);
@@ -91,6 +88,8 @@ export const cartSlice = createSlice({
         (currentTotal + state.tax - state.discount).toFixed(3)
       );
     },
+
+
 
     removeFromCart: (state, action) => {
       const { orderitems, totalAmount } = state;

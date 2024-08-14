@@ -1,53 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../store/cartSlice";
+import { Switch } from "antd";
+import axios from "axios";
+import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
-const ItemCard = () => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+const ItemCard = ({ item, show_toggle }) => {
   const dispatch = useDispatch();
+  const store_user = useSelector(getStoreUserData);
+  const [items,setItems]=useState([])
+  const [active, setActive] = useState(item?.is_inactive)
 
-  useEffect(() => {
-    axios.get('https://tyem.invenro.site/api/user/ExcelItems') // Adjust your API endpoint
-      .then((response) => {
-        if (response.data && Array.isArray(response.data)) {
-          setItems(response.data);
-        } else {
-          setItems([]);
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('There was an error fetching the items!', error);
-        setError('Error fetching items');
-        setLoading(false);
-      });
-  }, []);
-
-  const onItemClick = (item) => {
+  const onItemClick = () => {
     dispatch(addToCart(item));
   };
 
-  if (loading) return <div className="text-center text-lg">Loading...</div>;
-  if (error) return <div className="text-center text-lg text-red-600">{error}</div>;
+  
+  function onChange(checked) {
+    console.log(`switch to ${checked}`);
+    setActive(checked)
 
+    const headers = {
+      "Authorization": `Bearer ${store_user?.accessToken}`,
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    };
+
+
+    useEffect(() => {
+      axios.get('https://tyem.invenro.site/api/user/ExcelItems') // Adjust your API endpoint
+        .then((response) => {
+          setItems(response.data);
+        })
+        .catch((error) => {
+          console.error('There was an error fetching the items!', error);
+        });
+    }, []);
+  
+
+    // Cash Register Does Not Exist.
+   
+  }     
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-      {items.map((item) => (
-        <div
-          key={item._id}
-          onClick={() => onItemClick(item)}
-          className="flex flex-col bg-white text-gray-900 p-4 rounded-lg shadow-lg cursor-pointer transition-transform transform hover:scale-105 hover:shadow-2xl"
-          style={{ height: '250px', maxWidth: '300px' }} // Adjust height and maxWidth if needed
-        >
-          <div className="flex-1 flex flex-col justify-between">
-            <h3 className="text-lg font-semibold mb-2 truncate">{item.ItemName}</h3>
-            <p className="text-xl font-bold text-green-600">₹ {item.Price.toFixed(2)}</p>
-          </div>
-        </div>
-      ))}
+    <div
+      onClick={onItemClick}
+      className="home__item  flex flex-col   gap-2 justify-around bg-ch-headers-500 text-white p-3 rounded-md shadow-xl cursor-pointer transition-all ease-in-out hover:bg-slate-300 hover:scale-95 hover:shadow-sm"
+    >
+     {items.map((item,index)=>{
+      <><h3  key={index} className="text-sm font-bold text-transform: capitalize">
+         {item.Itemname}
+       </h3><h3 className="text-xs font-medium">₹ {parseFloat(item.Price).toFixed(3)}</h3></>
+      {show_toggle == true &&
+        <Switch checked={active} onChange={onChange} className={`w-10 ${!active ? 'bg-red-500' : 'bg-green-500'}`} />
+      }
+     })}
+     
+   
     </div>
   );
 };
