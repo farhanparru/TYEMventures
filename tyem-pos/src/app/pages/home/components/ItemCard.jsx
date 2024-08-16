@@ -22,7 +22,13 @@ const ItemCard = () => {
   }, []);
 
   const onItemClick = (item) => {
-    dispatch(addToCart(item));
+    // Map the item data to match the expected structure in addToCart
+    const cartItem = {
+      name: item.ItemName,
+      price: item.Price,
+      quantity: 1, // Default quantity to 1
+    };
+    dispatch(addToCart(cartItem));
   };
 
   // Split the items into three columns

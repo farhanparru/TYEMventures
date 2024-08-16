@@ -253,10 +253,10 @@ module.exports = {
     };
 
        // Initialize printer
-    const printer = new ThermalPrinter({
-      type: PrinterTypes.EPSON,
-      interface: 'tcp://192.168.1.100:9100', // IP address and port for the printer
-    });
+       const printer = new ThermalPrinter({
+        type: PrinterTypes.ROCKET, // Assuming ROCKET is a valid type
+        interface: 'tcp://192.168.1.100:9100', // IP address and port for the printer
+      });
 
     // Print Company Logo
     const logoPath = path.join(__dirname, "../../tyem-pos/src/assets/Logo.png");
