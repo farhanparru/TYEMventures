@@ -44,9 +44,10 @@ export const cartSlice = createSlice({
       } else {
         const product_id = action.payload.id;
         const name = action.payload.name;
-        const price = action.payload.product_variations[0].variations[0].sell_price_inc_tax;
-        const variation_id = action.payload.product_variations[0].variations[0].id;
+        const price = action.payload.product_variations?.[0]?.variations?.[0]?.sell_price_inc_tax;
+        const variation_id = action.payload.product_variations?.[0]?.variations?.[0]?.id;
         const quantity = action.payload?.quantity > 1 ? action.payload?.quantity : 1;
+  
         const totalPrice = price * quantity;
         const image = action.payload.image;
         const sell_line_note = "";
