@@ -70,7 +70,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       id: item.id,  // Add the unique identifier
       name: item.ItemName,
       price: item.Price,
-      quantity: 1,
+      // quantity: 1,
     };
     dispatch(addToCart(cartItem));
   }, [dispatch]);
