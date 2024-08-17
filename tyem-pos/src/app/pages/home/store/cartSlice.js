@@ -67,10 +67,11 @@ export const cartSlice = createSlice({
           discountType: null,
           discountValue: null,
         });
+        
+      console.log(newItem,"newItem");
         currentTotal += parseFloat(totalPrice);
       }
 
-      console.log(newItem,"newItem");
       
 
       // Update totals
