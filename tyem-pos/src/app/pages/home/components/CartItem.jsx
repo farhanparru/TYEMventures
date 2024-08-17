@@ -42,7 +42,7 @@ const CartItem = ({ item, index }) => {
   
   const handleIncrement = () => {
     dispatch(incrementQuantity(item.id));
-    console.log(handleIncrement,"handleIncrement");
+    console.log(handleIncrement,"dd");
     
   };
 
@@ -222,130 +222,7 @@ const CartItem = ({ item, index }) => {
           <UilTrashAlt className="w-5 text-white" />
         </div>
       </div>
-      {showModal && (
-        <CustomModal
-          onClose={() => {
-            setShowModal(false);
-          }}
-        >
-          <div className="p-6 flex flex-col gap-3">
-            <p className="text-sm font-black text-gray-800">{item.name}</p>
-            <div className="w-full  gap-4   flex justify-between px-5 py-7 items-center ">
-              {/* <Avatar shape="square" size={"large"} src={item.image}></Avatar> */}
-              <div className="cart__item-details flex-1 mx-2">
-                {/* <p className="text-sm font-black text-gray-800">{item.name}</p> */}
-                <p className="text-xs text-gray-800">SKU : {item.sku}</p>
-                <p className="text-xs text-gray-800">TAX : VAT 10%</p>
-                <p className="text-xs text-gray-800">
-                  Price : ₹ {parseFloat(item.Price).toFixed(3)}
-                </p>
-              </div>
-
-              <div className="cart__item-actions flex gap-5 items-center flex-end mx-3 relative">
-                <div className="flex flex-col  items-center">
-                  <div className="flex   items-center gap-2 cursor-pointer transition-all hover:scale-90">
-                    <p className="text-xs font-bold text-gray-800 text-center flex-2 mx-3">
-                      ₹ {item?.totalPrice}
-                    </p>
-                    {/* <UilEdit
-                      onClick={() => setOpenChangePriceBox(!openChangePriceBox)}
-                      className="w-4 text-chicket-600 "
-                    />
-                    <p
-                      onClick={() => setOpenChangePriceBox(!openChangePriceBox)}
-                      className="text-xs  text-medium text-chicket-600 text-center flex-1 "
-                    >
-                      {openChangePriceBox == true ? "Close" : "Change"}
-                    </p> */}
-                  </div>
-                  {openChangePriceBox == true && (
-                    <div className="flex gap-1 items-center">
-                      <Form.Item className="my-auto  w-[50%]">
-                        <Input
-                          initialValues={singleItemChangePrice}
-                          type="number"
-                          onChange={(e) =>
-                            setSingleItemChangePrice(e.target.value)
-                          }
-                          placeholder="Enter new price"
-                        />
-                      </Form.Item>
-                      {singleItemChangePrice &&
-                        singleItemChangePrice.length !== 0 && (
-                          <button
-                            onClick={() =>
-                              __updateSingleItemPrice(
-                                item,
-                                singleItemChangePrice
-                              )
-                            }
-                            className="px-4 py-2 text-white border-2 bg-orange-500 rounded-lg cursor-pointer transition-all hover:scale-90 "
-                          >
-                            Apply
-                          </button>
-                        )}
-                    </div>
-                  )}
-                </div>
-                <div
-                  onClick={(e) => onRemoveItem(e, false)}
-                  className=" w-[30%] p-2 rounded-lg flex items-center justify-center bg-red-500 cursor-pointer transition-all hover:scale-90"
-                >
-                  <UilMinus className="w-5 text-white" />
-                </div>
-                <div className="bg-gray-100 w-[50%] p-2 rounded-lg flex items-center justify-center">
-                  <p className="text-gray-800">{item.quantity}</p>
-                </div>
-
-                <div
-                  onClick={onAddItem}
-                  className=" w-[30%] p-2 rounded-lg flex items-center justify-center bg-red-500 cursor-pointer transition-all hover:scale-90"
-                >
-                  <UilPlus className="w-5 text-white" />
-                </div>
-                {/* <div className="flex  items-center gap-2 absolute top-[-100%] right-[-10%] cursor-pointer transition-all hover:scale-90">
-                  <UilEdit className="w-5 text-chicket-600 " />
-                  <p className="text-xs  text-medium text-chicket-600 text-center flex-1 ">
-                    Edit
-                  </p>
-                </div> */}
-              </div>
-            </div>
-            <hr />
-            
-            {/* {getAddonCat()} */}
-
-            {/* <div className="flex gap-3 text-gray-800 mt-3">
-              <div className="flex gap-1 items-center">
-                <UilPercentage className="w-4" />
-                <p className="text-xs">Apply Discount</p>
-                <Form.Item className="my-auto">
-                  <Input.Group compact>
-                    <Form.Item name={["discount", "coupon"]} noStyle>
-                      <Select placeholder="Fixed"></Select>
-                    </Form.Item>
-                    <Form.Item name={["coupon", "code"]} noStyle>
-                      <Input
-                        style={{
-                          width: "30%",
-                        }}
-                        placeholder=""
-                      />
-                    </Form.Item>
-                  </Input.Group>
-                </Form.Item>
-              </div>
-              <div className="flex gap-1 items-center">
-                <UilPen className="w-4" />
-                <p className="text-xs">Add Note</p>
-                <Form.Item className="my-auto">
-                  <Input placeholder="" />
-                </Form.Item>
-              </div>
-            </div> */}
-          </div>
-        </CustomModal>
-      )}
+      
     </div>
   );
 };
