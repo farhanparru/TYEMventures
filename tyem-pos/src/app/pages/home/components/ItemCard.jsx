@@ -23,7 +23,7 @@ const ItemCard = () => {
         // const secondColumn = fetchedItems.slice(130, 260); // Next 130 items
         // const thirdColumn = fetchedItems.slice(260, 392); // Remaining 132 items
 
-        setItems({ firstColumn, secondColumn, thirdColumn });
+        setItems({ firstColumn });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       }
