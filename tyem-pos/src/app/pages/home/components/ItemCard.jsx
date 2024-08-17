@@ -14,7 +14,8 @@ const ItemCard = () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); // Adjust your API endpoint
         const fetchedItems = response.data;
-
+        console.log(response);
+        
         // Manually split items into three columns
         const firstColumn = fetchedItems.slice(0, 4);  // Example: first 4 items
         const secondColumn = fetchedItems.slice(4, 8); // Example: next 4 items
