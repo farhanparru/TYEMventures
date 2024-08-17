@@ -27,45 +27,39 @@ export const cartSlice = createSlice({
       let currentTotal = totalAmount;
     
       const product_id = action.payload.id;
-      const name = action.payload.name;
-      const price = action.payload.price;
-      const variation_id = action.payload.variation_id; // Assume this could be null or undefined if not applicable
-    
-      // Find item in cart based on a combination of product ID and variation ID (if applicable)
-      const existingItem = orderitems.find(
-        (item) => item.id === product_id && item.variation_id === variation_id
-      );
+      
+      // Find if the item already exists in the cart based on id
+      const existingItem = orderitems.find((item) => item.id === product_id);
     
       if (existingItem) {
-        // If item exists in the cart, increment the quantity
+        // If item exists, update its quantity and total price
         existingItem.quantity += 1;
-        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-        currentTotal += parseFloat(existingItem.price);
-        state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(3);
+        currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
       } else {
-        // If item does not exist, add it as a new item
-        const newItem = {
-          id: product_id,
-          name: name,
-          price: price,
-          quantity: 1,
-          totalPrice: price.toFixed(2),
-          variation_id,
-          image: action.payload.image,
-          sku: action.payload.sku,
-          product_variations: action.payload.product_variations,
-          type: action.payload.type,
-        };
+        // If item doesn't exist, add it as a new entry
+        const price = action.payload.price;
+        const quantity = 1;
+        const totalPrice = price * quantity;
     
-        orderitems.push(newItem);
-        currentTotal += parseFloat(newItem.totalPrice);
-        state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
+        orderitems.push({
+          id: product_id,
+          name: action.payload.name,
+          price: price,
+          quantity: quantity,
+          totalPrice: totalPrice.toFixed(3),
+        });
+    
+        currentTotal = parseFloat(currentTotal) + parseFloat(totalPrice);
       }
     
-      // Update the total amounts
+      // Update state values
       state.totalAmount = currentTotal;
       state.totalAmountWithoutDiscount = currentTotal;
-      state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
+      state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+      state.totalPayableAmount = parseFloat(
+        (currentTotal + state.tax - state.discount).toFixed(3)
+      );
     },
     
 
