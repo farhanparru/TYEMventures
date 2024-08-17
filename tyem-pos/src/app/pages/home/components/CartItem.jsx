@@ -10,7 +10,7 @@ import {
   UilMoneyWithdraw,
   UilTrashAlt,
 } from "@iconscout/react-unicons";
-//ss
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
@@ -19,9 +19,10 @@ import {
   setSelectedAddon,
   setSingleItemDiscount,
   updateItemNote,
-  incrementQuantity,
-  decrementQuantity 
 } from "../store/cartSlice";
+
+import { incrementQuantity,decrementQuantity } from "../store/cartSlice";
+
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
 import { CiDiscount1 } from "react-icons/ci";
@@ -44,7 +45,6 @@ const CartItem = ({ item, index }) => {
   const handleDecrement = (id) => {
     dispatch(decrementQuantity(id));
   };
-
 
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
@@ -195,7 +195,7 @@ const CartItem = ({ item, index }) => {
             >
               -
             </button>
-
+            
             <p className="text-xs text-center">{item.quantity}</p>
 
             <button
