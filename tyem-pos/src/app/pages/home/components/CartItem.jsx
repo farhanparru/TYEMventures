@@ -21,7 +21,7 @@ import {
   updateItemNote,
 } from "../store/cartSlice";
 
-import { incrementQuantity, decrementQuantity } from '../store/cartSlice';
+import { incrementQuantity } from '../store/cartSlice';
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
@@ -43,9 +43,9 @@ const CartItem = ({ item, index }) => {
     dispatch(incrementQuantity(item.id));
   };
 
-  const handleDecrement = () => {
-    dispatch(decrementQuantity(item.id));
-  };
+  // const handleDecrement = () => {
+  //   dispatch(decrementQuantity(item.id));
+  // };
 
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
