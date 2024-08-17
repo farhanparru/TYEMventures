@@ -178,7 +178,7 @@ const CartItem = ({ item, index }) => {
           </div>
           <div className="cart__item-actions flex gap-5 items-center">
             <button
-              className="bg-gray-200 text-blue-800 px-3 py-1 rounded"
+              className="bg-gray-700 text-blue-800 px-3 py-1 rounded"
               onClick={() => handleDecrement(item.id)}
             >
               -
@@ -187,15 +187,15 @@ const CartItem = ({ item, index }) => {
             {/* <p className="text-xs text-center">{item.quantity}</p> */}
 
             <button
-              className="bg-gray-200 text-gray-800 px-3 py-1 rounded"
+              className="bg-gray-700 text-gray-800 px-3 py-1 rounded"
               onClick={() => handleIncrement(item.id)}
             >
               +
             </button>
 
-            <p className="text-xs font-bold text-center flex-1">
+            {/* <p className="text-xs font-bold text-center flex-1">
               ₹ {parseFloat(item.totalPrice).toFixed(3)}
-            </p>
+            </p> */}
           </div>
         </div>
         <div
