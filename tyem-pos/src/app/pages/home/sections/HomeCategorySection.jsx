@@ -41,8 +41,8 @@ const HomeCategorySection = ({ onCategorySelect }) => {
         {categories.map((category, index) => (
           <div
             key={index}
-            className={`text-teal-600 border-t border-white text-center py-2 cursor-pointer 
-              ${selectedCategory === category ? 'bg-teal-600 hover:bg-teal-700' : 'hover:bg-teal-500'}`}
+            className={`text-teal-600 border-t border-teal-600 text-center py-2 cursor-pointer 
+              ${selectedCategory === category ? 'bg-teal-600 hover:bg-teal-700' : 'hover:bg-white'}`}
             onClick={() => handleCategoryClick(category)}
           >
             {category}

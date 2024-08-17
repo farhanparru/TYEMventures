@@ -52,7 +52,7 @@ export const cartSlice = createSlice({
         currentTotal += parseFloat(price);
       } else {
         // Add new item
-        orderitems.push({
+      const newItem =  orderitems.push({
           id: productId,
           name,
           price,
@@ -69,6 +69,9 @@ export const cartSlice = createSlice({
         });
         currentTotal += parseFloat(totalPrice);
       }
+
+      console.log(newItem,"newItem");
+      
 
       // Update totals
       state.totalAmount = currentTotal;
