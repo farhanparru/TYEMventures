@@ -323,22 +323,23 @@ export const cartSlice = createSlice({
     // }
   });
 
-export const {
-  addToCart,
-  incrementQuantity,
-  decrementQuantity,
-  removeFromCart,
-  updateItemNote,
-  setDiscount,
-  setAmountToBeReturned,
-  setPaymentMethod,
-  clearCart,
-  updateTotalAmount,
-  setSelectedAddon,
-  setSingleItemDiscount,
-  setWholeCartDiscount,
-  addFromHoldCart,
-} = cartSlice.actions;
+  export const {
+    addToCart,
+    incrementQuantity,
+    decrementQuantity,
+    removeFromCart,
+    updateItemNote,
+    setDiscount,
+    setAmountToBeReturned,
+    setPaymentMethod,
+    clearCart,
+    updateTotalAmount,
+    setSelectedAddon,
+    setSingleItemDiscount,
+    setWholeCartDiscount,
+    addFromHoldCart,
+  } = cartSlice.actions;
+  
 
 export const getorderitems = (state) => state.cart.orderitems;
 
