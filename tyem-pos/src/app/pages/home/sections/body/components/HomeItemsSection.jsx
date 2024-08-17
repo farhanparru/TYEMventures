@@ -96,20 +96,17 @@ const HomeItemsSection = (props) => {
 
         <div
           className={`
-          w-full items__section   overflow-y-scroll 
-          grid grid-cols-1 gap-2 grid-rows-auto 
-          p-3
-          md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5
-          sm:gap-3 lg:gap-4 xl:gap-1 
-          `}
-          style={{ alignContent: "baseline" }}
-        >
-          {items.map((item, index) => {
-            // if (index >= 3) {
-            //   return
-            // }
-            return   <ItemCard selectedCategory={selectedCategory} />
-          })}
+  w-full items__section overflow-y-scroll 
+  grid grid-cols-1 gap-4 
+  p-3
+  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5
+  sm:gap-4 lg:gap-6 xl:gap-4
+  `}
+  style={{ alignContent: "start" }}
+>
+  {items.map((item, index) => (
+    <ItemCard key={index} selectedCategory={selectedCategory} />
+  ))}
         </div>
       </div>
     </>
