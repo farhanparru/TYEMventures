@@ -56,7 +56,7 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-9"> {/* Increased space-y for max spacing */}
+      <div className="flex flex-col space-y-9"> 
         {col2.map((item, index) => (
           <div
             key={index}
