@@ -83,6 +83,7 @@ export const cartSlice = createSlice({
       }
     },
   },
+
   
 
 
@@ -320,8 +321,7 @@ export const cartSlice = createSlice({
     //         paymentMethod,
     //     });
     // }
-  },
-);
+  });
 
 export const {
   addToCart,

@@ -21,7 +21,7 @@ import {
   updateItemNote,
 } from "../store/cartSlice";
 
-import { incrementQuantity,decrementQuantity } from "../store/cartSlice";
+import { incrementQuantity, decrementQuantity } from '../store/cartSlice';
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
@@ -38,12 +38,13 @@ const CartItem = ({ item, index }) => {
   const [itemNote, setitemNote] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  const handleIncrement = (id) => {
-    dispatch(incrementQuantity(id));
+  c
+  const handleIncrement = () => {
+    dispatch(incrementQuantity(item.id));
   };
 
-  const handleDecrement = (id) => {
-    dispatch(decrementQuantity(id));
+  const handleDecrement = () => {
+    dispatch(decrementQuantity(item.id));
   };
 
   const onRemoveItem = (e, isRemoveAll) => {
