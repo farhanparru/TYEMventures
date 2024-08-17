@@ -18,9 +18,9 @@ const ItemCard = React.memo(() => {
         // Split items into three columns
         // const firstColumn = fetchedItems.slice(0, Math.ceil(fetchedItems.length / 3));
         const secondColumn = fetchedItems.slice(Math.ceil(fetchedItems.length / 3), Math.ceil(2 * fetchedItems.length / 3));
-        const thirdColumn = fetchedItems.slice(Math.ceil(2 * fetchedItems.length / 3));
+        // const thirdColumn = fetchedItems.slice(Math.ceil(2 * fetchedItems.length / 3));
 
-        setItems({ secondColumn, thirdColumn });
+        setItems({ secondColumn, });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       }
@@ -68,7 +68,7 @@ const ItemCard = React.memo(() => {
       </div>
 
       <div className="flex flex-col space-y-9">
-        {items.thirdColumn.map((item, index) => (
+        {/* {items.thirdColumn.map((item, index) => (
           <div
             key={item.id || index} 
             onClick={() => onItemClick(item)}
@@ -78,7 +78,7 @@ const ItemCard = React.memo(() => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );
