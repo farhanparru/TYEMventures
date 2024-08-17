@@ -64,6 +64,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   }, [selectedCategory]);
 
   const onItemClick = React.useCallback((item) => {
+    console.log("Item clicked:", item); // Add this line to check
+    
     const cartItem = {
       id: item.id,  // Add the unique identifier
       name: item.ItemName,
