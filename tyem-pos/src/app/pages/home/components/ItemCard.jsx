@@ -20,7 +20,7 @@ const ItemCard = React.memo(() => {
         const secondColumn = fetchedItems.slice(Math.ceil(fetchedItems.length / 3), Math.ceil(2 * fetchedItems.length / 3));
         const thirdColumn = fetchedItems.slice(Math.ceil(2 * fetchedItems.length / 3));
 
-        setItems({ firstColumn, secondColumn, thirdColumn });
+        setItems({ secondColumn, thirdColumn });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       }
