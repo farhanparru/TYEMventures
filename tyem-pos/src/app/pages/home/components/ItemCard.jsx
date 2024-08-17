@@ -7,13 +7,20 @@ import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 const ItemCard = () => {
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); // Adjust your API endpoint
-        setItems(response.data);
+        const fetchedItems = response.data;
+
+        // Manually split items into three columns
+        const firstColumn = fetchedItems.slice(0, 4);  // Example: first 4 items
+        const secondColumn = fetchedItems.slice(4, 8); // Example: next 4 items
+        const thirdColumn = fetchedItems.slice(8, 12); // Example: next 4 items
+
+        setItems({ firstColumn, secondColumn, thirdColumn });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       }
@@ -22,29 +29,18 @@ const ItemCard = () => {
   }, []);
 
   const onItemClick = (item) => {
-    // Map the item data to match the expected structure in addToCart
     const cartItem = {
       name: item.ItemName,
       price: item.Price,
-      quantity: 1, // Default quantity to 1
+      quantity: 1,
     };
-    console.log(cartItem,"cartItem");
     dispatch(addToCart(cartItem));
   };
 
- 
-  
-
-  // Split the items into three columns
-  const col1 = items.filter((_, index) => index % 3 === 0);
-  const col2 = items.filter((_, index) => index % 3 === 1);
-  // const col3 = items.filter((_, index) => index % 3 === 2);
-
-
   return (
-    <div className="flex justify-between gap-x-10 p-6"> {/* Increased gap-x for max spacing */}
-      <div className="flex flex-col space-y-9"> {/* Increased space-y for max spacing */}
-        {col1.map((item, index) => (
+    <div className="flex justify-between gap-x-10 p-6">
+      <div className="flex flex-col space-y-9">
+        {items.firstColumn.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
@@ -57,8 +53,8 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-9"> 
-        {col2.map((item, index) => (
+      <div className="flex flex-col space-y-9">
+        {items.secondColumn.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
@@ -71,8 +67,8 @@ const ItemCard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col space-y-9"> {/* Increased space-y for max spacing */}
-        {/* {col3.map((item, index) => (
+      <div className="flex flex-col space-y-9">
+        {items.thirdColumn.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
@@ -82,7 +78,7 @@ const ItemCard = () => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))} */}
+        ))}
       </div>
     </div>
   );
