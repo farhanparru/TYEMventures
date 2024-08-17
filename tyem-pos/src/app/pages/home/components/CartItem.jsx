@@ -42,10 +42,9 @@ const CartItem = ({ item, index }) => {
   
   const handleIncrement = () => {
     dispatch(incrementQuantity(item.id));
+    console.log(handleIncrement,"handleIncrement");
+    
   };
-
-  console.log(handleIncrement,"handleIncrement");
-  
 
   const handleDecrement = () => {
     dispatch(decrementQuantity(item.id));
@@ -112,45 +111,35 @@ const CartItem = ({ item, index }) => {
       );
     });
   };
+
   // const getAddonCat = () => {
-  //   // Check if item is defined and if item.product_variations exists
-  //   if (!item || !item.product_variations) {
-  //     console.error('Item or item.product_variations is undefined or null');
-  //     return null; // Return null or an appropriate fallback
-  //   }
-  
-  //   // Default to an empty object if item.product_variations is null
-  //   const productVariations = item.product_variations || {};
-  
-  //   // Log productVariations for debugging
-  //   console.log('Product Variations:', productVariations);
-  
-  //   // Get keys of the productVariations object
-  //   const keys = Object.keys(productVariations);
-  
+  //   const keys = Object.keys(item.product_variations);
+
   //   return (
-  //     item.type === "variable" && (
+  //     item.type == "variable" && (
   //       <>
-  //         {keys.length > 0 && (
+  //         {keys && keys.length > 0 && (
   //           <>
   //             <h6 className="text-black font-bold text-base">Addons</h6>
-  //             {keys.map((key) => (
-  //               <div className="text-black" key={key}>
-  //                 <h4 className="font-semibold mt-2 text-capitalize text-sm">
-  //                   - {productVariations[key].name}
-  //                 </h4>
-  //                 <div className="flex gap-4 flex-wrap">
-  //                   {getAddons(productVariations[key])}
+  //             {keys.map((key, index) => {
+  //               return (
+  //                 <div className="text-black" key={key}>
+  //                   <h4 className="font-semibold mt-2 text-capitalize text-sm">
+  //                     - {item.product_variations[key].name}
+  //                   </h4>
+  //                   <div className="flex gap-4 flex-wrap">
+  //                     {getAddons(item.product_variations[key])}
+  //                   </div>
   //                 </div>
-  //               </div>
-  //             ))}
+  //               );
+  //             })}
   //           </>
   //         )}
   //       </>
   //     )
   //   );
   // };
-  
+
   const [showModal, setShowModal] = React.useState(false);
 
   const __updateSingleItemPrice = (item, price) => {
@@ -403,8 +392,8 @@ const CartItem = ({ item, index }) => {
                     />
                   </Form.Item> */}
               </div>
-            </Form>
-            {getAddonCat()}
+            </Form> 
+            {/* {getAddonCat()} */}
 
             {/* <div className="flex gap-3 text-gray-800 mt-3">
               <div className="flex gap-1 items-center">
