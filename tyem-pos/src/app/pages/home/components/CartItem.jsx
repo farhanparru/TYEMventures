@@ -19,6 +19,8 @@ import {
   setSelectedAddon,
   setSingleItemDiscount,
   updateItemNote,
+  incrementQuantity,
+  decrementQuantity 
 } from "../store/cartSlice";
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
@@ -34,6 +36,16 @@ const CartItem = ({ item, index }) => {
   const [discountType, setDiscountType] = useState("fixed");
   const [itemNote, setitemNote] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
+
+  const handleIncrement = (id) => {
+    dispatch(incrementQuantity(id));
+  };
+
+  const handleDecrement = (id) => {
+    dispatch(decrementQuantity(id));
+  };
+
+
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
     dispatch(
@@ -183,7 +195,7 @@ const CartItem = ({ item, index }) => {
             >
               -
             </button>
-            
+
             <p className="text-xs text-center">{item.quantity}</p>
 
             <button
