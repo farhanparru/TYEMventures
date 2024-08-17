@@ -31,10 +31,14 @@ const ItemCard = () => {
     dispatch(addToCart(cartItem));
   };
 
+  console.log(cartItem,"cartItem");
+  
+
   // Split the items into three columns
   const col1 = items.filter((_, index) => index % 3 === 0);
   const col2 = items.filter((_, index) => index % 3 === 1);
-  const col3 = items.filter((_, index) => index % 3 === 2);
+  // const col3 = items.filter((_, index) => index % 3 === 2);
+
 
   return (
     <div className="flex justify-between gap-x-10 p-6"> {/* Increased gap-x for max spacing */}
@@ -67,7 +71,7 @@ const ItemCard = () => {
       </div>
 
       <div className="flex flex-col space-y-9"> {/* Increased space-y for max spacing */}
-        {col3.map((item, index) => (
+        {/* {col3.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
@@ -77,7 +81,7 @@ const ItemCard = () => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );
