@@ -40,15 +40,9 @@ const CartItem = ({ item, index }) => {
   const [discountAmount, setDiscountAmount] = useState(0);
 
   
-  const handleIncrement = () => {
-    dispatch(incrementQuantity(item.id));
-    console.log(handleIncrement,"dd");
-    
-  };
+  const handleIncrement = () => dispatch(incrementQuantity(item.id));
+  const handleDecrement = () => dispatch(decrementQuantity(item.id));
 
-  const handleDecrement = () => {
-    dispatch(decrementQuantity(item.id));
-  };
 
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
@@ -196,7 +190,7 @@ const CartItem = ({ item, index }) => {
           <div className="cart__item-actions flex gap-5 items-center">
             <button
              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-              onClick={() => handleDecrement(item.id)}
+             onClick={handleDecrement}
             >
               -
             </button>
@@ -205,7 +199,7 @@ const CartItem = ({ item, index }) => {
 
             <button
              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-              onClick={() => handleIncrement(item.id)}
+             onClick={handleIncrement}  
             >
               +
             </button>

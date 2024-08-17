@@ -66,6 +66,7 @@ export const cartSlice = createSlice({
 
 
     incrementQuantity: (state, action) => {
+      console.log('Increment action:', action);
       const item = state.orderitems.find(item => item.id === action.payload);
       if (item) {
         item.quantity += 1;
@@ -75,6 +76,7 @@ export const cartSlice = createSlice({
     },
 
     decrementQuantity: (state, action) => {
+      console.log('Decrement action:', action);
       const item = state.orderitems.find(item => item.id === action.payload);
       if (item && item.quantity > 1) {
         item.quantity -= 1;
