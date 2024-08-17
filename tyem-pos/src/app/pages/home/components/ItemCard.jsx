@@ -45,7 +45,7 @@ const ItemCard = () => {
       <div className="flex flex-col space-y-9">
         {items.firstColumn.map((item, index) => (
           <div
-            key={index}
+            key={item.id} // Use a unique identifier if available
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }} 
