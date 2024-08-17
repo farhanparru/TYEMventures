@@ -65,13 +65,14 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   const onItemClick = React.useCallback((item) => {
     const cartItem = {
+      id: item.id,  // Add the unique identifier
       name: item.ItemName,
       price: item.Price,
       quantity: 1,
     };
     dispatch(addToCart(cartItem));
-  }, [dispatch]); // Use useCallback to prevent onItemClick from being recreated on every render
-
+  }, [dispatch]);
+  
   return (
     <div className="flex justify-between gap-x-10 p-6">
       {loading ? (
