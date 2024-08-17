@@ -28,10 +28,11 @@ const ItemCard = () => {
       price: item.Price,
       quantity: 1, // Default quantity to 1
     };
+    console.log(cartItem,"cartItem");
     dispatch(addToCart(cartItem));
   };
 
-  console.log(cartItem,"cartItem");
+ 
   
 
   // Split the items into three columns
