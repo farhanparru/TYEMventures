@@ -176,13 +176,24 @@ const CartItem = ({ item, index }) => {
             </p>
             {/* <p className="text-xs ">{`(${item.size} ML)`}</p> */}
           </div>
+          <div className="cart__item-actions flex gap-5 items-center">
+            <button
+              className="bg-gray-200 text-gray-800 px-3 py-1 rounded"
+              onClick={() => handleDecrement(item.id)}
+            >
+              -
+            </button>
 
-          <div className="cart__item-actions flex gap-5 items-center flex-end">
-            <p className="text-xs   text-center">
-              ₹ {parseFloat(item.price).toFixed(3)}
-            </p>
-            <p className=" ">x{item.quantity}</p>
-            <p className="text-xs font-bold  text-center flex-1">
+            <p className="text-xs text-center">{item.quantity}</p>
+
+            <button
+              className="bg-gray-200 text-gray-800 px-3 py-1 rounded"
+              onClick={() => handleIncrement(item.id)}
+            >
+              +
+            </button>
+
+            <p className="text-xs font-bold text-center flex-1">
               ₹ {parseFloat(item.totalPrice).toFixed(3)}
             </p>
           </div>
@@ -209,7 +220,7 @@ const CartItem = ({ item, index }) => {
                 <p className="text-xs text-gray-800">SKU : {item.sku}</p>
                 <p className="text-xs text-gray-800">TAX : VAT 10%</p>
                 <p className="text-xs text-gray-800">
-                  Price : ₹ {parseFloat(item.price).toFixed(3)}
+                  Price : ₹ {parseFloat(item.Price).toFixed(3)}
                 </p>
               </div>
 

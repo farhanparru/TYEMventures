@@ -30,14 +30,15 @@ const ItemCard = React.memo(() => {
     fetchItems();
   }, []);
 
-  const onItemClick = (item) => {
+  const onItemClick = React.useCallback((item) => {
     const cartItem = {
       name: item.ItemName,
       price: item.Price,
       quantity: 1,
     };
     dispatch(addToCart(cartItem));
-  };
+  }, [dispatch]); // Use useCallback to prevent onItemClick from being recreated on every render
+
 
   return (
     <div className="flex justify-between gap-x-10 p-6">
