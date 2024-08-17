@@ -24,61 +24,50 @@ export const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const { orderitems, totalAmount } = state;
-      
       let currentTotal = totalAmount;
     
-      // Extract product and variation IDs
       const product_id = action.payload.id;
-      const variation_id = action.payload.variation_id || action.payload.product_variations?.[0]?.variations?.[0]?.id;
-      
-      // Find item based on both product ID and variation ID (if it exists)
+      const name = action.payload.name;
+      const price = action.payload.price;
+      const variation_id = action.payload.variation_id; // Assume this could be null or undefined if not applicable
+    
+      // Find item in cart based on a combination of product ID and variation ID (if applicable)
       const existingItem = orderitems.find(
         (item) => item.id === product_id && item.variation_id === variation_id
       );
     
-      // If the item exists, update its quantity
       if (existingItem) {
+        // If item exists in the cart, increment the quantity
         existingItem.quantity += 1;
-        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(3);
-        currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
-        state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+        currentTotal += parseFloat(existingItem.price);
+        state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
       } else {
-        // Otherwise, add the new item to the cart
-        const price = action.payload.price || action.payload.product_variations?.[0]?.variations?.[0]?.sell_price_inc_tax;
-        const quantity = action.payload.quantity || 1;
-        const totalPrice = price * quantity;
-        const name = action.payload.name;
-        const image = action.payload.image;
-        
+        // If item does not exist, add it as a new item
         const newItem = {
           id: product_id,
           name: name,
           price: price,
-          quantity: quantity,
-          totalPrice: totalPrice,
+          quantity: 1,
+          totalPrice: price.toFixed(2),
           variation_id,
-          image,
+          image: action.payload.image,
           sku: action.payload.sku,
           product_variations: action.payload.product_variations,
           type: action.payload.type,
-          discountType: null,
-          discountValue: null,
         };
     
-      console.log(newItem,"newItem");
-      
-
         orderitems.push(newItem);
-        currentTotal = parseFloat(currentTotal) + parseFloat(totalPrice);
-        state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+        currentTotal += parseFloat(newItem.totalPrice);
+        state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
       }
     
+      // Update the total amounts
       state.totalAmount = currentTotal;
       state.totalAmountWithoutDiscount = currentTotal;
-      state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(3));
+      state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
     },
     
-
 
     removeFromCart: (state, action) => {
       const { orderitems, totalAmount } = state;

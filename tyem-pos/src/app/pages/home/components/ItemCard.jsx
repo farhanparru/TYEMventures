@@ -64,16 +64,22 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   }, [selectedCategory]);
 
   const onItemClick = React.useCallback((item) => {
-    console.log("Item clicked:", item); // Add this line to check
-    
+    console.log("Item clicked:", item);
+  
     const cartItem = {
-      id: item.id,  // Add the unique identifier
+      id: item.id,  // Unique identifier
       name: item.ItemName,
       price: item.Price,
-      // quantity: 1,
+      variation_id: item.variation_id, 
+      image: item.image, // If relevant
+      sku: item.sku,     // If relevant
+      product_variations: item.product_variations, // If relevant
+      type: item.type,   // If relevant
     };
+  
     dispatch(addToCart(cartItem));
   }, [dispatch]);
+  
   
   return (
     <div className="flex justify-between gap-x-10 p-6">
