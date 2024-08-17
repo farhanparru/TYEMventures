@@ -16,7 +16,7 @@ const ItemCard = React.memo(() => {
         const fetchedItems = response.data;
 
         // Split items into three columns
-        const firstColumn = fetchedItems.slice(0, Math.ceil(fetchedItems.length / 3));
+        // const firstColumn = fetchedItems.slice(0, Math.ceil(fetchedItems.length / 3));
         const secondColumn = fetchedItems.slice(Math.ceil(fetchedItems.length / 3), Math.ceil(2 * fetchedItems.length / 3));
         const thirdColumn = fetchedItems.slice(Math.ceil(2 * fetchedItems.length / 3));
 
@@ -40,7 +40,7 @@ const ItemCard = React.memo(() => {
   return (
     <div className="flex justify-between gap-x-10 p-6">
       <div className="flex flex-col space-y-9">
-        {items.firstColumn.map((item, index) => (
+        {/* {items.firstColumn.map((item, index) => (
           <div
             key={item.id || index} // Use a unique identifier if available
             onClick={() => onItemClick(item)}
@@ -50,7 +50,7 @@ const ItemCard = React.memo(() => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
 
       <div className="flex flex-col space-y-9">
