@@ -17,21 +17,24 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); 
         const fetchedItems = response.data;
 
-   // Filter items based on the selected category
-     const filteredItems = fetchedItems.filter(item => item.category === selectedCategory);
+        // Filter items based on the selected category
+        const filteredItems = selectedCategory === 'All' 
+          ? fetchedItems 
+          : fetchedItems.filter(item => item.category === selectedCategory);
 
-   // Split items into three columns
-   const firstColumn = filteredItems.slice(0, Math.ceil(filteredItems.length / 3));
-   const secondColumn = filteredItems.slice(Math.ceil(filteredItems.length / 3), Math.ceil(2 * filteredItems.length / 3));
-   const thirdColumn = filteredItems.slice(Math.ceil(2 * filteredItems.length / 3));
+        // Split items into three columns
+        const firstColumn = filteredItems.slice(0, Math.ceil(filteredItems.length / 3));
+        const secondColumn = filteredItems.slice(Math.ceil(filteredItems.length / 3), Math.ceil(2 * filteredItems.length / 3));
+        const thirdColumn = filteredItems.slice(Math.ceil(2 * filteredItems.length / 3));
 
-   setItems({ firstColumn, secondColumn, thirdColumn });
+        setItems({ firstColumn, secondColumn, thirdColumn });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       }
     };
     fetchItems();
   }, [selectedCategory]);
+
 
   const onItemClick = React.useCallback((item) => {
     const cartItem = {
