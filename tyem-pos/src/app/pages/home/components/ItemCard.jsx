@@ -64,16 +64,15 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   }, [selectedCategory]);
 
   const onItemClick = React.useCallback((item) => {
-    console.log("Item clicked:", item); // Add this line to check
-    
+    console.log("Item clicked:", item);
+  
     const cartItem = {
-      id: item.id,  // Unique identifier
+      id: item.Id,  // Use the item's unique identifier
       name: item.ItemName,
       price: item.Price,
-      // You can add more properties here if needed
     };
-    
-    dispatch(addToCart(cartItem));
+  
+    dispatch(addToCart(cartItem)); // Dispatch the action to add to cart
   }, [dispatch]);
   
   return (
