@@ -22,76 +22,62 @@ export const cartSlice = createSlice({
   initialState: initialState,
   
   reducers: {
-    
     addToCart: (state, action) => {
       const { orderitems, totalAmount } = state;
-      console.log(orderitems,"orderitems");
       
       let currentTotal = totalAmount;
-     
-      if (action.payload.isUpdateProduct == true) {
-        const product_id = action.payload.item.id ?? action.payload?.id;
-        const variation_id = action.payload.item.variation_id ?? action.payload?.product_variations[0]?.id;
-        const item = orderitems.find( (item) => item.id === product_id && item.variation_id === variation_id);
-        if (item) {
-          item.quantity += 1;
-          item.totalPrice = (item.price * item.quantity).toFixed(3);
-          currentTotal = parseFloat(currentTotal) + parseFloat(item.price);
-          // alert(currentTotal)
-
-          state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
-        }
-      } else {
-        const product_id = action.payload.id;
-        const name = action.payload.name;
-        const price = action.payload.product_variations?.[0]?.variations?.[0]?.sell_price_inc_tax;
-        const variation_id = action.payload.product_variations?.[0]?.variations?.[0]?.id;
-        const quantity = action.payload?.quantity > 1 ? action.payload?.quantity : 1;
-        const totalPrice = price * quantity;
-        const image = action.payload.image;
-        const sell_line_note = "";
-
-        const item = orderitems.find(
-          (item) => item.id === product_id && item.variation_id === variation_id
-        );
-        if (item) {
-          item.quantity += 1;
-          item.totalPrice = (item.price * item.quantity).toFixed(3);
-          currentTotal = parseFloat(currentTotal) + parseFloat(price);
-          // alert(currentTotal)
-
-          state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
-        } else {
-
-        const checkItems =   orderitems.push({
-            id: product_id,
-            name: name,
-            price: price,
-            quantity: quantity,
-            totalPrice: totalPrice,
-            variation_id,
-            image,
-            sell_line_note,
-            sku: action.payload.sku,
-            product_variations: action.payload.product_variations,
-            type: action.payload.type,
-            discountType: null,
-            discountValue: null,
-          });
-          console.log(checkItems,"checkItems");
-          
-          currentTotal = parseFloat(currentTotal) + parseFloat(totalPrice);
-
-          state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
-        }
-      }
-      state.totalAmount = currentTotal;
-      state.totalAmountWithoutDiscount = currentTotal
-      state.totalPayableAmount = parseFloat(
-        (currentTotal + state.tax - state.discount).toFixed(3)
+    
+      // Extract product and variation IDs
+      const product_id = action.payload.id;
+      const variation_id = action.payload.variation_id || action.payload.product_variations?.[0]?.variations?.[0]?.id;
+      
+      // Find item based on both product ID and variation ID (if it exists)
+      const existingItem = orderitems.find(
+        (item) => item.id === product_id && item.variation_id === variation_id
       );
-    },
+    
+      // If the item exists, update its quantity
+      if (existingItem) {
+        existingItem.quantity += 1;
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(3);
+        currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
+        state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+      } else {
+        // Otherwise, add the new item to the cart
+        const price = action.payload.price || action.payload.product_variations?.[0]?.variations?.[0]?.sell_price_inc_tax;
+        const quantity = action.payload.quantity || 1;
+        const totalPrice = price * quantity;
+        const name = action.payload.name;
+        const image = action.payload.image;
+        
+        const newItem = {
+          id: product_id,
+          name: name,
+          price: price,
+          quantity: quantity,
+          totalPrice: totalPrice,
+          variation_id,
+          image,
+          sku: action.payload.sku,
+          product_variations: action.payload.product_variations,
+          type: action.payload.type,
+          discountType: null,
+          discountValue: null,
+        };
+    
+      console.log(newItem,"newItem");
+      
 
+        orderitems.push(newItem);
+        currentTotal = parseFloat(currentTotal) + parseFloat(totalPrice);
+        state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+      }
+    
+      state.totalAmount = currentTotal;
+      state.totalAmountWithoutDiscount = currentTotal;
+      state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(3));
+    },
+    
 
 
     removeFromCart: (state, action) => {
