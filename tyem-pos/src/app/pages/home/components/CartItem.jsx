@@ -39,7 +39,7 @@ const CartItem = ({ item, index }) => {
   const [itemNote, setitemNote] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  c
+  
   const handleIncrement = () => {
     dispatch(incrementQuantity(item.id));
   };
