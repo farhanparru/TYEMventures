@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Initial state of the cart
 const initialState = {
   orderitems: [],
   totalAmount: 0,
@@ -18,66 +17,76 @@ const initialState = {
   splitCard: 0,
 };
 
-// Cart slice
 export const cartSlice = createSlice({
   name: "cart",
-  initialState,
+  initialState: initialState,
+  
   reducers: {
+    
     addToCart: (state, action) => {
       const { orderitems, totalAmount } = state;
-      let currentTotal = totalAmount;
-      const payload = action.payload;
-
-      // Define product details
-      const productId = payload.id;
-      const name = payload.name;
-      const price = payload.product_variations?.[0]?.variations?.[0]?.sell_price_inc_tax || 0;
-      const variationId = payload.product_variations?.[0]?.variations?.[0]?.id;
-      const quantity = payload.quantity || 1;
-      const totalPrice = price * quantity;
-      const image = payload.image;
-      const sku = payload.sku;
-      const productVariations = payload.product_variations;
-
-      // Check if item exists
-      const existingItemIndex = orderitems.findIndex(
-        (item) => item.id === productId && item.variation_id === variationId
-      );
-
-      if (existingItemIndex > -1) {
-        // Update existing item
-        const item = orderitems[existingItemIndex];
-        item.quantity += 1;
-        item.totalPrice = (item.price * item.quantity).toFixed(3);
-        currentTotal += parseFloat(price);
-      } else {
-        // Add new item
-      const newItem =  orderitems.push({
-          id: productId,
-          name,
-          price,
-          quantity,
-          totalPrice,
-          variation_id: variationId,
-          image,
-          sell_line_note: "",
-          sku,
-          product_variations: productVariations,
-          type: payload.type,
-          discountType: null,
-          discountValue: null,
-        });
-        
-      console.log(newItem,"newItem");
-        currentTotal += parseFloat(totalPrice);
-      }
-
+      console.log(orderitems,"orderitems");
       
+      let currentTotal = totalAmount;
+     
+      if (action.payload.isUpdateProduct == true) {
+        const product_id = action.payload.item.id ?? action.payload?.id;
+        const variation_id = action.payload.item.variation_id ?? action.payload?.product_variations[0]?.id;
+        const item = orderitems.find( (item) => item.id === product_id && item.variation_id === variation_id);
+        if (item) {
+          item.quantity += 1;
+          item.totalPrice = (item.price * item.quantity).toFixed(3);
+          currentTotal = parseFloat(currentTotal) + parseFloat(item.price);
+          // alert(currentTotal)
 
-      // Update totals
+          state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+        }
+      } else {
+        const product_id = action.payload.id;
+        const name = action.payload.name;
+        const price = action.payload.product_variations?.[0]?.variations?.[0]?.sell_price_inc_tax;
+        const variation_id = action.payload.product_variations?.[0]?.variations?.[0]?.id;
+        const quantity = action.payload?.quantity > 1 ? action.payload?.quantity : 1;
+        const totalPrice = price * quantity;
+        const image = action.payload.image;
+        const sell_line_note = "";
+
+        const item = orderitems.find(
+          (item) => item.id === product_id && item.variation_id === variation_id
+        );
+        if (item) {
+          item.quantity += 1;
+          item.totalPrice = (item.price * item.quantity).toFixed(3);
+          currentTotal = parseFloat(currentTotal) + parseFloat(price);
+          // alert(currentTotal)
+
+          state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+        } else {
+
+        const checkItems =   orderitems.push({
+            id: product_id,
+            name: name,
+            price: price,
+            quantity: quantity,
+            totalPrice: totalPrice,
+            variation_id,
+            image,
+            sell_line_note,
+            sku: action.payload.sku,
+            product_variations: action.payload.product_variations,
+            type: action.payload.type,
+            discountType: null,
+            discountValue: null,
+          });
+          console.log(checkItems,"checkItems");
+          
+          currentTotal = parseFloat(currentTotal) + parseFloat(totalPrice);
+
+          state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
+        }
+      }
       state.totalAmount = currentTotal;
-      state.totalAmountWithoutDiscount = currentTotal;
-      state.tax = parseFloat((currentTotal * 0.1).toFixed(3)); // Assuming a 10% tax rate
+      state.totalAmountWithoutDiscount = currentTotal
       state.totalPayableAmount = parseFloat(
         (currentTotal + state.tax - state.discount).toFixed(3)
       );
