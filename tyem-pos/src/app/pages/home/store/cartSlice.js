@@ -74,14 +74,14 @@ export const cartSlice = createSlice({
       }
     },
 
-    // decrementQuantity: (state, action) => {
-    //   const item = state.orderitems.find(item => item.id === action.payload);
-    //   if (item && item.quantity > 1) {
-    //     item.quantity -= 1;
-    //     item.totalPrice = (item.price * item.quantity).toFixed(2);
-    //     state.totalAmount -= parseFloat(item.price);
-    //   }
-    // },
+    decrementQuantity: (state, action) => {
+      const item = state.orderitems.find(item => item.id === action.payload);
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
+        item.totalPrice = (item.price * item.quantity).toFixed(2);
+        state.totalAmount -= parseFloat(item.price);
+      }
+    },
   },
 
   
@@ -326,7 +326,7 @@ export const cartSlice = createSlice({
   export const {
     addToCart,
     incrementQuantity,
-    // decrementQuantity,
+    decrementQuantity,
     removeFromCart,
     updateItemNote,
     setDiscount,
