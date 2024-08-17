@@ -97,7 +97,7 @@ const HomeItemsSection = (props) => {
         <div
           className={`
   w-full items__section overflow-y-scroll 
-  grid grid-cols-1 gap-4 
+  grid grid-cols-1 gap-5
   p-3
   md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5
   sm:gap-4 lg:gap-6 xl:gap-4

@@ -6,20 +6,26 @@ import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 // Define the Loader component
 // Define the Loader component
-const Loader = () => (
-  <div className="loader relative w-14 h-14 rounded-lg mx-auto my-6">
-    {Array.from({ length: 12 }).map((_, index) => (
+const Spinner = () => {
+  const spinnerDivs = Array.from({ length: 10 }).map((_, index) => {
+    const rotation = 36 * (index + 1);
+    const translation = 150;
+    const delay = 0.1 * (index + 1);
+
+    return (
       <div
         key={index}
-        className={`w-[8%] h-[24%] bg-gray-500 absolute left-1/2 top-[30%] opacity-0 rounded-full shadow-[0_0_3px_rgba(0,0,0,0.2)] animate-fade458`}
-        style={{ 
-          transform: `rotate(${index * 30}deg) translate(0, -130%)`,
-          animationDelay: `${-index * 0.1}s`
+        className="absolute w-[50%] h-[150%] bg-black"
+        style={{
+          transform: `rotate(${rotation}deg) translate(0, ${translation}%)`,
+          animation: `spinner-fzua35 1s ${delay}s infinite ease`,
         }}
       ></div>
-    ))}
-  </div>
-);
+    );
+  });
+
+  return <div className="relative w-[9px] h-[9px]">{spinnerDivs}</div>;
+};
 
 
 const ItemCard = React.memo(({ selectedCategory }) => {
@@ -69,7 +75,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   return (
     <div className="flex justify-between gap-x-10 p-6">
       {loading ? (
-        <Loader />
+        <Spinner />
       ) : (
         <>
           <div className="flex flex-col space-y-9">
