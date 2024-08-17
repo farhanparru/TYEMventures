@@ -20,8 +20,8 @@ const ItemCard = () => {
         
         console.log(firstColumn,"fetchedItems");
         
-        const secondColumn = fetchedItems.slice(130, 260); // Next 130 items
-        const thirdColumn = fetchedItems.slice(260, 392); // Remaining 132 items
+        // const secondColumn = fetchedItems.slice(130, 260); // Next 130 items
+        // const thirdColumn = fetchedItems.slice(260, 392); // Remaining 132 items
 
         setItems({ firstColumn, secondColumn, thirdColumn });
       } catch (error) {
@@ -57,7 +57,7 @@ const ItemCard = () => {
       </div>
 
       <div className="flex flex-col space-y-9">
-        {items.secondColumn.map((item, index) => (
+        {/* {items.secondColumn.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
@@ -67,11 +67,11 @@ const ItemCard = () => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
 
       <div className="flex flex-col space-y-9">
-        {items.thirdColumn.map((item, index) => (
+        {/* {items.thirdColumn.map((item, index) => (
           <div
             key={index}
             onClick={() => onItemClick(item)}
@@ -81,7 +81,7 @@ const ItemCard = () => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );
