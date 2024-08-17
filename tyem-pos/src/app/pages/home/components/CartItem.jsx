@@ -44,6 +44,9 @@ const CartItem = ({ item, index }) => {
     dispatch(incrementQuantity(item.id));
   };
 
+  console.log(handleIncrement,"handleIncrement");
+  
+
   const handleDecrement = () => {
     dispatch(decrementQuantity(item.id));
   };
@@ -109,44 +112,44 @@ const CartItem = ({ item, index }) => {
       );
     });
   };
-  const getAddonCat = () => {
-    // Check if item is defined and if item.product_variations exists
-    if (!item || !item.product_variations) {
-      console.error('Item or item.product_variations is undefined or null');
-      return null; // Return null or an appropriate fallback
-    }
+  // const getAddonCat = () => {
+  //   // Check if item is defined and if item.product_variations exists
+  //   if (!item || !item.product_variations) {
+  //     console.error('Item or item.product_variations is undefined or null');
+  //     return null; // Return null or an appropriate fallback
+  //   }
   
-    // Default to an empty object if item.product_variations is null
-    const productVariations = item.product_variations || {};
+  //   // Default to an empty object if item.product_variations is null
+  //   const productVariations = item.product_variations || {};
   
-    // Log productVariations for debugging
-    console.log('Product Variations:', productVariations);
+  //   // Log productVariations for debugging
+  //   console.log('Product Variations:', productVariations);
   
-    // Get keys of the productVariations object
-    const keys = Object.keys(productVariations);
+  //   // Get keys of the productVariations object
+  //   const keys = Object.keys(productVariations);
   
-    return (
-      item.type === "variable" && (
-        <>
-          {keys.length > 0 && (
-            <>
-              <h6 className="text-black font-bold text-base">Addons</h6>
-              {keys.map((key) => (
-                <div className="text-black" key={key}>
-                  <h4 className="font-semibold mt-2 text-capitalize text-sm">
-                    - {productVariations[key].name}
-                  </h4>
-                  <div className="flex gap-4 flex-wrap">
-                    {getAddons(productVariations[key])}
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-        </>
-      )
-    );
-  };
+  //   return (
+  //     item.type === "variable" && (
+  //       <>
+  //         {keys.length > 0 && (
+  //           <>
+  //             <h6 className="text-black font-bold text-base">Addons</h6>
+  //             {keys.map((key) => (
+  //               <div className="text-black" key={key}>
+  //                 <h4 className="font-semibold mt-2 text-capitalize text-sm">
+  //                   - {productVariations[key].name}
+  //                 </h4>
+  //                 <div className="flex gap-4 flex-wrap">
+  //                   {getAddons(productVariations[key])}
+  //                 </div>
+  //               </div>
+  //             ))}
+  //           </>
+  //         )}
+  //       </>
+  //     )
+  //   );
+  // };
   
   const [showModal, setShowModal] = React.useState(false);
 
