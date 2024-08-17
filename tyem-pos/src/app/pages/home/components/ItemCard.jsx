@@ -24,10 +24,10 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
         // Split items into three columns
         const firstColumn = filteredItems.slice(0, Math.ceil(filteredItems.length / 3));
-        const secondColumn = filteredItems.slice(Math.ceil(filteredItems.length / 3), Math.ceil(2 * filteredItems.length / 3));
-        const thirdColumn = filteredItems.slice(Math.ceil(2 * filteredItems.length / 3));
+        // const secondColumn = filteredItems.slice(Math.ceil(filteredItems.length / 3), Math.ceil(2 * filteredItems.length / 3));
+        // const thirdColumn = filteredItems.slice(Math.ceil(2 * filteredItems.length / 3));
 
-        setItems({ firstColumn, secondColumn, thirdColumn });
+        setItems({ firstColumn });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       }
@@ -63,7 +63,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       </div>
 
       <div className="flex flex-col space-y-9">
-      {items.secondColumn.map((item, index) => (
+      {/* {items.secondColumn.map((item, index) => (
           <div
             key={item.id || index} 
             onClick={() => onItemClick(item)}
@@ -73,11 +73,11 @@ const ItemCard = React.memo(({ selectedCategory }) => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
 
       <div className="flex flex-col space-y-9">
-      {items.thirdColumn.map((item, index) => (
+      {/* {items.thirdColumn.map((item, index) => (
           <div
             key={item.id || index} 
             onClick={() => onItemClick(item)}
@@ -87,7 +87,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );
