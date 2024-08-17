@@ -14,12 +14,13 @@ const ItemCard = () => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); // Adjust your API endpoint
         const fetchedItems = response.data;
-        console.log(response);
+
+        console.log(fetchedItems,"fetchedItems");
         
         // Manually split items into three columns
-        const firstColumn = fetchedItems.slice(0, 4);  // Example: first 4 items
-        const secondColumn = fetchedItems.slice(4, 8); // Example: next 4 items
-        const thirdColumn = fetchedItems.slice(8, 12); // Example: next 4 items
+        const firstColumn = fetchedItems.slice(0, 130);  // First 130 items
+        const secondColumn = fetchedItems.slice(130, 260); // Next 130 items
+        const thirdColumn = fetchedItems.slice(260, 392); // Remaining 132 items
 
         setItems({ firstColumn, secondColumn, thirdColumn });
       } catch (error) {
