@@ -5,6 +5,7 @@ import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 const ItemCard = () => {
+  console.log("Rendering ItemCard");  // Debugging: Log when ItemCard is rendered
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
@@ -45,7 +46,7 @@ const ItemCard = () => {
       <div className="flex flex-col space-y-9">
         {items.firstColumn.map((item, index) => (
           <div
-            key={item.id} // Use a unique identifier if available
+             key={item.id || index} // Use a unique identifier if available
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }} 
