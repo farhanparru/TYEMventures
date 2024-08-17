@@ -21,8 +21,11 @@ const style = {
 };
 
 const HomeItemsSection = (props) => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+
   const items = useSelector((state) => state.home.filteredItems);
-  const selectedCategory = useSelector((state) => state.home.selectedCategory);
+  // const selectedCategory = useSelector((state) => state.home.selectedCategory);
   const selectedBodySection = useSelector(getSelectedBodySection);
   const selectedTab = useSelector(getSelectedBodySection);
 
@@ -86,7 +89,7 @@ const HomeItemsSection = (props) => {
       </div>
       <div className="flex p-2 w-full h-full overflow-auto flex-row ">
         {selectedBodySection == "home" && (
-          <HomeCategorySection selectedCategory={selectedCategory} />
+          <HomeCategorySection onCategorySelect={setSelectedCategory} />
         )}
         <AddItemModal isOpen={open} setOpen={setOpen} />
         <AddCategoryModal isOpen={openCat} setOpen={setOpenCat} />
@@ -105,7 +108,7 @@ const HomeItemsSection = (props) => {
             // if (index >= 3) {
             //   return
             // }
-            return <ItemCard item={item} key={item.id} show_toggle={props.items_only}/>;
+            return   <ItemCard selectedCategory={selectedCategory} />
           })}
         </div>
       </div>
