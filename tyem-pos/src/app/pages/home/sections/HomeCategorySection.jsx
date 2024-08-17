@@ -1,20 +1,26 @@
-import React from 'react';
-
-const categories = [
-  "ARABIC",
-  "BEVERAGES",
-  "BREADS",
-  "CHICKEN MAIN COURSE",
-  "CHINESE MAIN COURSE",
-  "CHINESE STARTER",
-  "CHOCOLATE SUNDAYS",
-  "COCKTAIL",
-  "DRY FRUIT SHAKE",
-  "FALOODA",
-  // Add more categories here if needed
-];
+import React, { useEffect, useState } from 'react';
 
 const HomeCategorySection = () => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    // Fetch data from the API
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('https://tyem.invenro.site/api/user/ExcelItems');
+        const data = await response.json();
+
+        // Extract unique categories
+        const uniqueCategories = [...new Set(data.map(item => item.category))];
+        setCategories(uniqueCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="w-64 bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="bg-teal-600 text-white text-center py-2 font-semibold text-lg">
