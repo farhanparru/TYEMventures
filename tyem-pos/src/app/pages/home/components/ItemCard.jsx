@@ -8,12 +8,12 @@ import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 // Use React.memo to prevent unnecessary re-renders
 const ItemCard = React.memo(({ selectedCategory }) => {
-  console.log('Recat Rendring');
+  // console.log('Recat Rendring');
   
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
-  console.log(items,"Rendring");
+  // console.log(items,"Rendring");
   
   const [loading, setLoading] = useState(true); // Loading state
 
@@ -21,7 +21,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     const fetchItems = async () => {
       setLoading(true); // Start loading
       try {
-        console.log("Fetching items...");
+        // console.log("Fetching items...");
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); 
         const fetchedItems = response.data;
 
