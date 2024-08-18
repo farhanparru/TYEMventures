@@ -50,7 +50,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
         // Split items into three columns
         const firstColumn = filteredItems.slice(0, Math.ceil(filteredItems.length / 3));
-        console.log(firstColumn,"firstColumn");
+        console.log(firstColumn,"firstColumn Redring");
         
         // const secondColumn = filteredItems.slice(Math.ceil(filteredItems.length / 3), Math.ceil(2 * filteredItems.length / 3));
         // const thirdColumn = filteredItems.slice(Math.ceil(2 * filteredItems.length / 3));
