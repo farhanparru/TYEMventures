@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../store/cartSlice";
 import axios from "axios";
@@ -8,18 +8,18 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItems = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
-        const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); 
+        const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems');
         const fetchedItems = response.data;
 
         // Filter items based on the selected category
-        const filteredItems = selectedCategory === 'All' 
-          ? fetchedItems 
+        const filteredItems = selectedCategory === 'All'
+          ? fetchedItems
           : fetchedItems.filter(item => item.category === selectedCategory);
 
         // Split items into three columns
@@ -27,40 +27,47 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
         const firstColumn = filteredItems.slice(0, itemsPerColumn);
-        console.log(firstColumn,"Times Rendring");
-        
         const secondColumn = filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn);
         const thirdColumn = filteredItems.slice(2 * itemsPerColumn);
 
         setItems({ firstColumn, secondColumn, thirdColumn });
-        setLoading(false); // End loading
       } catch (error) {
         console.error('There was an error fetching the items!', error);
-        setLoading(false); // End loading on error
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchItems();
   }, [selectedCategory]);
 
-  // Memoize item click handler
   const onItemClick = useCallback((item) => {
     const cartItem = {
       Id: item.Id,
       name: item.ItemName,
       price: item.Price,
     };
-    dispatch(addToCart(cartItem)); 
+    dispatch(addToCart(cartItem));
   }, [dispatch]);
+
+  // Use useMemo to memoize column data to prevent unnecessary recalculations
+  const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
+  const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
+  const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex justify-between gap-x-10 p-6">
       <div className="flex flex-col space-y-9">
-        {items.firstColumn.map((item) => (
+        {firstColumnItems.map((item) => (
           <div
-            key={item.Id} // Ensure unique key
+            key={item.Id}
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
-            style={{ width: '180px', height: '120px' }} 
+            style={{ width: '180px', height: '120px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
@@ -68,12 +75,12 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         ))}
       </div>
       <div className="flex flex-col space-y-9">
-        {items.secondColumn.map((item) => (
+        {secondColumnItems.map((item) => (
           <div
-            key={item.Id} // Ensure unique key
+            key={item.Id}
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
-            style={{ width: '180px', height: '120px' }} 
+            style={{ width: '180px', height: '120px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
@@ -81,12 +88,12 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         ))}
       </div>
       <div className="flex flex-col space-y-9">
-        {items.thirdColumn.map((item) => (
+        {thirdColumnItems.map((item) => (
           <div
-            key={item.Id} // Ensure unique key
+            key={item.Id}
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
-            style={{ width: '180px', height: '120px' }} 
+            style={{ width: '180px', height: '120px' }}
           >
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
