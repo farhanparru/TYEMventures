@@ -5,6 +5,7 @@ import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 const ItemCard = React.memo(({ selectedCategory }) => {
+  console.log('ItemCard render');
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
@@ -26,11 +27,15 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const totalItems = filteredItems.length;
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
-        const firstColumn = filteredItems.slice(0, itemsPerColumn);
-        const secondColumn = filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn);
-        const thirdColumn = filteredItems.slice(2 * itemsPerColumn);
+             // Log the split items
+             console.log('Filtered Items:', filteredItems);
+             console.log('Items Per Column:', itemsPerColumn);
 
-        setItems({ firstColumn, secondColumn, thirdColumn });
+        setItems({
+          firstColumn: filteredItems.slice(0, itemsPerColumn),
+          secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
+          thirdColumn: filteredItems.slice(2 * itemsPerColumn),
+        });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       } finally {
@@ -50,10 +55,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     dispatch(addToCart(cartItem));
   }, [dispatch]);
 
-  // Use useMemo to memoize column data to prevent unnecessary recalculations
+  // Memoize column data
   const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
-  console.log(firstColumnItems,"Rendering ");
-  
   const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
   const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
 
