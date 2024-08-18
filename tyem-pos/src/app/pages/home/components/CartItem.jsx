@@ -190,7 +190,7 @@ const CartItem = ({ item, index }) => {
           <div className="cart__item-actions flex gap-5 items-center">
             <button
              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-             onClick={handleDecrement}
+            
             >
               -
             </button>
@@ -199,7 +199,7 @@ const CartItem = ({ item, index }) => {
 
             <button
              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-             onClick={handleIncrement}  
+           
             >
               +
             </button>

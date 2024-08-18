@@ -14,7 +14,9 @@ import SearchInput from "../../../../components/SearchInput";
 import { CiDiscount1 } from "react-icons/ci";
 import { UilTrashAlt } from "@iconscout/react-unicons";
 import { Popconfirm } from "antd";
-import { clearCart, setWholeCartDiscount } from "../../store/cartSlice";
+
+import { clearCart , setWholeCartDiscount } from "../../store/cartSlice";
+
 import CustomModal from "../../../../components/CustomModal";
 import { Form, Input, Select } from "antd";
 import CartCustomerList from "./components/CartCustomerList";

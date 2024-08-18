@@ -26,7 +26,7 @@ export const cartSlice = createSlice({
       const { orderitems, totalAmount } = state;
       let currentTotal = totalAmount;
 
-      const product_Id = action.payload.Id;
+      const product_id = action.payload.id;
 
       // Find if the item already exists in the cart based on id
       const existingItem = orderitems.find((item) => item.Id === product_Id);
@@ -42,7 +42,7 @@ export const cartSlice = createSlice({
       } else {
         // If item does not exist, add it to the cart
         const newItem = {
-          id: product_Id,
+          id: product_id,
           name: action.payload.name,
           price: action.payload.price,
           quantity: 1,  // Start with a quantity of 1
@@ -52,7 +52,7 @@ export const cartSlice = createSlice({
         console.log(newItem,"newItem");
         
         orderitems.push(newItem); // Add the new item to the cart
-        currentTotal = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
+        state.totalAmount = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
       }
 
       // Update state values
@@ -64,29 +64,36 @@ export const cartSlice = createSlice({
       );
     },
 
-    incrementQuantity: (state, action) => {
-      console.log('Increment action:', action);
-      const item = state.orderitems.find(item => item.id === action.payload);
-      if (item) {
-        item.quantity += 1;
-        item.totalPrice = (item.price * item.quantity).toFixed(2);
-        state.totalAmount += parseFloat(item.price);
-      }
-    },
 
-    decrementQuantity: (state, action) => {
-      console.log('Decrement action:', action);
-      const item = state.orderitems.find(item => item.id === action.payload);
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-        item.totalPrice = (item.price * item.quantity).toFixed(2);
-        state.totalAmount -= parseFloat(item.price);
-      }
-    },
+
+
+    // incrementQuantity: (state, action) => {
+    //   console.log('Increment action:', action);
+    //   const item = state.orderitems.find(item => item.id === action.payload);
+    //   if (item) {
+    //     item.quantity += 1;
+    //     item.totalPrice = (item.price * item.quantity).toFixed(2);
+    //     state.totalAmount += parseFloat(item.price);
+    //   }
+    // },
+
+    // decrementQuantity: (state, action) => {
+    //   console.log('Decrement action:', action);
+    //   const item = state.orderitems.find(item => item.id === action.payload);
+    //   if (item && item.quantity > 1) {
+    //     item.quantity -= 1;
+    //     item.totalPrice = (item.price * item.quantity).toFixed(2);
+    //     state.totalAmount -= parseFloat(item.price);
+    //   }
+    // },
+  
+
+  
+
+
 
     removeFromCart: (state, action) => {
       const { orderitems, totalAmount } = state;
-
       console.log(orderitems, "orderitemsorderitemsorderitems");
       const { id, isRemoveAll } = action.payload;
       const item = orderitems.find(
@@ -99,16 +106,13 @@ export const cartSlice = createSlice({
           currentTotal -= item.totalPrice;
           const index = orderitems.indexOf(item);
           orderitems.splice(index, 1);
-
           if (orderitems.length === 0) {
             currentTotal = 0;
           }
           state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
         } else {
           item.quantity -= 1;
-
           let totalPrice = 0;
-
           item.totalPrice = (item.price * item.quantity).toFixed(3);
           currentTotal -= item.price;
           if (item.quantity === 0) {
@@ -120,20 +124,18 @@ export const cartSlice = createSlice({
           }
           state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
         }
-
         state.totalAmount = currentTotal;
-        state.totalAmountWithoutDiscount = currentTotal;
-
+        state.totalAmountWithoutDiscount = currentTotal
         state.totalPayableAmount = parseFloat(
           (currentTotal + state.tax - state.discount).toFixed(3)
         );
       }
     },
-
+    // Clear Cart Reducer - THIS WAS MISSING
     clearCart: (state) => {
       state.orderitems = [];
       state.totalAmount = 0;
-      state.totalAmountWithoutDiscount = 0;
+      state.totalAmountWithoutDiscount = 0
       state.tax = 0;
       state.discount = 0;
       state.amountToBeReturned = 0;
@@ -144,26 +146,23 @@ export const cartSlice = createSlice({
       state.splitPayment = false;
       state.splitCash = 0;
       state.splitCard = 0;
-      state.returnAmountCash = 0;
+      state.returnAmountCash = 0
     },
     
     updateItemNote: (state, action) => {
       const { orderitems } = state;
       const { item_id, variation_id, note } = action.payload;
-
       const item = orderitems.find(
         (item) => item.id === item_id && item.variation_id === variation_id
       );
-
       if (item) {
         item.sell_line_note = note;
       }
     },
     updateTotalAmount: (state, action) => {
       state.totalAmount = action.payload;
-      state.totalAmountWithoutDiscount = action.payload;
+      state.totalAmountWithoutDiscount = action.payload
     },
-
     setDiscount: (state, action) => {
       state.discount = action.payload;
     },
@@ -171,7 +170,7 @@ export const cartSlice = createSlice({
       state.amountToBeReturned = action.payload.amountToBeReturned;
       state.totalPayableAmount = action.payload.totalPayableAmount;
       state.returnAmountCash = action.payload.returnAmountCash;
-      if (action.payload.paymentMethod === "Split") {
+      if (action.payload.paymentMethod == 'Split') {
         state.splitPayment = true;
         state.splitCash = action.payload.splitCash;
         state.splitCard = action.payload.splitCard;
@@ -189,7 +188,6 @@ export const cartSlice = createSlice({
       const { item_id, discountAmount, variation_id, discountType } =
         action.payload;
       let currentTotal = totalAmount;
-
       const item = orderitems.find(
         (item) => item.id === item_id && item.variation_id === variation_id
       );
@@ -211,13 +209,10 @@ export const cartSlice = createSlice({
           item.price = item.totalPrice / item.quantity;
           oldTotal = parseFloat(oldTotal) - parseFloat(toReduce);
         }
-
         currentTotal = oldTotal;
         state.totalAmount = oldTotal;
-        state.totalAmountWithoutDiscount = oldTotal;
-
+        state.totalAmountWithoutDiscount = oldTotal
         state.tax = parseFloat((currentTotal * 0.1).toFixed(3));
-
         state.totalPayableAmount = parseFloat(
           (currentTotal + state.tax - state.discount).toFixed(3)
         );
@@ -227,10 +222,14 @@ export const cartSlice = createSlice({
     setWholeCartDiscount: (state, action) => {
       const { discountType, discountAmount } = action.payload;
       const { totalAmount } = state;
-
-      if (discountType === "fixed") {
+      // if (state.discount > 0) {
+      //   state.totalPayableAmount += parseFloat(state.discount);
+      // }
+      if (discountType == "fixed") {
         state.discountType = "fixed";
         state.discountValue = discountAmount;
+        // state.totalAmount -= discountAmount;
+        // state.totalAmountWithoutDiscount = discountAmount
         state.discount = discountAmount;
         state.totalPayableAmount -= discountAmount;
       } else {
@@ -240,59 +239,68 @@ export const cartSlice = createSlice({
           (state.totalAmountWithoutDiscount * discountAmount) /
           100
         ).toFixed(3);
-
         state.totalPayableAmount -= toReduce;
         state.discount = toReduce;
       }
       state.tax = parseFloat((totalAmount * 0.1).toFixed(3));
     },
-
     setSelectedAddon: (state, action) => {
       const { orderitems, totalAmount } = state;
       const { item_id, selectedVariation } = action.payload;
-
       const item = orderitems.find((item) => item.id === item_id);
-
       if (item) {
-        const price = parseFloat(selectedVariation.sell_price_inc_tax).toFixed(
-          3
-        );
+        const price = parseFloat(selectedVariation.sell_price_inc_tax).toFixed(3);
         const variation_id = selectedVariation.id;
         const quantity = 1;
         const totalPrice = price * quantity;
-
-        if (item.variation_id !== selectedVariation.id) {
-          state.totalAmount =
-            parseFloat(totalAmount) - parseFloat(item.totalPrice);
-          state.totalAmount += parseFloat(totalPrice);
-
-          state.tax = parseFloat((state.totalAmount * 0.1).toFixed(3));
-          state.totalPayableAmount = parseFloat(
-            (state.totalAmount + state.tax - state.discount).toFixed(3)
-          );
+        if (item.variation_id != selectedVariation.id) {
+          state.totalAmount = parseFloat(totalAmount) - parseFloat(item.totalPrice);
+          state.totalAmountWithoutDiscount = parseFloat(totalAmount) - parseFloat(item.totalPrice);
           item.price = price;
-          item.totalPrice = parseFloat(totalPrice).toFixed(3);
+          item.totalPrice = totalPrice;
           item.variation_id = variation_id;
+          state.totalAmount = parseFloat(state.totalAmount) + parseFloat(item.totalPrice);
+          state.totalAmountWithoutDiscount = parseFloat(state.totalAmount) + parseFloat(item.totalPrice);
         }
       }
-    },
-
-    addFromHoldCart: (state, action) => {
-      state.orderitems = action.payload.orderitems;
-      state.totalAmount = action.payload.totalAmount;
-      state.totalAmountWithoutDiscount = action.payload.totalAmount;
       state.tax = parseFloat((state.totalAmount * 0.1).toFixed(3));
       state.totalPayableAmount = parseFloat(
         (state.totalAmount + state.tax - state.discount).toFixed(3)
       );
     },
+
+    addFromHoldCart: (state, action) => {
+      const { data } = action.payload;
+      state.orderitems = data.orderitems;
+      state.totalAmount = data.totalAmount;
+      state.totalAmountWithoutDiscount = data.totalAmount;
+      state.tax = data.tax;
+      state.discount = data.discount;
+      state.amountToBeReturned = data.amountToBeReturned;
+      state.totalPayableAmount = data.totalPayableAmount;
+      state.paymentMethod = data.paymentMethod;
+      state.discountType = data.discountType;
+      state.discountValue = data.discountValue;
+      state.splitPayment = data.splitPayment;
+      state.splitCash = data.splitCash;
+      state.splitCard = data.splitCard;
+    },
+    // addToTableHistory: (state, action) => {
+    //     const { tableCartHistory } = state;
+    //     const { orderitems, totalAmount, tax, discount, amountToBeReturned, paymentMethod } = action.payload;
+    //     tableCartHistory.push({
+    //         orderitems,
+    //         totalAmount,
+    //         tax,
+    //         discount,
+    //         amountToBeReturned,
+    //         paymentMethod,
+    //     });
+    // }
   },
 });
-
 export const {
   addToCart,
-  incrementQuantity,
-  decrementQuantity,
   removeFromCart,
   updateItemNote,
   setDiscount,
@@ -305,5 +313,7 @@ export const {
   setWholeCartDiscount,
   addFromHoldCart,
 } = cartSlice.actions;
+
+export const getorderitems = (state) => state.cart.orderitems;
 
 export default cartSlice.reducer;
