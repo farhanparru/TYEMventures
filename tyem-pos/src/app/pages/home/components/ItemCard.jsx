@@ -52,6 +52,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   // Use useMemo to memoize column data to prevent unnecessary recalculations
   const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
+  console.log(firstColumnItems,"Rendering ");
+  
   const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
   const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
 
