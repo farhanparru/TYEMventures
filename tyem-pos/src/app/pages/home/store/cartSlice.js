@@ -27,7 +27,7 @@ export const cartSlice = createSlice({
       const { orderitems, totalAmount } = state;
       let currentTotal = totalAmount;
     
-      const product_Id = action.payload.Id;  // Consistent field name
+      const product_Id = action.payload.id;  // Consistent field name
     
       // Find if the item already exists in the cart based on id
       const existingItem = orderitems.find((item) => item.id === product_Id);
