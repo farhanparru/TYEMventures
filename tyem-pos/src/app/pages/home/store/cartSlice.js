@@ -26,7 +26,7 @@ export const cartSlice = createSlice({
       const { orderitems, totalAmount } = state;
       let currentTotal = totalAmount;
 
-      const product_id = action.payload.id;
+      const product_Id = action.payload.Id;
 
       // Find if the item already exists in the cart based on id
       const existingItem = orderitems.find((item) => item.Id === product_Id);
@@ -42,7 +42,7 @@ export const cartSlice = createSlice({
       } else {
         // If item does not exist, add it to the cart
         const newItem = {
-          id: product_id,
+          id: product_Id,
           name: action.payload.name,
           price: action.payload.price,
           quantity: 1,  // Start with a quantity of 1
@@ -67,27 +67,7 @@ export const cartSlice = createSlice({
 
 
 
-    // incrementQuantity: (state, action) => {
-    //   console.log('Increment action:', action);
-    //   const item = state.orderitems.find(item => item.id === action.payload);
-    //   if (item) {
-    //     item.quantity += 1;
-    //     item.totalPrice = (item.price * item.quantity).toFixed(2);
-    //     state.totalAmount += parseFloat(item.price);
-    //   }
-    // },
-
-    // decrementQuantity: (state, action) => {
-    //   console.log('Decrement action:', action);
-    //   const item = state.orderitems.find(item => item.id === action.payload);
-    //   if (item && item.quantity > 1) {
-    //     item.quantity -= 1;
-    //     item.totalPrice = (item.price * item.quantity).toFixed(2);
-    //     state.totalAmount -= parseFloat(item.price);
-    //   }
-    // },
-  
-
+   
   
 
 
@@ -95,10 +75,10 @@ export const cartSlice = createSlice({
     removeFromCart: (state, action) => {
       const { orderitems, totalAmount } = state;
       console.log(orderitems, "orderitemsorderitemsorderitems");
-      const { id, isRemoveAll } = action.payload;
+      const { Id, isRemoveAll } = action.payload;
       const item = orderitems.find(
         (item) =>
-          item.id === id && item.variation_id === action.payload.variation_id
+          item.Id === Id && item.variation_id === action.payload.variation_id
       );
       let currentTotal = totalAmount;
       if (item) {
@@ -131,6 +111,8 @@ export const cartSlice = createSlice({
         );
       }
     },
+
+
     // Clear Cart Reducer - THIS WAS MISSING
     clearCart: (state) => {
       state.orderitems = [];

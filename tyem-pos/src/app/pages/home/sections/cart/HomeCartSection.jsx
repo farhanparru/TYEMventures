@@ -15,7 +15,8 @@ import { CiDiscount1 } from "react-icons/ci";
 import { UilTrashAlt } from "@iconscout/react-unicons";
 import { Popconfirm } from "antd";
 
-import { clearCart , setWholeCartDiscount } from "../../store/cartSlice";
+import { setWholeCartDiscount } from "../../store/cartSlice";
+import { clearCart } from "../../store/cartSlice";
 
 import CustomModal from "../../../../components/CustomModal";
 import { Form, Input, Select } from "antd";
@@ -153,6 +154,7 @@ const HomeCartSection = () => {
             description={"This action cannot be undone."}
             onConfirm={() => {
               dispatch(clearCart()); // Clear the cart
+              // Ensure clearEditOrder() is defined and imported if used
               dispatch(clearEditOrder()); // Clear the order edits
             }}
             okText="Yes"
