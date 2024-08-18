@@ -6,6 +6,7 @@ import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 
 
+// Use React.memo to prevent unnecessary re-renders
 const ItemCard = React.memo(({ selectedCategory }) => {
   console.log('Recat Rendring');
   
@@ -20,6 +21,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     const fetchItems = async () => {
       setLoading(true); // Start loading
       try {
+        console.log("Fetching items...");
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems'); 
         const fetchedItems = response.data;
 
@@ -44,7 +46,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     fetchItems();
   }, [selectedCategory]);
 
-  const onItemClick = React.useCallback((item) => {
+  // Memoize item click handler
+  const onItemClick = useCallback((item) => {
+    console.log("Item clicked:", item);
     const cartItem = {
       Id: item.Id,  // Ensure this matches with cartSlice reducer
       name: item.ItemName,
@@ -53,6 +57,11 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   
     dispatch(addToCart(cartItem)); 
   }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Component rendered:", { items });
+  });
+
 
   return (
     <div className="flex justify-between gap-x-10 p-6">
