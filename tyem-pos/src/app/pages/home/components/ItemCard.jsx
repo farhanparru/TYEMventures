@@ -12,6 +12,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
+  console.log(items,"Rendring");
+  
   const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
