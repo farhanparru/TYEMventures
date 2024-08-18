@@ -30,7 +30,7 @@ export const cartSlice = createSlice({
       const product_Id = action.payload.Id;  // Consistent field name
     
       // Find if the item already exists in the cart based on id
-      const existingItem = orderitems.find((item) => item.Id === product_Id);
+      const existingItem = orderitems.find((item) => item.id === product_Id);
     console.log(existingItem,"existingItem");
     
       if (existingItem) {
