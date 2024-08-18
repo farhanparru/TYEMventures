@@ -5,7 +5,6 @@ import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 // Define the Loader component
-// Define the Loader component
 const Spinner = () => {
   const spinnerDivs = Array.from({ length: 10 }).map((_, index) => {
     const rotation = 36 * (index + 1);
@@ -27,10 +26,7 @@ const Spinner = () => {
   return <div className="relative w-[9px] h-[9px]">{spinnerDivs}</div>;
 };
 
-
 const ItemCard = React.memo(({ selectedCategory }) => {
-  console.log("RenderComponent");
-  
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
@@ -49,13 +45,12 @@ const ItemCard = React.memo(({ selectedCategory }) => {
           : fetchedItems.filter(item => item.category === selectedCategory);
 
         // Split items into three columns
-        const firstColumn = filteredItems.slice(0, Math.ceil(filteredItems.length / 3));
-        console.log(firstColumn,"firstColumn Redring");
-        
-        // const secondColumn = filteredItems.slice(Math.ceil(filteredItems.length / 3), Math.ceil(2 * filteredItems.length / 3));
-        // const thirdColumn = filteredItems.slice(Math.ceil(2 * filteredItems.length / 3));
+        const columnLength = Math.ceil(filteredItems.length / 3);
+        const firstColumn = filteredItems.slice(0, columnLength);
+        const secondColumn = filteredItems.slice(columnLength, 2 * columnLength);
+        const thirdColumn = filteredItems.slice(2 * columnLength);
 
-        setItems({ firstColumn });
+        setItems({ firstColumn, secondColumn, thirdColumn });
         setLoading(false); // End loading
       } catch (error) {
         console.error('There was an error fetching the items!', error);
@@ -66,8 +61,6 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   }, [selectedCategory]);
 
   const onItemClick = React.useCallback((item) => {
-    console.log("Item clicked:", item);
-  
     const cartItem = {
       Id: item.Id,  // Ensure this matches with cartSlice reducer
       name: item.ItemName,
@@ -76,7 +69,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   
     dispatch(addToCart(cartItem)); 
   }, [dispatch]);
-  
+
   return (
     <div className="flex justify-between gap-x-10 p-6">
       {loading ? (
@@ -84,9 +77,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       ) : (
         <>
           <div className="flex flex-col space-y-9">
-            {items.firstColumn.map((item, index) => (
+            {items.firstColumn.map((item) => (
               <div
-                key={item.id || index}
+                key={item.Id}
                 onClick={() => onItemClick(item)}
                 className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
                 style={{ width: '180px', height: '120px' }} 
@@ -97,10 +90,30 @@ const ItemCard = React.memo(({ selectedCategory }) => {
             ))}
           </div>
           <div className="flex flex-col space-y-9">
-            {/* Repeat for second and third columns if needed */}
+            {items.secondColumn.map((item) => (
+              <div
+                key={item.Id}
+                onClick={() => onItemClick(item)}
+                className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+                style={{ width: '180px', height: '120px' }} 
+              >
+                <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
+                <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
+              </div>
+            ))}
           </div>
           <div className="flex flex-col space-y-9">
-            {/* Repeat for second and third columns if needed */}
+            {items.thirdColumn.map((item) => (
+              <div
+                key={item.Id}
+                onClick={() => onItemClick(item)}
+                className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
+                style={{ width: '180px', height: '120px' }} 
+              >
+                <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
+                <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
+              </div>
+            ))}
           </div>
         </>
       )}
