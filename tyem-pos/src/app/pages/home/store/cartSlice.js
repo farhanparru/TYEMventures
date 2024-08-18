@@ -52,7 +52,7 @@ export const cartSlice = createSlice({
         console.log(newItem,"newItem");
         
         orderitems.push(newItem); // Add the new item to the cart
-        state.totalAmount = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
+        currentTotal = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
       }
 
       // Update state values
@@ -63,9 +63,6 @@ export const cartSlice = createSlice({
         (currentTotal + state.tax - state.discount).toFixed(3)
       );
     },
-
-
-
 
     incrementQuantity: (state, action) => {
       console.log('Increment action:', action);
@@ -86,11 +83,6 @@ export const cartSlice = createSlice({
         state.totalAmount -= parseFloat(item.price);
       }
     },
-  
-
-  
-
-
 
     removeFromCart: (state, action) => {
       const { orderitems, totalAmount } = state;
@@ -137,7 +129,7 @@ export const cartSlice = createSlice({
         );
       }
     },
-    // Clear Cart Reducer - THIS WAS MISSING
+
     clearCart: (state) => {
       state.orderitems = [];
       state.totalAmount = 0;
@@ -179,7 +171,7 @@ export const cartSlice = createSlice({
       state.amountToBeReturned = action.payload.amountToBeReturned;
       state.totalPayableAmount = action.payload.totalPayableAmount;
       state.returnAmountCash = action.payload.returnAmountCash;
-      if (action.payload.paymentMethod == "Split") {
+      if (action.payload.paymentMethod === "Split") {
         state.splitPayment = true;
         state.splitCash = action.payload.splitCash;
         state.splitCard = action.payload.splitCard;
@@ -235,15 +227,10 @@ export const cartSlice = createSlice({
     setWholeCartDiscount: (state, action) => {
       const { discountType, discountAmount } = action.payload;
       const { totalAmount } = state;
-      // if (state.discount > 0) {
-      //   state.totalPayableAmount += parseFloat(state.discount);
-      // }
 
-      if (discountType == "fixed") {
+      if (discountType === "fixed") {
         state.discountType = "fixed";
         state.discountValue = discountAmount;
-        // state.totalAmount -= discountAmount;
-        // state.totalAmountWithoutDiscount = discountAmount
         state.discount = discountAmount;
         state.totalPayableAmount -= discountAmount;
       } else {
@@ -274,81 +261,49 @@ export const cartSlice = createSlice({
         const quantity = 1;
         const totalPrice = price * quantity;
 
-        if (item.variation_id != selectedVariation.id) {
+        if (item.variation_id !== selectedVariation.id) {
           state.totalAmount =
             parseFloat(totalAmount) - parseFloat(item.totalPrice);
-          state.totalAmountWithoutDiscount =
-            parseFloat(totalAmount) - parseFloat(item.totalPrice);
+          state.totalAmount += parseFloat(totalPrice);
 
+          state.tax = parseFloat((state.totalAmount * 0.1).toFixed(3));
+          state.totalPayableAmount = parseFloat(
+            (state.totalAmount + state.tax - state.discount).toFixed(3)
+          );
           item.price = price;
-          item.totalPrice = totalPrice;
+          item.totalPrice = parseFloat(totalPrice).toFixed(3);
           item.variation_id = variation_id;
-          state.totalAmount =
-            parseFloat(state.totalAmount) + parseFloat(item.totalPrice);
-
-          state.totalAmountWithoutDiscount =
-            parseFloat(state.totalAmount) + parseFloat(item.totalPrice);
         }
       }
+    },
 
+    addFromHoldCart: (state, action) => {
+      state.orderitems = action.payload.orderitems;
+      state.totalAmount = action.payload.totalAmount;
+      state.totalAmountWithoutDiscount = action.payload.totalAmount;
       state.tax = parseFloat((state.totalAmount * 0.1).toFixed(3));
       state.totalPayableAmount = parseFloat(
         (state.totalAmount + state.tax - state.discount).toFixed(3)
       );
     },
+  },
+});
 
-    addFromHoldCart: (state, action) => {
-      const { data } = action.payload;
-      state.orderitems = data.orderitems;
-      state.totalAmount = data.totalAmount;
-      state.totalAmountWithoutDiscount = data.totalAmount;
-
-      state.tax = data.tax;
-      state.discount = data.discount;
-      state.amountToBeReturned = data.amountToBeReturned;
-      state.totalPayableAmount = data.totalPayableAmount;
-      state.paymentMethod = data.paymentMethod;
-      state.discountType = data.discountType;
-      state.discountValue = data.discountValue;
-      state.splitPayment = data.splitPayment;
-      state.splitCash = data.splitCash;
-      state.splitCard = data.splitCard;
-    },
-
-    // addToTableHistory: (state, action) => {
-    //     const { tableCartHistory } = state;
-    //     const { orderitems, totalAmount, tax, discount, amountToBeReturned, paymentMethod } = action.payload;
-    //     tableCartHistory.push({
-    //         orderitems,
-    //         totalAmount,
-    //         tax,
-    //         discount,
-    //         amountToBeReturned,
-    //         paymentMethod,
-    //     });
-    // }
-  }
-}
-);
-
-  export const {
-    addToCart,
-    incrementQuantity,
-    decrementQuantity,
-    removeFromCart,
-    updateItemNote,
-    setDiscount,
-    setAmountToBeReturned,
-    setPaymentMethod,
-    clearCart,
-    updateTotalAmount,
-    setSelectedAddon,
-    setSingleItemDiscount,
-    setWholeCartDiscount,
-    addFromHoldCart,
-  } = cartSlice.actions;
-  
-
-export const getorderitems = (state) => state.cart.orderitems;
+export const {
+  addToCart,
+  incrementQuantity,
+  decrementQuantity,
+  removeFromCart,
+  updateItemNote,
+  setDiscount,
+  setAmountToBeReturned,
+  setPaymentMethod,
+  clearCart,
+  updateTotalAmount,
+  setSelectedAddon,
+  setSingleItemDiscount,
+  setWholeCartDiscount,
+  addFromHoldCart,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;
