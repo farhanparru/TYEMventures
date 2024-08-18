@@ -17,28 +17,21 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems');
         const fetchedItems = response.data;
 
-        // Filter items based on the selected category
         const filteredItems = selectedCategory === 'All'
           ? fetchedItems
           : fetchedItems.filter(item => item.category === selectedCategory);
 
-        // Split items into three columns
-        const totalItems = filteredItems.length;
-        const itemsPerColumn = Math.ceil(totalItems / 3);
-
-        const firstColumn = filteredItems.slice(0, itemsPerColumn);
-        const secondColumn = filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn);
-        const thirdColumn = filteredItems.slice(2 * itemsPerColumn);
-
-        // Update state only if there's a change
-        setItems(prevItems => {
-          const isSame = (
-            JSON.stringify(prevItems.firstColumn) === JSON.stringify(firstColumn) &&
-            JSON.stringify(prevItems.secondColumn) === JSON.stringify(secondColumn) &&
-            JSON.stringify(prevItems.thirdColumn) === JSON.stringify(thirdColumn)
-          );
-          return isSame ? prevItems : { firstColumn, secondColumn, thirdColumn };
+        const splitItems = [[], [], []];
+        filteredItems.forEach((item, index) => {
+          splitItems[index % 3].push(item);
         });
+
+        setItems({
+          firstColumn: splitItems[0],
+          secondColumn: splitItems[1],
+          thirdColumn: splitItems[2],
+        });
+
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       } finally {
@@ -51,17 +44,12 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   const onItemClick = useCallback((item) => {
     const cartItem = {
-      Id: item.Id,
+      id: item.Id,
       name: item.ItemName,
       price: item.Price,
     };
     dispatch(addToCart(cartItem));
   }, [dispatch]);
-
-  // Memoize column data to prevent unnecessary recalculations
-  const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
-  const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
-  const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -70,9 +58,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   return (
     <div className="flex justify-between gap-x-10 p-6">
       <div className="flex flex-col space-y-9">
-        {firstColumnItems.map((item) => (
+        {items.firstColumn.map((item) => (
           <div
-            key={item.Id} // Ensure unique key
+            key={item.Id}
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
@@ -83,9 +71,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         ))}
       </div>
       <div className="flex flex-col space-y-9">
-        {secondColumnItems.map((item) => (
+        {items.secondColumn.map((item) => (
           <div
-            key={item.Id} // Ensure unique key
+            key={item.Id}
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
@@ -96,9 +84,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         ))}
       </div>
       <div className="flex flex-col space-y-9">
-        {thirdColumnItems.map((item) => (
+        {items.thirdColumn.map((item) => (
           <div
-            key={item.Id} // Ensure unique key
+            key={item.Id}
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
@@ -113,3 +101,6 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 });
 
 export default ItemCard;
+;
+
+
