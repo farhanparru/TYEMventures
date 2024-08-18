@@ -86,7 +86,7 @@ export const cartSlice = createSlice({
         state.totalAmount -= parseFloat(item.price);
       }
     },
-  },
+  
 
   
 
@@ -327,7 +327,9 @@ export const cartSlice = createSlice({
     //         paymentMethod,
     //     });
     // }
-  });
+  }
+}
+);
 
   export const {
     addToCart,
