@@ -60,7 +60,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   useEffect(() => {
     console.log("Component rendered:", { items });
-  });
+  }, [items]); // Empty dependency array ensures this runs only once
 
 
   return (
@@ -70,7 +70,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
           <div className="flex flex-col space-y-9">
             {items.firstColumn.map((item) => (
               <div
-                key={item.Id}
+                key={item.Id} // Ensure unique key
                 onClick={() => onItemClick(item)}
                 className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
                 style={{ width: '180px', height: '120px' }} 
