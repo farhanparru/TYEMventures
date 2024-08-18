@@ -5,7 +5,6 @@ import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 const ItemCard = React.memo(({ selectedCategory }) => {
-  console.log('ItemCard render');
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
@@ -27,14 +26,18 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const totalItems = filteredItems.length;
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
-             // Log the split items
-             console.log('Filtered Items:', filteredItems);
-             console.log('Items Per Column:', itemsPerColumn);
+        const firstColumn = filteredItems.slice(0, itemsPerColumn);
+        const secondColumn = filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn);
+        const thirdColumn = filteredItems.slice(2 * itemsPerColumn);
 
-        setItems({
-          firstColumn: filteredItems.slice(0, itemsPerColumn),
-          secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
-          thirdColumn: filteredItems.slice(2 * itemsPerColumn),
+        // Update state only if there's a change
+        setItems(prevItems => {
+          const isSame = (
+            JSON.stringify(prevItems.firstColumn) === JSON.stringify(firstColumn) &&
+            JSON.stringify(prevItems.secondColumn) === JSON.stringify(secondColumn) &&
+            JSON.stringify(prevItems.thirdColumn) === JSON.stringify(thirdColumn)
+          );
+          return isSame ? prevItems : { firstColumn, secondColumn, thirdColumn };
         });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
@@ -55,7 +58,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     dispatch(addToCart(cartItem));
   }, [dispatch]);
 
-  // Memoize column data
+  // Memoize column data to prevent unnecessary recalculations
   const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
   const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
   const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
@@ -69,7 +72,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       <div className="flex flex-col space-y-9">
         {firstColumnItems.map((item) => (
           <div
-            key={item.Id}
+            key={item.Id} // Ensure unique key
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
@@ -82,7 +85,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       <div className="flex flex-col space-y-9">
         {secondColumnItems.map((item) => (
           <div
-            key={item.Id}
+            key={item.Id} // Ensure unique key
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
@@ -95,7 +98,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       <div className="flex flex-col space-y-9">
         {thirdColumnItems.map((item) => (
           <div
-            key={item.Id}
+            key={item.Id} // Ensure unique key
             onClick={() => onItemClick(item)}
             className="bg-teal-600 text-white p-6 rounded-md flex flex-col justify-between hover:bg-teal-700 cursor-pointer"
             style={{ width: '180px', height: '120px' }}
