@@ -22,11 +22,11 @@ const ItemCard = React.memo(({ selectedCategory }) => {
           : fetchedItems.filter(item => item.category === selectedCategory);
 
         const columnLength = Math.ceil(filteredItems.length / 3);
-        const firstColumn = filteredItems.slice(0, columnLength);
+        // const firstColumn = filteredItems.slice(0, columnLength);
         const secondColumn = filteredItems.slice(columnLength, 2 * columnLength);
         const thirdColumn = filteredItems.slice(2 * columnLength);
 
-        setItems({ firstColumn, secondColumn, thirdColumn });
+        setItems({  secondColumn, thirdColumn });
         setLoading(false);
       } catch (error) {
         console.error('There was an error fetching the items!', error);
@@ -47,7 +47,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   return (
     <div className="flex justify-between gap-x-10 p-6">
-      {['firstColumn', 'secondColumn', 'thirdColumn'].map((col, index) => (
+      {[, 'secondColumn', 'thirdColumn'].map((col, index) => (
         <div key={index} className="flex flex-col space-y-9">
           {items[col].map((item) => (
             <div
