@@ -67,13 +67,14 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     console.log("Item clicked:", item);
   
     const cartItem = {
-      id: item.Id,  // Use the item's unique identifier
+      id: item.Id,  // Ensure this matches with cartSlice reducer
       name: item.ItemName,
       price: item.Price,
     };
   
     dispatch(addToCart(cartItem)); 
   }, [dispatch]);
+  
   
   return (
     <div className="flex justify-between gap-x-10 p-6">

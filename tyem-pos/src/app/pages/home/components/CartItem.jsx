@@ -48,7 +48,7 @@ const CartItem = ({ item, index }) => {
     e.stopPropagation();
     dispatch(
       removeFromCart({
-        id: item.Id,
+        id: item.id,
         variation_id: item.variation_id,
         isRemoveAll,
       })

@@ -16,7 +16,7 @@ import { UilTrashAlt } from "@iconscout/react-unicons";
 import { Popconfirm } from "antd";
 
 import { setWholeCartDiscount } from "../../store/cartSlice";
-import { clearCart } from "../../store/cartSlice";
+import { clearCart  } from "../../store/cartSlice";
 
 import CustomModal from "../../../../components/CustomModal";
 import { Form, Input, Select } from "antd";
@@ -153,7 +153,7 @@ const HomeCartSection = () => {
             title={"Do you want to clear the cart?"}
             description={"This action cannot be undone."}
             onConfirm={() => {
-              dispatch(clearCart()); // Clear the cart
+              dispatch(clearCart())
               // Ensure clearEditOrder() is defined and imported if used
               dispatch(clearEditOrder()); // Clear the order edits
             }}

@@ -690,7 +690,9 @@ const FooterActions = () => {
     
   };
 
-  const printnodeThermal = async (orderData) => {
+  const printnodeThermal = async ({orderData}) => {
+    console.log(orderData,'orderData');
+    
     try {
       const response = await axios.post(
         "https://tyem.invenro.site/api/print/salesPrint",
