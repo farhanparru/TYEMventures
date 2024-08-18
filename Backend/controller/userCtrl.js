@@ -83,8 +83,8 @@ submitOrder:async (req, res) => {
       const newOrder = new orderData(req.body);
       await newOrder.save();
   
-      // Call the print function with the new order data
-      await printOrderReceipt(newOrder);
+      // // Call the print function with the new order data
+      // await printOrderReceipt(newOrder);
   
       // Respond with a success message
       return res.status(201).json({
