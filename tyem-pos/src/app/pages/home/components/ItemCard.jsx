@@ -32,7 +32,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         // const secondColumn = filteredItems.slice(columnLength, 1 * columnLength);
         // const thirdColumn = filteredItems.slice(2 * columnLength);
 
-        setItems({ secondColumn });
+        setItems({ firstColumn });
         setLoading(false); // End loading
       } catch (error) {
         console.error('There was an error fetching the items!', error);
