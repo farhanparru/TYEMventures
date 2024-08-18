@@ -27,6 +27,8 @@ const Spinner = () => {
 };
 
 const ItemCard = React.memo(({ selectedCategory }) => {
+  console.log('Recat Rendring');
+  
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
