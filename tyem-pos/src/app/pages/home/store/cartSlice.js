@@ -42,7 +42,7 @@ export const cartSlice = createSlice({
   } else {
     // If item does not exist, add it to the cart
     const newItem = {
-      id: product_Id,  // Consistent field name
+      Id: product_Id,  // Consistent field name
       name: action.payload.name,
       price: action.payload.price,
       quantity: 1,  // Start with a quantity of 1
