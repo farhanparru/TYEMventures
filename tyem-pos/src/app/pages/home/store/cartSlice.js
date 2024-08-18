@@ -27,22 +27,20 @@ export const cartSlice = createSlice({
   const { orderitems, totalAmount } = state;
   let currentTotal = totalAmount;
 
-  const product_Id = action.payload.Id;  // Consistent field name
+  const product_Id = action.payload.id;  // Consistent field name
 
   // Find if the item already exists in the cart based on id
-  const existingItem = orderitems.find((item) => item.Id === product_Id);  // Consistent field name
+  const existingItem = orderitems.find((item) => item.id === product_Id);  // Consistent field name
 
   if (existingItem) {
     // If item exists, update its quantity and total price
     existingItem.quantity += 1;
-    existingItem.totalPrice = (
-      existingItem.price * existingItem.quantity
-    ).toFixed(2);  // Ensure fixed decimals
+    existingItem.totalPrice = (existingItem.price * existingItem.quantity ).toFixed(2);  // Ensure fixed decimals
     currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
   } else {
     // If item does not exist, add it to the cart
     const newItem = {
-      Id: product_Id,  // Consistent field name
+      id: product_Id,  // Consistent field name
       name: action.payload.name,
       price: action.payload.price,
       quantity: 1,  // Start with a quantity of 1
