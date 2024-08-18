@@ -24,43 +24,44 @@ export const cartSlice = createSlice({
   reducers: {
 
     addToCart: (state, action) => {
-  const { orderitems, totalAmount } = state;
-  let currentTotal = totalAmount;
-
-  const product_Id = action.payload.id;  // Consistent field name
-
-  // Find if the item already exists in the cart based on id
-  const existingItem = orderitems.find((item) => item.id === product_Id);  // Consistent field name
-
-  if (existingItem) {
-    // If item exists, update its quantity and total price
-    existingItem.quantity += 1;
-    existingItem.totalPrice = (existingItem.price * existingItem.quantity ).toFixed(2);  // Ensure fixed decimals
-    currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
-  } else {
-    // If item does not exist, add it to the cart
-    const newItem = {
-      id: product_Id,  // Consistent field name
-      name: action.payload.name,
-      price: action.payload.price,
-      quantity: 1,  // Start with a quantity of 1
-      totalPrice: parseFloat(action.payload.price).toFixed(2), // Initial total price
-    };
+      const { orderitems, totalAmount } = state;
+      let currentTotal = totalAmount;
     
-    console.log(newItem, "newItem");
+      const product_Id = action.payload.id;  // Consistent field name
     
-    orderitems.push(newItem); // Add the new item to the cart
-    state.totalAmount = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
-  }
-
-  // Update state values
-  state.totalAmount = currentTotal;
-  state.totalAmountWithoutDiscount = currentTotal;
-  state.tax = parseFloat((currentTotal * 0.1).toFixed(2));  // Ensure fixed decimals
-  state.totalPayableAmount = parseFloat(
-    (currentTotal + state.tax - state.discount).toFixed(2)  // Ensure fixed decimals
-  );
-},
+      // Find if the item already exists in the cart based on id
+      const existingItem = orderitems.find((item) => item.id === product_Id);
+    console.log(existingItem,"existingItem");
+    
+      if (existingItem) {
+        // If item exists, update its quantity and total price
+        existingItem.quantity += 1;
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+        currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
+      } else {
+        // If item does not exist, add it to the cart
+        const newItem = {
+          Id: product_Id,
+          name: action.payload.name,
+          price: action.payload.price,
+          quantity: 1,  // Start with a quantity of 1
+          totalPrice: parseFloat(action.payload.price).toFixed(2), // Initial total price
+        };
+        
+        console.log(newItem, "newItem");
+        
+        orderitems.push(newItem);
+        state.totalAmount = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
+      }
+    
+      // Update state values
+      state.totalAmount = currentTotal;
+      state.totalAmountWithoutDiscount = currentTotal;
+      state.tax = parseFloat((currentTotal * 0.1).toFixed(2));  // Ensure fixed decimals
+      state.totalPayableAmount = parseFloat(
+        (currentTotal + state.tax - state.discount).toFixed(2)
+      );
+    },
 
     removeFromCart: (state, action) => {
       const { orderitems, totalAmount } = state;
