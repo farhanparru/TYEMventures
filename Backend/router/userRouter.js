@@ -22,6 +22,7 @@ router.post('/Onlinecustomer',userCtrl.onlineCustomer)
 router.patch('/PaymentStatus/:id', userCtrl.paymentStatus);
 router.post('/importexcel', upload.single('file'),userCtrl.ImportExcel);
 router.get('/ExcelItems',userCtrl.SheetDataGet)
+router.post('/salesPrint',userCtrl.printOrderReceipt)
 
 
      

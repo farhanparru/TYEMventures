@@ -69,14 +69,24 @@ const validateOrderData = (data) => {
   // }
 };
 
-module.exports = {
-  submitOrder: async (req, res) => {
-    try {
-      validateOrderData(req.body);
 
+
+
+
+module.exports = {
+submitOrder:async (req, res) => {
+    try {
+      // Validate incoming order data
+      validateOrderData(req.body);
+  
+      // Create and save the new order
       const newOrder = new orderData(req.body);
       await newOrder.save();
-
+  
+      // Call the print function with the new order data
+      await printOrderReceipt(newOrder);
+  
+      // Respond with a success message
       return res.status(201).json({
         status: "success",
         message: "Order created successfully",
@@ -84,7 +94,8 @@ module.exports = {
       });
     } catch (error) {
       console.error("Error creating order:", error.message);
-
+  
+      // Handle specific validation errors
       if (
         error.message.startsWith("Invalid") ||
         error.message.includes("required") ||
@@ -92,10 +103,72 @@ module.exports = {
       ) {
         return res.status(400).json({ message: error.message });
       }
+  
+      // Handle general errors
       res.status(500).json({ message: "Internal server error" });
     }
   },
-
+  
+  // sales printe
+  printOrderReceipt:async (req, res) => {
+    const {
+      status,
+      orderDetails,
+      location,
+      itemDetails,
+      method,
+      total,
+      discount,
+      qrCodeData, // Make sure to include qrCodeData if needed
+    } = req.body;
+  
+    let printer = new ThermalPrinter({
+      type: PrinterTypes.ROCKET, // Updated printer type to Rocket
+      interface: "tcp://192.168.0.100", // Printer IP address
+    });
+  
+    printer.alignCenter();
+    printer.println("Restaurant Name");
+    printer.drawLine();
+  
+    printer.alignLeft();
+    printer.println(`Order Number: ${orderDetails.orderNumber}`);
+    printer.println(`Invoice Number: ${orderDetails.invoiceNumber}`);
+    printer.println(`Customer: ${orderDetails.customerName}`);
+    printer.println(`Location: ${location}`);
+    printer.drawLine();
+  
+    itemDetails.itemName.forEach((item, index) => {
+      printer.println(`${index + 1}. ${item} x ${itemDetails.quantity[index]}`); // Fixed to use itemDetails.quantity[index]
+    });
+  
+    printer.drawLine();
+    printer.println(`Payment Method: ${method}`);
+    printer.println(`Total: ${total}`);
+    printer.println(`Discount: ${discount.value || "None"}`);
+    printer.drawLine();
+    printer.println("Thank you for dining with us!");
+  
+    // Print a QR code at the bottom of the receipt
+    if (qrCodeData) {
+      printer.println("Scan to View Details:");
+      printer.printQR(qrCodeData, {
+        cellSize: 8, // Adjust the size of the QR code
+        correction: 'M' // Error correction level
+      });
+    }
+  
+    try {
+      printer.cut();
+      let execute = await printer.execute(); // Ensure you await the execute function
+      console.log("Print success:", execute);
+      res.status(200).send('Print job sent successfully'); // Send success response
+    } catch (error) {
+      console.error("Print failed:", error);
+      res.status(500).send('Failed to send print job'); // Send failure response
+    }
+  },
+  
   // sles report data get
 
   getOrders: async (req, res) => {

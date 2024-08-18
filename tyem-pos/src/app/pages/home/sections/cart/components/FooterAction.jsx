@@ -118,7 +118,7 @@ const FooterActions = () => {
     console.log("Sending order data:", orderData); // Debug log
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/user/orders",
+        "https://tyem.invenro.site/api/user/orders",
         orderData
       );
       console.log("API response:", response); // Log the API response
@@ -135,6 +135,11 @@ const FooterActions = () => {
       );
     }
   };
+
+
+
+
+
 
   const selectedTable = useSelector((state) => state.table.selectedTable);
   // console.log(selectedTable);
@@ -679,13 +684,22 @@ const FooterActions = () => {
     setHoldCartModal(false);
   };
 
-  const componentRef = useRef();
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
+ 
 
   const handleSave = () => {
-    navigate("/bill");
+    
+  };
+
+  const printnodeThermal = async (orderData) => {
+    try {
+      const response = await axios.post(
+        "https://tyem.invenro.site/api/print/salesPrint",
+        orderData
+      );
+      console.log("Print response:", response);
+    } catch (error) {
+      console.error("Error printing receipt:", error);
+    }
   };
   const [holdCartModal, setHoldCartModal] = useState(false);
 
@@ -1088,7 +1102,7 @@ const FooterActions = () => {
 
                       setTimeout(() => {
                         placeOrder(2);
-                        // printThermal();
+                        printnodeThermal(orderData); // Trigger thermal print
                       }, 200);
                     }}
                   >
@@ -1244,19 +1258,7 @@ const FooterActions = () => {
         </CustomModal>
       )}
 
-      {saveModal && (
-        <CustomModal onClose={() => setSaveModal(false)}>
-          <div className="p-10 flex flex-col items-center">
-            <button
-              onClick={handlePrint}
-              className="bg-blue-500 w-[100px] text-white rounded-lg hover:bg-blue-400 p-2 mb-4"
-            >
-              Print
-            </button>
-            <div ref={componentRef} className="w-full"></div>
-          </div>
-        </CustomModal>
-      )}
+      
     </div>
   );
 };
