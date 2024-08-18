@@ -83,6 +83,7 @@ const FooterActions = () => {
     other: PAYMENTSTATUS.PENDING,
   };
 
+  
   const handleSubmit = async () => {
     const invoiceNumber = generateInvoiceNumber();
 
@@ -703,6 +704,8 @@ const FooterActions = () => {
       console.error("Error printing receipt:", error);
     }
   };
+
+
   const [holdCartModal, setHoldCartModal] = useState(false);
 
   return (
@@ -1104,11 +1107,12 @@ const FooterActions = () => {
 
                       setTimeout(() => {
                         placeOrder(2);
-                        printnodeThermal(orderData); // Trigger thermal print
+                     
                       }, 200);
                     }}
                   >
-                    <p className="text-sm font-semibold mt-[0.2rem] ">
+                    <p className="text-sm font-semibold mt-[0.2rem] "
+                      onClick={printnodeThermal}>
                       Receipt
                     </p>
                   </button>
