@@ -27,6 +27,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
         const firstColumn = filteredItems.slice(0, itemsPerColumn);
+        console.log(firstColumn,"Times Rendring");
+        
         const secondColumn = filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn);
         const thirdColumn = filteredItems.slice(2 * itemsPerColumn);
 
