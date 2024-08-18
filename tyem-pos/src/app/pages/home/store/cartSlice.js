@@ -65,6 +65,8 @@ export const cartSlice = createSlice({
     },
 
 
+
+
     incrementQuantity: (state, action) => {
       console.log('Increment action:', action);
       const item = state.orderitems.find(item => item.id === action.payload);
@@ -135,6 +137,7 @@ export const cartSlice = createSlice({
         );
       }
     },
+    // Clear Cart Reducer - THIS WAS MISSING
     clearCart: (state) => {
       state.orderitems = [];
       state.totalAmount = 0;
@@ -151,6 +154,7 @@ export const cartSlice = createSlice({
       state.splitCard = 0;
       state.returnAmountCash = 0;
     },
+    
     updateItemNote: (state, action) => {
       const { orderitems } = state;
       const { item_id, variation_id, note } = action.payload;

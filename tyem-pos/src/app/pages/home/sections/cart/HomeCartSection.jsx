@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CartItem from "../../components/CartItem";
-import {
-  homeBodySection,
-  homeTopBarTabs,
-} from "../../constants";
+import { homeBodySection, homeTopBarTabs } from "../../constants";
 import {
   getPriceGroupsList,
   getSelectedBodySection,
@@ -84,7 +81,7 @@ const HomeCartSection = () => {
 
   return (
     <div className="w-[35%] relative h-full bg-white text-white border-l-[3px] border-chicket-border flex flex-col">
-       {/* <div className="home__cart-top flex gap-3 ml-3 mr-3 mt-2 w-full overflow-x-scroll">
+      {/* <div className="home__cart-top flex gap-3 ml-3 mr-3 mt-2 w-full overflow-x-scroll">
         {homePriceCategories.map((item, index) => {
           const isSelected = item.id === selectedTab.id;
           return (
@@ -109,9 +106,7 @@ const HomeCartSection = () => {
         })}
       </div>  */}
       <div className="search__section w-full flex gap-4 items-center mb-2 p-3">
-        <h3 className="text-black font-bold text-base text-center">
-          Customer
-        </h3>
+        <h3 className="text-black font-bold text-base text-center">Customer</h3>
         <div
           className="w-full relative"
           tabIndex={0}
@@ -155,8 +150,8 @@ const HomeCartSection = () => {
             title={"Do you want to clear the cart?"}
             description={"This action cannot be undone."}
             onConfirm={() => {
-              dispatch(clearCart());
-              dispatch(clearEditOrder());
+              dispatch(clearCart()); // Clear the cart
+              dispatch(clearEditOrder()); // Clear the order edits
             }}
             okText="Yes"
             cancelText="No"
@@ -175,7 +170,9 @@ const HomeCartSection = () => {
               <Form form={form}>
                 <div className="flex items-center gap-10">
                   <CiDiscount1 className="w-8 h-9 text-black" />
-                  <h4 className="text-md text-black font-bold">Apply Discount</h4>
+                  <h4 className="text-md text-black font-bold">
+                    Apply Discount
+                  </h4>
                   <div className="mt-[25px]">
                     <Form.Item
                       name={"discountAmount"}
@@ -220,7 +217,10 @@ const HomeCartSection = () => {
       {/* Cart body */}
       {editOrder?.orderitems && editOrder?.orderitems?.length !== 0 ? (
         <div className="bg-red-500 mx-3 px-3 py-2 rounded-md flex items-center justify-center font-bold">
-          <h6 className="text-danger">Editing Order <span className="underline">{editOrder?.order_id}</span></h6>
+          <h6 className="text-danger">
+            Editing Order{" "}
+            <span className="underline">{editOrder?.order_id}</span>
+          </h6>
         </div>
       ) : null}
       <div className="home__cart-items flex flex-col pb-60 flex-auto gap-2 p-3 overflow-y-scroll">

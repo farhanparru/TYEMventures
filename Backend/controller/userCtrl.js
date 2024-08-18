@@ -127,6 +127,7 @@ submitOrder:async (req, res) => {
       interface: "tcp://192.168.0.100", // Printer IP address
     });
   
+    
     printer.alignCenter();
     printer.println("Restaurant Name");
     printer.drawLine();
