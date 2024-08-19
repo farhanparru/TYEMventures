@@ -11,6 +11,8 @@ import {
   UilTag, // Sales icon
  
 } from "@iconscout/react-unicons";
+import { FaUtensils, FaShoppingCart, FaChartLine, FaClipboardList, FaCashRegister, FaUsers, FaCog, FaGlobe } from 'react-icons/fa';
+
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
 import logo from '../../../assets/Logo.png';
@@ -70,21 +72,31 @@ const Badge = styled.span`
 
 const DrawerMenuItemContainer = styled.div`
   width: 100%;
-  padding: 0.5rem;
-  height: 4rem;
+  padding: 0.75rem;
+  height: 6rem; /* Increased height for more spacing */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
-  border-radius: 0.5rem;
-  background-color: ${(props) => (props.active ? "gray" : "transparent")};
-  color: ${(props) => (props.active ? "white" : "gray")};
+  gap: 0.5rem; /* Increased gap between icon and label */
+  background-color: ${(props) => (props.active ? "#1d1d1d" : "transparent")};
+  color: ${(props) => (props.active ? "white" : "#6b7280")};
   transition: all 0.3s ease-in-out;
+  position: relative;
 
   &:hover {
-    background-color: gray;
+    background-color: #1d1d1d;
     color: white;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 4px;
+    background-color: ${(props) => (props.active ? "#3b82f6" : "transparent")};
+    transition: background-color 0.3s ease-in-out;
   }
 `;
 
@@ -92,7 +104,23 @@ const IconContainer = styled.div`
   position: relative;
 `;
 
-const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, }) => {
+
+const LabelContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem; /* Adjust font size as needed */
+  text-align: center;
+`;
+
+const ShortcutText = styled.span`
+  font-size: 0.75rem; /* Increased font size for the shortcut */
+  color: ${(props) => (props.active ? "white" : "#9ca3af")};
+  margin-top: 0.5rem; /* Increased space between label and shortcut */
+`;
+
+const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, shortcut }) => {
   return (
     <Link to={path}>
       <DrawerMenuItemContainer onClick={onClick} active={active}>
@@ -101,6 +129,7 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, }) => {
           {badge && <Badge>{badge}</Badge>}
         </IconContainer>
         <p className="text-xs font-medium">{label}</p>
+        <ShortcutText active={active}>{shortcut}</ShortcutText>
       </DrawerMenuItemContainer>
     </Link>
   );
@@ -120,49 +149,57 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       icon: UilEstate,
       onClick: () => setActiveMenu(drawerMenuLabels.home.label),
       path: drawerMenuLabels.home.path,
+      shortcut: "Alt+1",
     },
     {
       label: drawerMenuLabels.customers.label,
       icon: UilUsersAlt,
       onClick: () => setActiveMenu(drawerMenuLabels.customers.label),
       path: drawerMenuLabels.customers.path,
+      shortcut: "Alt+2",
     },
     {
       label: drawerMenuLabels.online.label,
-      icon: AiOutlineShoppingCart,
+      icon:FaGlobe,
       onClick: () => setActiveMenu(drawerMenuLabels.online.label),
       path: drawerMenuLabels.online.path,
       badge: totalOrders, // Use totalOrders from context
+      shortcut: "Alt+3",
     },
     {
       label: drawerMenuLabels.orders.label,
       icon: UilBox,
       onClick: () => setActiveMenu(drawerMenuLabels.orders.label),
       path: drawerMenuLabels.orders.path,
+      shortcut: "Alt+4",
     },
     {
       label: drawerMenuLabels.reports.label,
-      icon: UilFileGraph,
+      icon: FaClipboardList,
       onClick: () => setActiveMenu(drawerMenuLabels.reports.label),
       path: drawerMenuLabels.reports.path,
+       shortcut: "Alt+5"
     },
     {
       label: drawerMenuLabels.settings.label,
-      icon: UilSetting,
+      icon: FaCog,
       onClick: () => setActiveMenu(drawerMenuLabels.settings.label),
       path: drawerMenuLabels.settings.path,
+      shortcut: "Alt+6",
     },
     {
       label: drawerMenuLabels.sales.label,
-      icon: UilTag, // Sales icon
+      icon: FaChartLine, // Sales icon
       onClick: () => setActiveMenu(drawerMenuLabels.sales.label),
       path: drawerMenuLabels.sales.path,
+      shortcut: "Alt+7",
     },
     {
       label: drawerMenuLabels.scheduledOrders.label,
       icon: AiOutlineShoppingCart, // Scheduled Orders icon
       onClick: () => setActiveMenu(drawerMenuLabels.scheduledOrders.label),
       path: drawerMenuLabels.scheduledOrders.path,
+      shortcut: "Alt+8",
     }
   ];
 
@@ -186,6 +223,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
             path={item.path}
             key={item.path}
             badge={item.badge} // Pass badge prop here
+            shortcut={item.shortcut} // Passing the shortcut prop here
           />
         ))}
       </div>

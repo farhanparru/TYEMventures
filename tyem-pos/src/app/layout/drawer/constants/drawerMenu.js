@@ -1,19 +1,18 @@
- export const drawerMenuLabels = {
-    home:{label:"Home",path:"/"},
+export const drawerMenuLabels = {
+  home: { label: "Home", path: "/" },
 
-    kds:{label:"KDS",path:"/kds"},
+  kds: { label: "KDS", path: "/kds" },
 
-    customers:{label:"Customers",path:"/customers"},
+  customers: { label: "CUSTOMERS", path: "/customers" },
 
-    online:{label:"ONLINE ORDERS",path:"/online"},
-    sales: { label: "Sales", path: "/sales" }, // New entry
-    scheduledOrders: { label: "Scheduled Orders", path: "/scheduled-orders" }, // New entry
-    orders:{label:"Items",path:"/orders"},
+  online: { label: "ONLINE ORDERS", path: "/online" },
+  sales: { label: "SALES", path: "/sales" }, // New entry
+  scheduledOrders: { label: "ScheduleOrders", path: "/scheduled-orders" }, // New entry
+  orders: { label: "Items", path: "/orders" },
 
-    reports:{label:"Reports",path:"/reports"},
+  reports: { label: "REPORTS", path: "/reports" },
 
-    cash:{label:"Cash",path:"/cash"},
+  cash: { label: "CASH", path: "/cash" },
 
-    settings:{label:"Settings",path:"/settings"},
-  
-}
+  settings: { label: "SETTINGS", path: "/settings" },
+};
