@@ -46,7 +46,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     };
 
     fetchItems();
-  }, [selectedCategory]);
+  }, [items]);
 
   const onItemClick = useCallback((item) => {
     const cartItem = {
