@@ -5,7 +5,9 @@ import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 const ItemCard = React.memo(({ selectedCategory }) => {
-
+ 
+  
+  const [newData,setnewData]=useState([])
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
@@ -31,7 +33,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const totalItems = filteredItems.length;
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
-           
+        setnewData(fetchedItems)
 
         setItems({
           // firstColumn: filteredItems.slice(0, itemsPerColumn),
@@ -77,7 +79,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
      
 
-        {fetchedItems.map((item) => (
+        {newData.map((item) => (
           <div
             key={item.Id}
             onClick={() => onItemClick(item)}
