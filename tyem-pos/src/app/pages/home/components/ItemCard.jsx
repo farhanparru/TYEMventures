@@ -27,7 +27,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
         // Split items into three columns
         const totalItems = filteredItems.length;
-        const itemsPerColumn = Math.ceil(totalItems / 3);
+        const itemsPerColumn = Math.ceil(totalItems / 2);
 
            
 
