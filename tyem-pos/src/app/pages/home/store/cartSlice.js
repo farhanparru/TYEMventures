@@ -26,9 +26,11 @@ export const cartSlice = createSlice({
       const { orderitems, totalAmount } = state;
       let currentTotal = totalAmount;
       const product_Id = action.payload.Id;
+    console.log(product_Id,"product_Id");
     
       // Find if the item already exists in the cart based on Id
-      const existingItem = orderitems.find((item) => item.Id === product_Id);
+      const existingItem = orderitems.find((item) => item.id === product_Id);
+    console.log(existingItem,"existingItem");
     
       if (existingItem) {
         // If item exists, update its quantity and total price
