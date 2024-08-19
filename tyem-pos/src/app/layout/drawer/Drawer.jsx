@@ -1,152 +1,43 @@
-import React from "react";
-import { Layout } from "antd";
-import styled from "styled-components";
-import {
-  AiOutlineShoppingCart,
-  AiOutlineFork,
-  AiOutlineBarChart,
-  AiOutlineMoneyCollect,
-  AiOutlineTeam,
-  AiOutlineSetting,
-} from "react-icons/ai";
-import { Link } from "react-router-dom";
-import logo from '../../../assets/Logo.png';
+import React from 'react';
+import { FaUtensils, FaShoppingCart, FaChartLine, FaClipboardList, FaCashRegister, FaUsers, FaCog, FaGlobe } from 'react-icons/fa';
 
-const { Sider } = Layout;
-
-const DrawerMenuItemContainer = styled.div`
-  width: 100%;
-  height: 60px; /* Adjust height */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #aaa;
-  position: relative;
-  transition: all 0.3s ease-in-out;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #1f1f1f;
-    color: white;
-
-    .shortcut-key {
-      opacity: 1;
-    }
-  }
-
-  ${(props) =>
-    props.active &&
-    `
-    background-color: #1f1f1f;
-    color: white;
-  `}
-`;
-
-const ShortcutKey = styled.span`
-  position: absolute;
-  bottom: -15px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-`;
-
-const DrawerMenuItem = ({ Icon, label, active, path, shortcut }) => {
+const Sidebar = () => {
   return (
-    <Link to={path}>
-      <DrawerMenuItemContainer active={active}>
-        <Icon size={24} />
-        <p className="text-xs font-medium mt-1">{label}</p>
-        <ShortcutKey className="shortcut-key">{shortcut}</ShortcutKey>
-      </DrawerMenuItemContainer>
-    </Link>
-  );
-};
-
-const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
-
-  const menuItems = [
-    {
-      label: "Sell",
-      icon: AiOutlineShoppingCart,
-      path: "/sell",
-      shortcut: "Alt+1",
-    },
-    {
-      label: "Tables",
-      icon: AiOutlineFork,
-      path: "/tables",
-      shortcut: "Alt+2",
-    },
-    {
-      label: "Online Orders",
-      icon: AiOutlineShoppingCart,
-      path: "/online-orders",
-      shortcut: "Alt+3",
-    },
-    {
-      label: "Sales",
-      icon: AiOutlineBarChart,
-      path: "/sales",
-      shortcut: "Alt+4",
-    },
-    {
-      label: "Reports",
-      icon: AiOutlineBarChart,
-      path: "/reports",
-      shortcut: "Alt+5",
-    },
-    {
-      label: "Cash",
-      icon: AiOutlineMoneyCollect,
-      path: "/cash",
-      shortcut: "Alt+6",
-    },
-    {
-      label: "Customers",
-      icon: AiOutlineTeam,
-      path: "/customers",
-      shortcut: "Alt+7",
-    },
-    {
-      label: "Settings",
-      icon: AiOutlineSetting,
-      path: "/settings",
-      shortcut: "Alt+8",
-    },
-  ];
-
-  return (
-    <Sider
-      theme="dark"
-      trigger={null}
-      collapsible
-      width={100} /* Adjusted width */
-      collapsed={collapsed}
-      className="bg-gray-900"
-    >
-      <div className="flex flex-col items-center py-4">
-        <img src={logo} alt="logo" className="w-10 mb-4" />
-        {menuItems.map((item) => (
-          <DrawerMenuItem
-            Icon={item.icon}
-            label={item.label}
-            active={activeMenu === item.label}
-            path={item.path}
-            key={item.path}
-            shortcut={item.shortcut}
-          />
-        ))}
+    <div className="flex flex-col w-20 bg-gray-900 text-gray-400 h-screen">
+      <div className="flex justify-center items-center p-4">
+        <img src="logo.png" alt="Logo" className="w-10 h-10" />
       </div>
-      <div className="mt-auto mb-4">
-        <div className="flex items-center justify-center text-gray-500">
+      <div className="flex flex-col mt-8 space-y-6">
+        <MenuItem icon={<FaShoppingCart size={20} />} label="SELL" shortcut="Alt+1" active />
+        <MenuItem icon={<FaUtensils size={20} />} label="TABLES" shortcut="Alt+2" />
+        <MenuItem icon={<FaGlobe size={20} />} label="ONLINE ORDERS" shortcut="Alt+3" />
+        <MenuItem icon={<FaChartLine size={20} />} label="SALES" shortcut="Alt+4" />
+        <MenuItem icon={<FaClipboardList size={20} />} label="REPORTS" shortcut="Alt+5" />
+        <MenuItem icon={<FaCashRegister size={20} />} label="CASH" shortcut="Alt+6" />
+        <MenuItem icon={<FaUsers size={20} />} label="CUSTOMERS" shortcut="Alt+7" />
+        <MenuItem icon={<FaCog size={20} />} label="SETTINGS" shortcut="Alt+8" />
+      </div>
+      <div className="mt-auto p-4 flex justify-center">
+        <div className="flex items-center space-x-2">
+          <span className="h-2 w-2 bg-green-500 rounded-full"></span>
           <span className="text-xs">Online</span>
-          <div className="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
         </div>
       </div>
-    </Sider>
+    </div>
   );
 };
 
-export default Drawer;
+const MenuItem = ({ icon, label, shortcut, active }) => {
+  return (
+    <div className={`flex flex-col items-center text-center py-3 cursor-pointer ${active ? 'text-white bg-gray-800' : 'hover:text-white hover:bg-gray-800'} group relative`}>
+      <div className={`text-lg ${active ? 'text-blue-500' : ''}`}>
+        {icon}
+      </div>
+      <span className="text-xs mt-2">{label}</span>
+      <span className="text-xs mt-1 text-gray-500">{shortcut}</span>
+      {active && <div className="absolute left-0 h-full w-1 bg-blue-500"></div>}
+    </div>
+  );
+};
+
+export default Sidebar;
