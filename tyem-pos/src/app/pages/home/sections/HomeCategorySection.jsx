@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
+
+
+export const userContext = React.createContext()
+
+
+
+
+
+
 const HomeCategorySection = ({ onCategorySelect }) => {
   const [categories, setCategories] = useState([]);
   const [totalItems, setTotalItems] = useState(0); // Added state for total items
   const [selectedCategory, setSelectedCategory] = useState('All');
+
+
+
 
   useEffect(() => {
     const fetchCategories = async () => {
