@@ -9,13 +9,11 @@ import {
   UilFileGraph,
   UilSetting,
   UilTag, // Sales icon
- 
 } from "@iconscout/react-unicons";
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
 import logo from '../../../assets/Logo.png';
 import { useOrderContext } from "../../pages/home/sections/body/components/OrderContext";
-
 
 const { Sider } = Layout;
 
@@ -47,19 +45,19 @@ const shake = keyframes`
 
 const Badge = styled.span`
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: -8px;
+  right: -8px;
   background-color: red;
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: bold;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(2);
+  transform: scale(1.5);
   transition: transform 0.3s, background-color 0.9s;
   animation: ${pulse} 1.16s infinite;
 
@@ -71,20 +69,25 @@ const Badge = styled.span`
 const DrawerMenuItemContainer = styled.div`
   width: 100%;
   padding: 0.5rem;
-  height: 4rem;
+  height: 3.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
   border-radius: 0.5rem;
-  background-color: ${(props) => (props.active ? "gray" : "transparent")};
-  color: ${(props) => (props.active ? "white" : "gray")};
+  background-color: ${(props) => (props.active ? "#333" : "transparent")};
+  color: ${(props) => (props.active ? "white" : "#aaa")};
   transition: all 0.3s ease-in-out;
+  position: relative;
 
   &:hover {
-    background-color: gray;
+    background-color: #333;
     color: white;
+
+    .shortcut-key {
+      opacity: 1;
+    }
   }
 `;
 
@@ -92,27 +95,32 @@ const IconContainer = styled.div`
   position: relative;
 `;
 
-const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, }) => {
+const ShortcutKey = styled.span`
+  position: absolute;
+  bottom: -12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+`;
+
+const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, shortcut }) => {
   return (
     <Link to={path}>
       <DrawerMenuItemContainer onClick={onClick} active={active}>
         <IconContainer>
-          <Icon className="text-xl" />
+          <Icon className="text-2xl" />
           {badge && <Badge>{badge}</Badge>}
         </IconContainer>
         <p className="text-xs font-medium">{label}</p>
+        <ShortcutKey className="shortcut-key">{shortcut}</ShortcutKey>
       </DrawerMenuItemContainer>
     </Link>
   );
 };
 
-
-
 const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
-
   const { totalOrders } = useOrderContext(); // Access totalOrders from context
-   
-
 
   const menuItems = [
     {
@@ -120,49 +128,57 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       icon: UilEstate,
       onClick: () => setActiveMenu(drawerMenuLabels.home.label),
       path: drawerMenuLabels.home.path,
+      shortcut: "Alt+1",
     },
     {
       label: drawerMenuLabels.customers.label,
       icon: UilUsersAlt,
       onClick: () => setActiveMenu(drawerMenuLabels.customers.label),
       path: drawerMenuLabels.customers.path,
+      shortcut: "Alt+2",
     },
     {
       label: drawerMenuLabels.online.label,
       icon: AiOutlineShoppingCart,
       onClick: () => setActiveMenu(drawerMenuLabels.online.label),
       path: drawerMenuLabels.online.path,
-      badge: totalOrders, // Use totalOrders from context
+      badge: totalOrders,
+      shortcut: "Alt+3",
     },
     {
       label: drawerMenuLabels.orders.label,
       icon: UilBox,
       onClick: () => setActiveMenu(drawerMenuLabels.orders.label),
       path: drawerMenuLabels.orders.path,
+      shortcut: "Alt+4",
     },
     {
       label: drawerMenuLabels.reports.label,
       icon: UilFileGraph,
       onClick: () => setActiveMenu(drawerMenuLabels.reports.label),
       path: drawerMenuLabels.reports.path,
+      shortcut: "Alt+5",
     },
     {
       label: drawerMenuLabels.settings.label,
       icon: UilSetting,
       onClick: () => setActiveMenu(drawerMenuLabels.settings.label),
       path: drawerMenuLabels.settings.path,
+      shortcut: "Alt+6",
     },
     {
       label: drawerMenuLabels.sales.label,
-      icon: UilTag, // Sales icon
+      icon: UilTag,
       onClick: () => setActiveMenu(drawerMenuLabels.sales.label),
       path: drawerMenuLabels.sales.path,
+      shortcut: "Alt+7",
     },
     {
       label: drawerMenuLabels.scheduledOrders.label,
-      icon: AiOutlineShoppingCart, // Scheduled Orders icon
+      icon: AiOutlineShoppingCart,
       onClick: () => setActiveMenu(drawerMenuLabels.scheduledOrders.label),
       path: drawerMenuLabels.scheduledOrders.path,
+      shortcut: "Alt+8",
     }
   ];
 
@@ -171,12 +187,12 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       theme="dark"
       trigger={null}
       collapsible
-      width={120}
-      collapsed={!collapsed}
+      width={100}
+      collapsed={collapsed}
       className="bg-gray-900"
     >
       <div className="flex flex-col items-center py-4">
-        <img src={logo} alt="logo" className="w-12 mb-4" />
+        <img src={logo} alt="logo" className="w-10 mb-4" />
         {menuItems.map((item) => (
           <DrawerMenuItem
             Icon={item.icon}
@@ -185,7 +201,8 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
             onClick={item.onClick}
             path={item.path}
             key={item.path}
-            badge={item.badge} // Pass badge prop here
+            badge={item.badge}
+            shortcut={item.shortcut}
           />
         ))}
       </div>

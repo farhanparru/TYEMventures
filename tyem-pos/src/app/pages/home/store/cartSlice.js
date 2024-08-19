@@ -28,6 +28,8 @@ export const cartSlice = createSlice({
 
       // Find if the item already exists in the cart
       const existingItem = state.orderitems.find((item) => item.id === id);
+      console.log(existingItem,"existingItem");
+      
 
       if (existingItem) {
         if (type === 'increase') {
@@ -56,6 +58,8 @@ export const cartSlice = createSlice({
           quantity: 1,
           totalPrice: parseFloat(price).toFixed(2),
         };
+        console.log(newItem,"newItem");
+        
         state.orderitems.push(newItem);
         currentTotal += parseFloat(newItem.totalPrice);
       }
