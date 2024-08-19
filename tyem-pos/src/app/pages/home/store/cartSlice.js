@@ -23,33 +23,15 @@ export const cartSlice = createSlice({
 
   reducers: {
     addToCart: (state, action) => {
-      const { id, type, name, price } = action.payload; // Extracting properties
-      let currentTotal = state.totalAmount;
-
-      // Find if the item already exists in the cart based on Id
+      const { id, name, price } = action.payload;
       const existingItem = state.orderitems.find((item) => item.id === id);
 
       if (existingItem) {
-        if (type === 'increase') {
-          // Increase quantity
-          existingItem.quantity += 1;
-          existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-          currentTotal += parseFloat(existingItem.price);
-        } else if (type === 'decrease') {
-          // Decrease quantity
-          if (existingItem) {
-            existingItem.quantity -= 1;
-            existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-            currentTotal -= parseFloat(existingItem.price);
-
-          } else {
-            // Remove item if quantity is 1 and decrease is requested
-            state.orderitems = state.orderitems.filter((item) => item.id !== id);
-            currentTotal -= parseFloat(existingItem.price);
-          }
-        }
-      } else if (type === 'increase') {
-        // Add item to the cart if it doesn't exist
+        // Update quantity and totalPrice of existing item
+        existingItem.quantity += 1;
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+      } else {
+        // Add new item to the cart
         const newItem = {
           id,
           name,
@@ -58,19 +40,26 @@ export const cartSlice = createSlice({
           totalPrice: parseFloat(price).toFixed(2),
         };
         state.orderitems.push(newItem);
-        currentTotal += parseFloat(newItem.totalPrice);
       }
 
-      // Update state values
-      state.totalAmount = currentTotal;
-      state.totalAmountWithoutDiscount = currentTotal;
-      state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
-      state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
+      updateTotals(state);
     },
 
 
 
-    decreaseFromCart: (state, action) => {
+
+    increaseQuantity: (state, action) => {
+      const { id } = action.payload;
+      const existingItem = state.orderitems.find((item) => item.id === id);
+
+      if (existingItem) {
+        existingItem.quantity += 1;
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+      }
+      updateTotals(state);
+    },
+
+    decreaseQuantity: (state, action) => {
       const { id } = action.payload;
       const existingItem = state.orderitems.find((item) => item.id === id);
 
@@ -78,15 +67,11 @@ export const cartSlice = createSlice({
         if (existingItem.quantity > 1) {
           existingItem.quantity -= 1;
           existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-          state.totalAmount -= parseFloat(existingItem.price);
         } else {
           state.orderitems = state.orderitems.filter((item) => item.id !== id);
-          state.totalAmount -= parseFloat(existingItem.price);
         }
-
-        state.tax = parseFloat((state.totalAmount * 0.1).toFixed(2));
-        state.totalPayableAmount = parseFloat((state.totalAmount + state.tax - state.discount).toFixed(2));
       }
+      updateTotals(state);
     },
     
   
@@ -304,10 +289,20 @@ export const cartSlice = createSlice({
     // }
   },
 });
+
+const updateTotals = (state) => {
+  const currentTotal = state.orderitems.reduce((total, item) => total + parseFloat(item.totalPrice), 0);
+  state.totalAmount = currentTotal;
+  state.totalAmountWithoutDiscount = currentTotal;
+  state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
+  state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
+};
+
 export const {
   addToCart,
   removeFromCart,
-  decreaseFromCart,
+  increaseQuantity,
+  decreaseQuantity,
   updateItemNote,
   setDiscount,
   setAmountToBeReturned,

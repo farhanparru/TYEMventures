@@ -20,6 +20,8 @@ import {
   setSelectedAddon,
   setSingleItemDiscount,
   updateItemNote,
+  decreaseQuantity,
+  increaseQuantity
 } from "../store/cartSlice";
 
 
@@ -31,16 +33,14 @@ import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
 
-  const onDecreaseQuantity = (e) => {
+  const handleIncrease = (e) => {
     e.stopPropagation();
-    console.log("Dispatching addToCart with decrease type for id:", item.id);
-    dispatch(addToCart({ id: item.id, type: 'decrease' }));
+    dispatch(increaseQuantity({ id: item.id }));
   };
-  
-  const onIncreaseQuantity = (e) => {
+
+  const handleDecrease = (e) => {
     e.stopPropagation();
-    console.log("Dispatching addToCart with increase type for id:", item.id);
-    dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
+    dispatch(decreaseQuantity({ id: item.id }));
   };
   
   
@@ -203,7 +203,7 @@ const CartItem = ({ item, index }) => {
 
     <div className="cart__item-quantity flex items-center gap-2">
       <button
-        onClick={onDecreaseQuantity}
+      onClick={handleDecrease}
         className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
       >
         <AiOutlineMinus size={16} />
@@ -212,7 +212,7 @@ const CartItem = ({ item, index }) => {
       <p className="text-sm">{item.quantity}</p>
 
       <button
-        onClick={onIncreaseQuantity}
+          onClick={handleIncrease}
         className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
       >
         <AiOutlinePlus size={16} />
