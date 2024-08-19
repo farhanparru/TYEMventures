@@ -33,7 +33,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
         setItems({
-          // firstColumn: filteredItems.slice(0, itemsPerColumn),
+          firstColumn: filteredItems.slice(0, itemsPerColumn),
           secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
           thirdColumn: filteredItems.slice(2 * itemsPerColumn),
         });
