@@ -35,7 +35,7 @@ const HomeCategorySection = ({ onCategorySelect }) => {
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
-    // onCategorySelect(category);
+    onCategorySelect(category);
   };
 
   return (
