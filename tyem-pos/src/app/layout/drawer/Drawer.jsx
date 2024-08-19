@@ -19,7 +19,7 @@ const { Sider } = Layout;
 
 const Badge = styled.span`
   position: absolute;
-  top: -10px;
+  top: -5px;
   right: -10px;
   background-color: red;
   color: white;
@@ -35,8 +35,7 @@ const Badge = styled.span`
 
 const DrawerMenuItemContainer = styled.div`
   width: 100%;
-  padding: 0.5rem;
-  height: 4rem;
+  height: 3.5rem; /* Adjusted height to match the style */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,7 +56,7 @@ const DrawerMenuItemContainer = styled.div`
 
 const IconContainer = styled.div`
   position: relative;
-  font-size: 24px; /* Adjust icon size */
+  font-size: 20px; /* Adjust icon size */
 `;
 
 const ShortcutKey = styled.span`
@@ -67,7 +66,7 @@ const ShortcutKey = styled.span`
   color: ${(props) => (props.active ? "white" : "gray")};
   padding: 2px 4px;
   border-radius: 4px;
-  margin-top: 4px;
+  margin-top: 2px; /* Reduce margin for closer spacing */
 `;
 
 const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, shortcut }) => {
@@ -153,7 +152,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       theme="dark"
       trigger={null}
       collapsible
-      width={120}
+      width={120} /* Adjust width for proper spacing */
       collapsed={!collapsed}
       className="bg-gray-900"
     >
