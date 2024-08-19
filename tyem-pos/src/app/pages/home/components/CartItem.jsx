@@ -10,6 +10,7 @@ import {
   UilMoneyWithdraw,
   UilTrashAlt,
 } from "@iconscout/react-unicons";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,8 +22,7 @@ import {
   updateItemNote,
 } from "../store/cartSlice";
 
-import  decreaseFromCart  from '../store/cartSlice';
-
+import decreaseFromCart from "../store/cartSlice";
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
@@ -30,7 +30,6 @@ import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
-
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
     dispatch(addToCart({ item }));
@@ -41,7 +40,6 @@ const CartItem = ({ item, index }) => {
     dispatch(decreaseFromCart({ item }));
   };
 
-
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
 
@@ -51,10 +49,8 @@ const CartItem = ({ item, index }) => {
   const [itemNote, setitemNote] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  
   const handleIncrement = () => dispatch(incrementQuantity(item.id));
   const handleDecrement = () => dispatch(decrementQuantity(item.id));
-
 
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
@@ -180,64 +176,57 @@ const CartItem = ({ item, index }) => {
   );
   return (
     <div>
-      <div
-        className={`w-full  border border-zinc-300   rounded-lg flex justify-between p-2 items-center cursor-pointer transition-all  ${"bg-gray-100 text-gray-800 "}`}
+     <div
+  className={`w-full border border-zinc-300 rounded-lg flex justify-between items-center p-2 cursor-pointer transition-all bg-gray-100 text-gray-800`}
+>
+  <div onClick={() => setShowModal(true)} className="flex-1 flex gap-4">
+    <div className="cart__item-details flex-1">
+      <p className="text-sm font-black">
+        {item.name}
+        {item?.selectedAddon && (
+          <span className="text-xs font-semibold ml-1">
+            ({item.selectedAddon.name})
+          </span>
+        )}
+      </p>
+      <p className="text-xs font-normal">{item.size}</p> {/* Assuming you have a size or other detail */}
+    </div>
+
+    <div className="cart__item-price text-sm font-bold">
+      ₹ {parseFloat(item.price).toFixed(2)}
+    </div>
+
+    <div className="cart__item-quantity flex items-center gap-2">
+      <button
+        onClick={onDecreaseQuantity}
+        className="bg-gray-200 p-1 rounded-full text-gray-600 hover:bg-gray-300"
       >
-        {/* <UilAngleDown
-          onClick={() => setShowModal(true)}
-          className="w-8 mr-2 cursor-pointer transition-all hover:scale-125"
-        /> */}
+        <AiOutlineMinus size={16} />
+      </button>
 
-        <div onClick={() => setShowModal(true)} className="  flex-1 flex gap-4">
-          <div className="cart__item-details flex-1">
-            <p className="text-sm font-black ">
-              {item.name}
-              {item && item.selectedAddon && (
-                <span className="text-xs font-semibold">
-                  ({item?.selectedAddon?.name})
-                </span>
-              )}
-            </p>
-            {/* <p className="text-xs ">{`(${item.size} ML)`}</p> */}
-          </div>
+      <p className="text-sm">{item.quantity}</p>
 
-          <div className="cart__item-price">
-          <p className="text-sm font-bold">₹ {parseFloat(item.price).toFixed(2)}</p>
-        </div>
+      <button
+        onClick={onIncreaseQuantity}
+        className="bg-gray-200 p-1 rounded-full text-gray-600 hover:bg-gray-300"
+      >
+        <AiOutlinePlus size={16} />
+      </button>
+    </div>
 
-          <div className="cart__item-actions flex gap-5 items-center">
-            <button
-             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-             onClick={onDecreaseQuantity}
-            >
-              -
-            </button>
-            
-            <p className="text-xs text-center">{item.quantity}</p>
+    <div className="cart__item-total text-sm font-bold">
+      ₹ {parseFloat(item.totalPrice).toFixed(2)}
+    </div>
+  </div>
+  
+  <div
+    onClick={(e) => onRemoveItem(e, true)}
+    className="mx-2 p-1 rounded-md bg-red-500 cursor-pointer transition-all hover:scale-90"
+  >
+    <UilTrashAlt className="w-5 text-white" />
+  </div>
+</div>
 
-            <button
-             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-             onClick={onIncreaseQuantity}
-            >
-              +
-            </button>
-      {/* Display total price here */}
-         <div className="cart__item-total">
-            <p className="text-sm font-bold">₹ {parseFloat(item.totalPrice).toFixed(2)}</p>
-          </div>
-
-            {/* <p className="text-xs font-bold text-center flex-1">
-              ₹ {parseFloat(item.totalPrice).toFixed(3)}
-            </p> */}
-          </div>
-        </div>
-        <div
-          onClick={(e) => onRemoveItem(e, true)}
-          className=" mx-2 p-1 rounded-md bg-red-500 cursor-pointer transition-all hover:scale-90"
-        >
-          <UilTrashAlt className="w-5 text-white" />
-        </div>
-      </div>
       {showModal && (
         <CustomModal
           onClose={() => {
