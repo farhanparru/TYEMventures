@@ -48,10 +48,12 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   const onItemClick = useCallback((item) => {
     const cartItem = {
-      Id: item.Id,  // Use the correct field name here
+      id: item.Id,  // Make sure the 'id' matches the one used in the reducer
       name: item.ItemName,
       price: item.Price,
     };
+    console.log(cartItem, "cartItem");
+  
     dispatch(addToCart(cartItem));
   }, [dispatch]);
   

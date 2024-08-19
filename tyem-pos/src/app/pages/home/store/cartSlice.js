@@ -25,13 +25,13 @@ export const cartSlice = createSlice({
     addToCart: (state, action) => {
       const { orderitems, totalAmount } = state;
       let currentTotal = totalAmount;
-      
-      const product_Id = action.payload.id;
-    console.log(product_Id,"product_Id");
+    
+      const product_Id = action.payload.id; // Ensure correct case for 'id' field
+      console.log(product_Id, "product_Id");
     
       // Find if the item already exists in the cart based on Id
       const existingItem = orderitems.find((item) => item.id === product_Id);
-    console.log(existingItem,"existingItem");
+      console.log(existingItem, "existingItem");
     
       if (existingItem) {
         // If item exists, update its quantity and total price
@@ -47,8 +47,8 @@ export const cartSlice = createSlice({
           quantity: 1,
           totalPrice: parseFloat(action.payload.price).toFixed(2),
         };
-        console.log(newItem,"newItem");
-        
+        console.log(newItem, "newItem");
+    
         orderitems.push(newItem);
         currentTotal = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
       }
@@ -58,7 +58,8 @@ export const cartSlice = createSlice({
       state.totalAmountWithoutDiscount = currentTotal;
       state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
       state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
-    },
+    }
+    ,
     
     
     removeFromCart: (state, action) => {
