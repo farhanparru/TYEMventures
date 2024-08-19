@@ -22,53 +22,39 @@ export const cartSlice = createSlice({
   initialState: initialState,
 
   reducers: {
-
     addToCart: (state, action) => {
       const { orderitems, totalAmount } = state;
       let currentTotal = totalAmount;
+      const product_Id = action.payload.Id;
     
-      const product_Id = action.payload.Id;  // Use `Id` from the payload
+      // Find if the item already exists in the cart based on Id
+      const existingItem = orderitems.find((item) => item.id === product_Id);
     
-      // Find if the item already exists in the cart based on `Id`
-      const existingItemIndex = orderitems.findIndex((item) => item.id === product_Id);
-      let newOrderItems;
-    
-      if (existingItemIndex !== -1) {
+      if (existingItem) {
         // If item exists, update its quantity and total price
-        const updatedItem = {
-          ...orderitems[existingItemIndex],
-          quantity: orderitems[existingItemIndex].quantity + 1,
-          totalPrice: (orderitems[existingItemIndex].price * (orderitems[existingItemIndex].quantity + 1)).toFixed(2),
-        };
-        currentTotal = parseFloat(currentTotal) + parseFloat(updatedItem.price);
-        newOrderItems = [
-          ...orderitems.slice(0, existingItemIndex),
-          updatedItem,
-          ...orderitems.slice(existingItemIndex + 1),
-        ];
+        existingItem.quantity += 1;
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+        currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
       } else {
         // If item does not exist, add it to the cart
         const newItem = {
-          id: product_Id,  // Use `Id` from the item
-          name: action.payload.ItemName,
-          price: action.payload.Price,
+          Id: product_Id,
+          name: action.payload.name,
+          price: action.payload.price,
           quantity: 1,
-          totalPrice: parseFloat(action.payload.Price).toFixed(2),
+          totalPrice: parseFloat(action.payload.price).toFixed(2),
         };
-        newOrderItems = [...orderitems, newItem];
+        orderitems.push(newItem);
         currentTotal = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
       }
     
       // Update state values
-      return {
-        ...state,
-        orderitems: newOrderItems,
-        totalAmount: currentTotal,
-        totalAmountWithoutDiscount: currentTotal,
-        tax: parseFloat((currentTotal * 0.1).toFixed(2)),
-        totalPayableAmount: parseFloat((currentTotal + state.tax - state.discount).toFixed(2)),
-      };
+      state.totalAmount = currentTotal;
+      state.totalAmountWithoutDiscount = currentTotal;
+      state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
+      state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
     },
+    
     
     removeFromCart: (state, action) => {
       const { orderitems, totalAmount } = state;
