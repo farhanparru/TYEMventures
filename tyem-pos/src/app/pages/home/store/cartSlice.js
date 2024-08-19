@@ -64,6 +64,7 @@ export const cartSlice = createSlice({
 
 
     decreaseFromCart: (state, action) => {
+      console.log("decreaseFromCart action called with payload:", action.payload);
       const product_Id = action.payload.id;
       const existingItem = state.orderitems.find((cartItem) => cartItem.id === product_Id);
     
