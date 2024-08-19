@@ -22,9 +22,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const fetchedItems = response.data;
 
         // Filter items based on the selected category
-        const filteredItems = selectedCategory === 'All'
-          ? fetchedItems
-          : fetchedItems.filter(item => item.category === selectedCategory);
+        const filteredItems = selectedCategory === 'All' ? fetchedItems: fetchedItems.filter(item => item.category === selectedCategory);
 
         // Split items into three columns
         const totalItems = filteredItems.length;
@@ -36,6 +34,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
         setItems({
           firstColumn: filteredItems.slice(0, itemsPerColumn),
+          
           // secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
           // thirdColumn: filteredItems.slice(2 * itemsPerColumn),
         });
@@ -63,6 +62,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   // Memoize column data
   const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
+  console.log(firstColumnItems,"firstColumnItems");
+  
   const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
   const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
 
