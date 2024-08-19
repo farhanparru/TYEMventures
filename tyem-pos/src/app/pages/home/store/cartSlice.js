@@ -37,7 +37,7 @@ export const cartSlice = createSlice({
         // If item exists, update its quantity and total price
         existingItem.quantity += 1;
         existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-        currentTotal = parseFloat(currentTotal) + parseFloat(existingItem.price);
+        currentTotal += parseFloat(existingItem.price);
       } else {
         // If item does not exist, add it to the cart
         const newItem = {
@@ -50,7 +50,7 @@ export const cartSlice = createSlice({
         console.log(newItem, "newItem");
     
         orderitems.push(newItem);
-        currentTotal = parseFloat(totalAmount) + parseFloat(newItem.totalPrice);
+        currentTotal += parseFloat(newItem.totalPrice);
       }
     
       // Update state values
@@ -62,19 +62,20 @@ export const cartSlice = createSlice({
 
 
 
-    decreaseFromCart: (state, action) => {
-      const { item } = action.payload;
-      const existingItem = state.orderitems.find((cartItem) => cartItem.id === item.id);
 
+    decreaseFromCart: (state, action) => {
+      const product_Id = action.payload.id;
+      const existingItem = state.orderitems.find((cartItem) => cartItem.id === product_Id);
+    
       if (existingItem && existingItem.quantity > 1) {
         existingItem.quantity -= 1;
         existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
         state.totalAmount -= parseFloat(existingItem.price);
       } else if (existingItem && existingItem.quantity === 1) {
-        state.orderitems = state.orderitems.filter((cartItem) => cartItem.id !== item.id);
+        state.orderitems = state.orderitems.filter((cartItem) => cartItem.id !== product_Id);
         state.totalAmount -= parseFloat(existingItem.price);
       }
-
+    
       state.tax = parseFloat((state.totalAmount * 0.1).toFixed(2));
       state.totalPayableAmount = parseFloat((state.totalAmount + state.tax - state.discount).toFixed(2));
     },

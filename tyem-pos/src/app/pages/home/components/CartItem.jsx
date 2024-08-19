@@ -32,13 +32,13 @@ import TextArea from "antd/es/input/TextArea";
 const CartItem = ({ item, index }) => {
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
-    dispatch(addToCart({ item }));
+    dispatch(addToCart({ id: item.id, name: item.name, price: item.price }));
   };
 
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
-    dispatch(decreaseFromCart({ item }));
-  };
+    dispatch(decreaseFromCart({ id: item.id }));
+  };;
 
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
@@ -49,9 +49,7 @@ const CartItem = ({ item, index }) => {
   const [itemNote, setitemNote] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  const handleIncrement = () => dispatch(incrementQuantity(item.id));
-  const handleDecrement = () => dispatch(decrementQuantity(item.id));
-
+  
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
     dispatch(
@@ -199,7 +197,7 @@ const CartItem = ({ item, index }) => {
     <div className="cart__item-quantity flex items-center gap-2">
       <button
         onClick={onDecreaseQuantity}
-        className="bg-gray-200 p-1 rounded-full text-gray-600 hover:bg-gray-300"
+         className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
       >
         <AiOutlineMinus size={16} />
       </button>
@@ -208,7 +206,7 @@ const CartItem = ({ item, index }) => {
 
       <button
         onClick={onIncreaseQuantity}
-        className="bg-gray-200 p-1 rounded-full text-gray-600 hover:bg-gray-300"
+         className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
       >
         <AiOutlinePlus size={16} />
       </button>

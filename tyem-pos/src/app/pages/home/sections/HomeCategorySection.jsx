@@ -27,27 +27,32 @@ const HomeCategorySection = ({ onCategorySelect }) => {
 
   return (
     <div className="w-64 bg-white shadow-lg rounded-lg overflow-hidden">
-    {/* All Category */}
-    <div
-      className={`text-center py-2 font-semibold text-lg cursor-pointer 
-        ${selectedCategory === 'All' ? 'bg-teal-600 text-white' : 'bg-teal-500 text-teal-600 hover:bg-teal-600'}`}
-      onClick={() => handleCategoryClick('All')}
-    >
-      All
-    </div>
-    
-    {/* Other Categories */}
-    <div className="flex flex-col max-h-96 overflow-y-auto">
-      {categories.map((category, index) => (
-        <div
-          key={index}
-          className={`text-center py-2 cursor-pointer 
-            ${selectedCategory === category ? 'bg-teal-600 text-white hover:bg-teal-700' : 'text-teal-600 border-t border-teal-600 hover:bg-teal-100'}`}
-          onClick={() => handleCategoryClick(category)}
-        >
-          {category}
-        </div>
-      ))}
+      {/* Total Items */}
+      <div className="text-right p-2 text-sm text-gray-600">
+        Showing <span className="font-bold text-black">{categories.length}</span> / <span className="font-bold text-black">{totalItems}</span> items
+      </div>
+      
+      {/* All Category */}
+      <div
+        className={`text-center py-2 font-semibold text-lg cursor-pointer 
+          ${selectedCategory === 'All' ? 'bg-teal-600 text-white' : 'bg-teal-500 text-teal-600 hover:bg-teal-600'}`}
+        onClick={() => handleCategoryClick('All')}
+      >
+        All
+      </div>
+      
+      {/* Other Categories */}
+      <div className="flex flex-col max-h-96 overflow-y-auto">
+        {categories.map((category, index) => (
+          <div
+            key={index}
+            className={`text-center py-2 cursor-pointer 
+              ${selectedCategory === category ? 'bg-teal-600 text-white hover:bg-teal-700' : 'text-teal-600 border-t border-teal-600 hover:bg-teal-100'}`}
+            onClick={() => handleCategoryClick(category)}
+          >
+            {category}
+          </div>
+        ))}
       </div>
     </div>
   );
