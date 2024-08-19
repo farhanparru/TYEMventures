@@ -20,11 +20,12 @@ import {
   setSelectedAddon,
   setSingleItemDiscount,
   updateItemNote,
-  decreaseQuantity,
-  increaseQuantity
+  
+  
 } from "../store/cartSlice";
 
-
+import  decreaseQuantity from '../store/cartSlice'
+import increaseQuantity from '../store/cartSlice'
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
