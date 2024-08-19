@@ -37,10 +37,11 @@ export const cartSlice = createSlice({
           currentTotal += parseFloat(existingItem.price);
         } else if (type === 'decrease') {
           // Decrease quantity
-          if (existingItem.quantity > 1) {
+          if (existingItem) {
             existingItem.quantity -= 1;
             existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
             currentTotal -= parseFloat(existingItem.price);
+
           } else {
             // Remove item if quantity is 1 and decrease is requested
             state.orderitems = state.orderitems.filter((item) => item.id !== id);
