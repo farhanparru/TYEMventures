@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const HomeCategorySection = ({ onCategorySelect }) => {
   const [categories, setCategories] = useState([]);
+  const [totalItems, setTotalItems] = useState(0); // Added state for total items
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
