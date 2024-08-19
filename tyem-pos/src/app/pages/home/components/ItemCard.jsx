@@ -20,6 +20,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems');
         const fetchedItems = response.data;
 
+        
+
         // Filter items based on the selected category
         const filteredItems = selectedCategory === 'All'
           ? fetchedItems
@@ -27,12 +29,12 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
         // Split items into three columns
         const totalItems = filteredItems.length;
-        const itemsPerColumn = Math.ceil(totalItems / 2);
+        const itemsPerColumn = Math.ceil(totalItems / 3);
 
            
 
         setItems({
-          firstColumn: filteredItems.slice(0, itemsPerColumn),
+          // firstColumn: filteredItems.slice(0, itemsPerColumn),
           // secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
           // thirdColumn: filteredItems.slice(2 * itemsPerColumn),
         });
@@ -52,7 +54,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       name: item.ItemName,
       price: item.Price,
     };
-    console.log(cartItem, "cartItem");
+   
   
     dispatch(addToCart(cartItem));
   }, [dispatch]);
@@ -72,7 +74,10 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   return (
     <div className="flex justify-between gap-x-10 p-6">
       <div className="flex flex-col space-y-9">
-        {firstColumnItems.map((item) => (
+
+     
+
+        {fetchedItems.map((item) => (
           <div
             key={item.Id}
             onClick={() => onItemClick(item)}
