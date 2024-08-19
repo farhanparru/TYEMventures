@@ -48,12 +48,13 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
   const onItemClick = useCallback((item) => {
     const cartItem = {
-      Id: item.Id,
+      Id: item.Id,  // Use the correct field name here
       name: item.ItemName,
       price: item.Price,
     };
     dispatch(addToCart(cartItem));
   }, [dispatch]);
+  
 
   // Memoize column data
   const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
