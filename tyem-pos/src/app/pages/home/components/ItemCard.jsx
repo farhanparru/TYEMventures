@@ -8,7 +8,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   console.log('ItemCard render');
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
-  const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
+  const [items, setItems] = useState([]);
+  console.log(items,"rendring");
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -62,6 +64,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
   const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
   const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
+
+
 
   if (loading) {
     return <div>Loading...</div>;

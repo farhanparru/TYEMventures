@@ -64,10 +64,9 @@ export const cartSlice = createSlice({
 
 
     decreaseFromCart: (state, action) => {
-      console.log("decreaseFromCart action called with payload:", action.payload);
       const product_Id = action.payload.id;
       const existingItem = state.orderitems.find((cartItem) => cartItem.id === product_Id);
-    
+
       if (existingItem && existingItem.quantity > 1) {
         existingItem.quantity -= 1;
         existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
@@ -76,7 +75,7 @@ export const cartSlice = createSlice({
         state.orderitems = state.orderitems.filter((cartItem) => cartItem.id !== product_Id);
         state.totalAmount -= parseFloat(existingItem.price);
       }
-    
+
       state.tax = parseFloat((state.totalAmount * 0.1).toFixed(2));
       state.totalPayableAmount = parseFloat((state.totalAmount + state.tax - state.discount).toFixed(2));
     },
@@ -298,7 +297,7 @@ export const cartSlice = createSlice({
 export const {
   addToCart,
   removeFromCart,
-  decreaseFromCart,
+ 
   updateItemNote,
   setDiscount,
   setAmountToBeReturned,
@@ -312,5 +311,6 @@ export const {
 } = cartSlice.actions;
 
 export const getorderitems = (state) => state.cart.orderitems;
+export const { decreaseFromCart } = cartSlice.actions; // Access actions here
 
 export default cartSlice.reducer;
