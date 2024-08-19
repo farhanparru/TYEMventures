@@ -202,7 +202,7 @@ const CartItem = ({ item, index }) => {
           </div>
 
           <div className="cart__item-price">
-          <p className="text-sm font-bold">₹ {parseFloat(item.Price).toFixed(2)}</p>
+          <p className="text-sm font-bold">₹ {parseFloat(item.price).toFixed(2)}</p>
         </div>
 
           <div className="cart__item-actions flex gap-5 items-center">
