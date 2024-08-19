@@ -72,7 +72,7 @@ const Badge = styled.span`
 
 const DrawerMenuItemContainer = styled.div`
   width: 100%;
-  padding: 0.75rem;
+  padding: 2.75rem;
   height: 6rem; /* Increased height for more spacing */
   display: flex;
   flex-direction: column;
@@ -194,13 +194,13 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       path: drawerMenuLabels.sales.path,
       shortcut: "Alt+7",
     },
-    {
-      label: drawerMenuLabels.scheduledOrders.label,
-      icon: AiOutlineShoppingCart, // Scheduled Orders icon
-      onClick: () => setActiveMenu(drawerMenuLabels.scheduledOrders.label),
-      path: drawerMenuLabels.scheduledOrders.path,
-      shortcut: "Alt+8",
-    }
+    // {
+    //   label: drawerMenuLabels.scheduledOrders.label,
+    //   icon: AiOutlineShoppingCart, // Scheduled Orders icon
+    //   onClick: () => setActiveMenu(drawerMenuLabels.scheduledOrders.label),
+    //   path: drawerMenuLabels.scheduledOrders.path,
+    //   shortcut: "Alt+8",
+    // }
   ];
 
   return (

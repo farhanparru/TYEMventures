@@ -57,7 +57,6 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       price: item.Price,
     };
     console.log(cartItem, "cartItem");
-  
     dispatch(addToCart(cartItem));
   }, [dispatch]);
   

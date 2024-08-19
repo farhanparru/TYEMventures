@@ -7,7 +7,7 @@ export const drawerMenuLabels = {
 
   online: { label: "ONLINE ORDERS", path: "/online" },
   sales: { label: "SALES", path: "/sales" }, // New entry
-  scheduledOrders: { label: "ScheduleOrders", path: "/scheduled-orders" }, // New entry
+//   scheduledOrders: { label: "ScheduleOrder", path: "/scheduled-orders" }, // New entry
   orders: { label: "Items", path: "/orders" },
 
   reports: { label: "REPORTS", path: "/reports" },
