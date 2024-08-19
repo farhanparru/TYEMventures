@@ -23,43 +23,49 @@ export const cartSlice = createSlice({
 
   reducers: {
     addToCart: (state, action) => {
-      const { orderitems, totalAmount } = state;
-      let currentTotal = totalAmount;
-    
-      const product_Id = action.payload.id; // Ensure correct case for 'id' field
-      console.log(product_Id, "product_Id");
-    
+      const { id, type } = action.payload; // 'type' to differentiate between add and remove
+      let currentTotal = state.totalAmount;
+
       // Find if the item already exists in the cart based on Id
-      const existingItem = orderitems.find((item) => item.id === product_Id);
-      console.log(existingItem, "existingItem");
-    
+      const existingItem = state.orderitems.find((item) => item.id === id);
+
       if (existingItem) {
-        // If item exists, update its quantity and total price
-        existingItem.quantity += 1;
-        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-        currentTotal += parseFloat(existingItem.price);
-      } else {
-        // If item does not exist, add it to the cart
+        if (type === 'increase') {
+          // If item exists and type is 'increase', update its quantity and total price
+          existingItem.quantity += 1;
+          existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+          currentTotal += parseFloat(existingItem.price);
+        } else if (type === 'decrease') {
+          // If item exists and type is 'decrease'
+          if (existingItem.quantity > 1) {
+            existingItem.quantity -= 1;
+            existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+            currentTotal -= parseFloat(existingItem.price);
+          } else {
+            // Remove item if quantity is 1 and decrease is requested
+            state.orderitems = state.orderitems.filter((item) => item.id !== id);
+            currentTotal -= parseFloat(existingItem.price);
+          }
+        }
+      } else if (type === 'increase') {
+        // If item does not exist and type is 'increase', add it to the cart
         const newItem = {
-          id: product_Id,
+          id,
           name: action.payload.name,
           price: action.payload.price,
           quantity: 1,
           totalPrice: parseFloat(action.payload.price).toFixed(2),
         };
-        console.log(newItem, "newItem");
-    
-        orderitems.push(newItem);
+        state.orderitems.push(newItem);
         currentTotal += parseFloat(newItem.totalPrice);
       }
-    
+
       // Update state values
       state.totalAmount = currentTotal;
       state.totalAmountWithoutDiscount = currentTotal;
       state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
       state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
     },
-
 
 
 
