@@ -168,7 +168,7 @@ const CartItem = ({ item, index }) => {
   return (
     <div>
       <div
-        className={`w-full  border border-zinc-300   rounded-lg flex justify-between p-2 items-center cursor-pointer transition-all  ${"bg-gray-100 text-gray-800 hover:scale-95"}`}
+        className={`w-full  border border-zinc-300   rounded-lg flex justify-between p-2 items-center cursor-pointer transition-all  ${"bg-gray-100 text-gray-800 "}`}
       >
         {/* <UilAngleDown
           onClick={() => setShowModal(true)}
@@ -223,7 +223,7 @@ const CartItem = ({ item, index }) => {
           }}
         >
           <div className="p-6 flex flex-col gap-3">
-            <p className="text-sm font-black text-gray-800">{item.name}</p>
+            {/* <p className="text-sm font-black text-gray-800">{item.name}</p> */}
             <div className="w-full  gap-4   flex justify-between px-5 py-7 items-center ">
               {/* <Avatar shape="square" size={"large"} src={item.image}></Avatar> */}
               <div className="cart__item-details flex-1 mx-2">
