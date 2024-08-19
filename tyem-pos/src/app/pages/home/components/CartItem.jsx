@@ -30,6 +30,7 @@ import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
+  
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
     dispatch(addToCart({ id: item.id, name: item.name, price: item.price }));
@@ -37,9 +38,10 @@ const CartItem = ({ item, index }) => {
 
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
+    console.log("Dispatching decreaseFromCart with id:", item.id); // Debug
     dispatch(decreaseFromCart({ id: item.id }));
-  };;
-
+  };
+  
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
 

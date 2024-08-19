@@ -5,9 +5,7 @@ import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 const ItemCard = React.memo(({ selectedCategory }) => {
- 
   
-  const [newData,setnewData]=useState([])
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
@@ -22,8 +20,6 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems');
         const fetchedItems = response.data;
 
-        
-
         // Filter items based on the selected category
         const filteredItems = selectedCategory === 'All'
           ? fetchedItems
@@ -33,12 +29,14 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const totalItems = filteredItems.length;
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
-        setnewData(fetchedItems)
+             // Log the split items
+             console.log('Filtered Items:', filteredItems);
+             console.log('Items Per Column:', itemsPerColumn);
 
         setItems({
-          // firstColumn: filteredItems.slice(0, itemsPerColumn),
-          // secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
-          // thirdColumn: filteredItems.slice(2 * itemsPerColumn),
+          firstColumn: filteredItems.slice(0, itemsPerColumn),
+          secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
+          thirdColumn: filteredItems.slice(2 * itemsPerColumn),
         });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
@@ -56,7 +54,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       name: item.ItemName,
       price: item.Price,
     };
-   
+    console.log(cartItem, "cartItem");
   
     dispatch(addToCart(cartItem));
   }, [dispatch]);
@@ -76,10 +74,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   return (
     <div className="flex justify-between gap-x-10 p-6">
       <div className="flex flex-col space-y-9">
-
-     
-
-        {newData.map((item) => (
+        {firstColumnItems.map((item) => (
           <div
             key={item.Id}
             onClick={() => onItemClick(item)}
@@ -92,7 +87,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         ))}
       </div>
       <div className="flex flex-col space-y-9">
-        {/* {secondColumnItems.map((item) => (
+        {secondColumnItems.map((item) => (
           <div
             key={item.Id}
             onClick={() => onItemClick(item)}
@@ -102,10 +97,10 @@ const ItemCard = React.memo(({ selectedCategory }) => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))} */}
+        ))}
       </div>
       <div className="flex flex-col space-y-9">
-        {/* {thirdColumnItems.map((item) => (
+        {thirdColumnItems.map((item) => (
           <div
             key={item.Id}
             onClick={() => onItemClick(item)}
@@ -115,7 +110,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))} */}
+        ))}
       </div>
     </div>
   );
