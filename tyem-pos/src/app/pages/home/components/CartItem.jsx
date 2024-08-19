@@ -22,7 +22,7 @@ import {
   updateItemNote,
 } from "../store/cartSlice";
 
-import decreaseFromCart from "../store/cartSlice";
+
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
@@ -33,15 +33,17 @@ const CartItem = ({ item, index }) => {
 
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
-    console.log("Dispatching addToCart with decrease type for id:", item.id); // Debug
+    console.log("Dispatching addToCart with decrease type for id:", item.id);
     dispatch(addToCart({ id: item.id, type: 'decrease' }));
   };
-
+  
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
-    console.log("Dispatching addToCart with increase type for id:", item.id); // Debug
+    console.log("Dispatching addToCart with increase type for id:", item.id);
     dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
   };
+  
+  
 
 
   
