@@ -19,7 +19,8 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems');
         const fetchedItems = response.data;
-
+        console.log(response,"response");
+        
         // Filter items based on the selected category
         const filteredItems = selectedCategory === 'All'
           ? fetchedItems
