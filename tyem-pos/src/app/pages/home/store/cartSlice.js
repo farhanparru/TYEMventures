@@ -23,52 +23,47 @@ export const cartSlice = createSlice({
 
   reducers: {
     addToCart: (state, action) => {
-      const { id, type, name, price } = action.payload; // Extracting data from action
-      let currentTotal = state.totalAmount;
-
-      // Find if the item already exists in the cart
-      const existingItem = state.orderitems.find((item) => item.id === id);
-
+      const { orderitems, totalAmount } = state;
+      let currentTotal = totalAmount;
+    
+      const product_Id = action.payload.id; // Ensure correct case for 'id' field
+      console.log(product_Id, "product_Id");
+    
+      // Find if the item already exists in the cart based on Id
+      const existingItem = orderitems.find((item) => item.id === product_Id);
+      console.log(existingItem, "existingItem");
+    
       if (existingItem) {
-        if (type === 'increase') {
-          // Increase quantity if the type is 'increase'
-          existingItem.quantity += 1;
-          existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-          currentTotal += parseFloat(existingItem.price);
-        } else if (type === 'decrease') {
-          // Decrease quantity if the type is 'decrease'
-          if (existingItem.quantity > 1) {
-            existingItem.quantity -= 1;
-            existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
-            currentTotal -= parseFloat(existingItem.price);
-          } else {
-            // Remove item if quantity is 1 and type is 'decrease'
-            state.orderitems = state.orderitems.filter((item) => item.id !== id);
-            currentTotal -= parseFloat(existingItem.price);
-          }
-        }
-      } else if (type === 'increase') {
-        // Add item if it doesn’t exist and type is 'increase'
+        // If item exists, update its quantity and total price
+        existingItem.quantity += 1;
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+        currentTotal += parseFloat(existingItem.price);
+      } else {
+        // If item does not exist, add it to the cart
         const newItem = {
-          id,
-          name,
-          price,
+          id: product_Id,
+          name: action.payload.name,
+          price: action.payload.price,
           quantity: 1,
-          totalPrice: parseFloat(price).toFixed(2),
+          totalPrice: parseFloat(action.payload.price).toFixed(2),
         };
-        state.orderitems.push(newItem);
+        console.log(newItem, "newItem");
+    
+        orderitems.push(newItem);
         currentTotal += parseFloat(newItem.totalPrice);
       }
-
+    
       // Update state values
       state.totalAmount = currentTotal;
       state.totalAmountWithoutDiscount = currentTotal;
       state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
       state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
     },
-  
 
-    
+
+
+  
+  
 
 
     
@@ -281,12 +276,10 @@ export const cartSlice = createSlice({
     // }
   },
 });
-
-
-
 export const {
   addToCart,
   removeFromCart,
+ 
   updateItemNote,
   setDiscount,
   setAmountToBeReturned,
