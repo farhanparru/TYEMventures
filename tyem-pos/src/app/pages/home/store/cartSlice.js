@@ -58,8 +58,31 @@ export const cartSlice = createSlice({
       state.totalAmountWithoutDiscount = currentTotal;
       state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
       state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
-    }
-    ,
+    },
+
+
+
+    decreaseFromCart: (state, action) => {
+      const { item } = action.payload;
+      const existingItem = state.orderitems.find((cartItem) => cartItem.id === item.id);
+
+      if (existingItem && existingItem.quantity > 1) {
+        existingItem.quantity -= 1;
+        existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+        state.totalAmount -= parseFloat(existingItem.price);
+      } else if (existingItem && existingItem.quantity === 1) {
+        state.orderitems = state.orderitems.filter((cartItem) => cartItem.id !== item.id);
+        state.totalAmount -= parseFloat(existingItem.price);
+      }
+
+      state.tax = parseFloat((state.totalAmount * 0.1).toFixed(2));
+      state.totalPayableAmount = parseFloat((state.totalAmount + state.tax - state.discount).toFixed(2));
+    },
+  
+
+    
+
+
     
     
     removeFromCart: (state, action) => {
@@ -273,6 +296,7 @@ export const cartSlice = createSlice({
 export const {
   addToCart,
   removeFromCart,
+  decreaseFromCart,
   updateItemNote,
   setDiscount,
   setAmountToBeReturned,

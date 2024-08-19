@@ -21,8 +21,8 @@ import {
   updateItemNote,
 } from "../store/cartSlice";
 
-import  decrementQuantity  from '../store/cartSlice';
-import  incrementQuantity from '../store/cartSlice';
+import  decreaseFromCart  from '../store/cartSlice';
+
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
@@ -30,6 +30,18 @@ import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
+
+  const onIncreaseQuantity = (e) => {
+    e.stopPropagation();
+    dispatch(addToCart({ item }));
+  };
+
+  const onDecreaseQuantity = (e) => {
+    e.stopPropagation();
+    dispatch(decreaseFromCart({ item }));
+  };
+
+
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
 
@@ -54,10 +66,11 @@ const CartItem = ({ item, index }) => {
       })
     );
   };
-  const onAddItem = (e) => {
-    e.stopPropagation();
-    dispatch(addToCart({ item: item, isUpdateProduct: true }));
-  };
+
+  // const onAddItem = (e) => {
+  //   e.stopPropagation();
+  //   dispatch(addToCart({ item: item, isUpdateProduct: true }));
+  // };
 
   const onUpdateItemNote = (item) => {
     // e.stopPropagation();
@@ -187,10 +200,15 @@ const CartItem = ({ item, index }) => {
             </p>
             {/* <p className="text-xs ">{`(${item.size} ML)`}</p> */}
           </div>
+
+          <div className="cart__item-price">
+          <p className="text-sm font-bold">₹ {parseFloat(item.Price).toFixed(2)}</p>
+        </div>
+
           <div className="cart__item-actions flex gap-5 items-center">
             <button
              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-             onClick={onAddItem}
+             onClick={onDecreaseQuantity}
             >
               -
             </button>
@@ -199,10 +217,14 @@ const CartItem = ({ item, index }) => {
 
             <button
              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-             onClick={onAddItem}
+             onClick={onIncreaseQuantity}
             >
               +
             </button>
+      {/* Display total price here */}
+         <div className="cart__item-total">
+            <p className="text-sm font-bold">₹ {parseFloat(item.totalPrice).toFixed(2)}</p>
+          </div>
 
             {/* <p className="text-xs font-bold text-center flex-1">
               ₹ {parseFloat(item.totalPrice).toFixed(3)}
@@ -223,7 +245,7 @@ const CartItem = ({ item, index }) => {
           }}
         >
           <div className="p-6 flex flex-col gap-3">
-            {/* <p className="text-sm font-black text-gray-800">{item.name}</p> */}
+            <p className="text-sm font-black text-gray-800">{item.name}</p>
             <div className="w-full  gap-4   flex justify-between px-5 py-7 items-center ">
               {/* <Avatar shape="square" size={"large"} src={item.image}></Avatar> */}
               <div className="cart__item-details flex-1 mx-2">
@@ -280,7 +302,7 @@ const CartItem = ({ item, index }) => {
                     </div>
                   )}
                 </div>
-                <div
+                {/* <div
                   onClick={(e) => onRemoveItem(e, false)}
                   className=" w-[30%] p-2 rounded-lg flex items-center justify-center bg-red-500 cursor-pointer transition-all hover:scale-90"
                 >
@@ -294,7 +316,7 @@ const CartItem = ({ item, index }) => {
                   className=" w-[30%] p-2 rounded-lg flex items-center justify-center bg-red-500 cursor-pointer transition-all hover:scale-90"
                 >
                   <UilPlus className="w-5 text-white" />
-                </div>
+                </div> */}
                 {/* <div className="flex  items-center gap-2 absolute top-[-100%] right-[-10%] cursor-pointer transition-all hover:scale-90">
                   <UilEdit className="w-5 text-chicket-600 " />
                   <p className="text-xs  text-medium text-chicket-600 text-center flex-1 ">
