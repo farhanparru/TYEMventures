@@ -28,16 +28,16 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         const totalItems = filteredItems.length;
         const itemsPerColumn = Math.ceil(totalItems / 3);
 
-             // Log the split items
-             console.log('Filtered Items:', filteredItems);
-             console.log('Items Per Column:', itemsPerColumn);
+            //  // Log the split items
+            //  console.log('Filtered Items:', filteredItems);
+            //  console.log('Items Per Column:', itemsPerColumn);
 
-        setItems({
-          firstColumn: filteredItems.slice(0, itemsPerColumn),
+        // setItems({
+        //   firstColumn: filteredItems.slice(0, itemsPerColumn),
           
-          // secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
-          // thirdColumn: filteredItems.slice(2 * itemsPerColumn),
-        });
+        //   // secondColumn: filteredItems.slice(itemsPerColumn, 2 * itemsPerColumn),
+        //   // thirdColumn: filteredItems.slice(2 * itemsPerColumn),
+        // });
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       } finally {
@@ -46,7 +46,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     };
 
     fetchItems();
-  }, []);
+  }, [selectedCategory]);
 
   
 
