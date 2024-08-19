@@ -31,17 +31,18 @@ import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
 
-const onIncreaseQuantity = (e) => {
-  e.stopPropagation();
-  console.log("Dispatching addToCart with increase type for id:", item.id); // Debug
-  dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
-};
+  const onDecreaseQuantity = (e) => {
+    e.stopPropagation();
+    console.log("Dispatching addToCart with decrease type for id:", item.id); // Debug
+    dispatch(addToCart({ id: item.id, type: 'decrease' }));
+  };
 
-const onDecreaseQuantity = (e) => {
-  e.stopPropagation();
-  console.log("Dispatching addToCart with decrease type for id:", item.id); // Debug
-  dispatch(addToCart({ id: item.id, type: 'decrease' }));
-};
+  const onIncreaseQuantity = (e) => {
+    e.stopPropagation();
+    console.log("Dispatching addToCart with increase type for id:", item.id); // Debug
+    dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
+  };
+
 
   
   const dispatch = useDispatch();
@@ -201,7 +202,7 @@ const onDecreaseQuantity = (e) => {
     <div className="cart__item-quantity flex items-center gap-2">
       <button
         onClick={onDecreaseQuantity}
-         className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
+        className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
       >
         <AiOutlineMinus size={16} />
       </button>
@@ -210,7 +211,7 @@ const onDecreaseQuantity = (e) => {
 
       <button
         onClick={onIncreaseQuantity}
-         className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
+        className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
       >
         <AiOutlinePlus size={16} />
       </button>

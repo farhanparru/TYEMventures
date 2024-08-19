@@ -23,7 +23,7 @@ export const cartSlice = createSlice({
 
   reducers: {
     addToCart: (state, action) => {
-      const { id, type } = action.payload; // 'type' to differentiate between add and remove
+      const { id, type, name, price } = action.payload; // Extracting properties
       let currentTotal = state.totalAmount;
 
       // Find if the item already exists in the cart based on Id
@@ -31,12 +31,12 @@ export const cartSlice = createSlice({
 
       if (existingItem) {
         if (type === 'increase') {
-          // If item exists and type is 'increase', update its quantity and total price
+          // Increase quantity
           existingItem.quantity += 1;
           existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
           currentTotal += parseFloat(existingItem.price);
         } else if (type === 'decrease') {
-          // If item exists and type is 'decrease'
+          // Decrease quantity
           if (existingItem.quantity > 1) {
             existingItem.quantity -= 1;
             existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
@@ -48,13 +48,13 @@ export const cartSlice = createSlice({
           }
         }
       } else if (type === 'increase') {
-        // If item does not exist and type is 'increase', add it to the cart
+        // Add item to the cart if it doesn't exist
         const newItem = {
           id,
-          name: action.payload.name,
-          price: action.payload.price,
+          name,
+          price,
           quantity: 1,
-          totalPrice: parseFloat(action.payload.price).toFixed(2),
+          totalPrice: parseFloat(price).toFixed(2),
         };
         state.orderitems.push(newItem);
         currentTotal += parseFloat(newItem.totalPrice);
