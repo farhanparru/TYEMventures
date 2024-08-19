@@ -64,24 +64,19 @@ export const cartSlice = createSlice({
 
 
     decreaseFromCart: (state, action) => {
-      const product_Id = action.payload?.id; // Safeguard against undefined payload
-      if (!product_Id) {
-        console.error("Payload is missing or invalid", action.payload); // Debug
-        return;
-      }
-    
-      const existingItem = state.orderitems.find((cartItem) => cartItem.id === product_Id);
-    
+      const { id } = action.payload;
+      const existingItem = state.orderitems.find((item) => item.id === id);
+
       if (existingItem) {
         if (existingItem.quantity > 1) {
           existingItem.quantity -= 1;
           existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
           state.totalAmount -= parseFloat(existingItem.price);
         } else {
-          state.orderitems = state.orderitems.filter((cartItem) => cartItem.id !== product_Id);
+          state.orderitems = state.orderitems.filter((item) => item.id !== id);
           state.totalAmount -= parseFloat(existingItem.price);
         }
-    
+
         state.tax = parseFloat((state.totalAmount * 0.1).toFixed(2));
         state.totalPayableAmount = parseFloat((state.totalAmount + state.tax - state.discount).toFixed(2));
       }
