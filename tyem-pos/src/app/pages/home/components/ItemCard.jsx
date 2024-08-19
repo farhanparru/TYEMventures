@@ -46,7 +46,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
     };
 
     fetchItems();
-  }, [selectedCategory]);
+  }, []);
+
+  
 
   const onItemClick = useCallback((item) => {
     const cartItem = {
@@ -61,11 +63,11 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   
 
   // Memoize column data
-  // const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
-  // console.log(firstColumnItems,"firstColumnItems");
+  const firstColumnItems = useMemo(() => items.firstColumn, [items.firstColumn]);
+  console.log(firstColumnItems,"firstColumnItems");
   
-  // const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
-  // const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
+  const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
+  const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
 
 
 
@@ -76,7 +78,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   return (
     <div className="flex justify-between gap-x-10 p-6">
       <div className="flex flex-col space-y-9">
-        {items.firstColumn.map((item) => (
+        {firstColumnItems.map((item) => (
           <div
             key={item.Id}
             onClick={() => onItemClick(item)}
