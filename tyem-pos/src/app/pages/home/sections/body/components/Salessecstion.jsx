@@ -30,10 +30,11 @@ const OrderItem = ({ order, onClick, selected }) => {
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId || order.orderDetails?.orderNumber} details`}
     >
-      {/* Badge to indicate the order type */}
-      <span className={`absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}>
+    {/* Badge to indicate the order type */}
+    <span className={`absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 py-1 px-4 font-medium border text-green-900 bg-green-100 border-green-300 rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500 text-white border-red-400' : 'bg-green-100 text-green-900 border-green-300'}`}>
         {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
       </span>
+
 
       <div>
         <h3 className="text-lg font-semibold">
@@ -231,9 +232,10 @@ const OrderDetails = ({ order }) => {
 
 
 
-const CartSection = ({ order }) => {
+const CartSection = ({ order, posOrders }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
+  // Menu items for actions
   const menu = (
     <Menu>
       <Menu.Item key="1" icon={<FaPrint />}>
@@ -243,10 +245,10 @@ const CartSection = ({ order }) => {
         Download
       </Menu.Item>
       <Menu.Item key="3" icon={<MailOutlined />}>
-        e-mail
+        Email
       </Menu.Item>
       <Menu.Item key="4" icon={<MessageOutlined />}>
-        sms
+        SMS
       </Menu.Item>
       <Menu.Item key="5" icon={<WhatsAppOutlined />}>
         WhatsApp
@@ -254,6 +256,7 @@ const CartSection = ({ order }) => {
     </Menu>
   );
 
+  // Display a message if no order is selected
   // if (!order) {
   //   return (
   //     <div className="p-6 bg-gray-100 text-gray-500 rounded-lg">
@@ -262,10 +265,15 @@ const CartSection = ({ order }) => {
   //   );
   // }
 
+  // Extract item details from the selected order
+  const items = order.orderDetails || [];
+  const totalAmount = items.reduce((sum, item) => sum + item.unit_price * item.product_quantity, 0);
+
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
+      {/* Cart Items */}
       <div className="flex-grow overflow-auto max-h-96">
-        {order?.orderDetails.map((item, index) => (
+        {items.map((item, index) => (
           <div
             key={index}
             className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
@@ -279,18 +287,18 @@ const CartSection = ({ order }) => {
       </div>
 
       {/* Summary and Actions */}
-      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg" style={{ marginBottom: "42px" }}>
+      <div className="mt-auto p-4 bg-gray-700 text-white rounded-lg" style={{ marginBottom: '42px' }}>
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
           <span>
-            {order?.orderMeta.paymentTendered} {order?.orderDetails[0]?.product_currency}
+            {order.orderMeta.paymentTendered} {order.orderDetails[0]?.product_currency}
           </span>
         </div>
 
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold">Total</span>
           <span>
-            <h1>{/* Display total price if needed */}</h1>
+            {totalAmount} {order.orderDetails[0]?.product_currency}
           </span>
         </div>
 
@@ -301,16 +309,12 @@ const CartSection = ({ order }) => {
           </button>
           <Dropdown
             overlay={menu}
-            trigger={["click"]}
+            trigger={['click']}
             onVisibleChange={(visible) => setDropdownVisible(visible)}
           >
             <button className="flex-1 flex items-center justify-center bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
-              Receipt{" "}
-              {dropdownVisible ? (
-                <UpOutlined className="ml-2" />
-              ) : (
-                <DownOutlined className="ml-2" />
-              )}
+              Receipt{' '}
+              {dropdownVisible ? <UpOutlined className="ml-2" /> : <DownOutlined className="ml-2" />}
             </button>
           </Dropdown>
         </div>
@@ -320,78 +324,80 @@ const CartSection = ({ order }) => {
 };
 
 
-const Salesssection = () => {
+const SalesSection = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [posOrders, setPosOrders] = useState([]); // State for POS Orders
 
-  // WebSocket for WhatsAppOrder real-time updates
+  // WebSocket for real-time updates
   useEffect(() => {
-    const wsWhatsApp = new WebSocket('wss://tyem.invenro.site');
+    const ws = new WebSocket('wss://tyem.invenro.site');
 
-    wsWhatsApp.onmessage = (event) => {
+    ws.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-      console.log('New WhatsApp WebSocket Order:', newOrder);
-
-      if (newOrder.orderMeta.paymentStatus === 'Completed') {
-        newOrder.orderType = 'WhatsAppOrder';
-        setOrders((prevOrders) => [newOrder, ...prevOrders]);
-      }
-    };
-
-    return () => {
-      wsWhatsApp.close();
-    };
-  }, []);
-
-  // WebSocket for PosOrder real-time updates
-  useEffect(() => {
-    const wsPosOrder = new WebSocket('wss://tyem.invenro.site/pos');
-
-    wsPosOrder.onmessage = (event) => {
-      const newOrder = JSON.parse(event.data);
-      console.log('New PosOrder WebSocket Order:', newOrder);
+      console.log('New WebSocket Order:', newOrder);
 
       if (newOrder.status === 'COMPLETED') {
         newOrder.orderType = 'PosOrder';
-        setOrders((prevOrders) => [newOrder, ...prevOrders]);
+
+        if (newOrder.orderType === 'PosOrder') {
+          // Update the POS orders list
+          setPosOrders((prevPosOrders) => {
+            const updatedOrders = prevPosOrders.filter(order => order._id !== newOrder._id);
+            return [newOrder, ...updatedOrders];
+          });
+        } else if (newOrder.orderType === 'WhatsappOrder') {
+          setOrders((prevOrders) => [newOrder, ...prevOrders]);
+        }
       }
     };
 
     return () => {
-      wsPosOrder.close();
+      ws.close();
     };
   }, []);
 
-  // Fetch completed WhatsAppOrders and PosOrders from the APIs
+  // Fetch WhatsApp Orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        // Fetch WhatsApp Orders
-        const responseWhatsApp = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
-        console.log('WhatsApp API Response:', responseWhatsApp.data);
+        const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
+        console.log('API Response:', response.data);
 
-        // Fetch POS Orders
-        const responsePosOrder = await axios.get('https://tyem.invenro.site/api/user/PosOrder');
-        console.log('POS API Response:', responsePosOrder.data);
+        if (Array.isArray(response.data)) {
+          const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Completed');
+          console.log('Filtered Completed Orders:', completedOrders);
 
-        // Filter completed orders and add orderType
-        const completedWhatsAppOrders = responseWhatsApp.data.filter(order => order.orderMeta.paymentStatus === 'Completed').map(order => ({
-          ...order,
-          orderType: 'WhatsAppOrder',
-        }));
-
-        const completedPosOrders = responsePosOrder.data.filter(order => order.status === 'COMPLETED').map(order => ({
-          ...order,
-          orderType: 'PosOrder',
-        }));
-
-        setOrders([...completedWhatsAppOrders, ...completedPosOrders]);
+          setOrders(completedOrders);
+        } else {
+          console.error('Unexpected API response format:', response.data);
+        }
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
 
     fetchOrders();
+  }, []);
+
+  // Fetch POS Orders
+  useEffect(() => {
+    const fetchPosOrders = async () => {
+      try {
+        const response = await axios.get('https://tyem.invenro.site/api/user/PosOrder');
+        console.log('POS Orders:', response.data);
+
+        if (Array.isArray(response.data)) {
+          setPosOrders(response.data);
+        } else {
+          console.error('Unexpected POS Orders response format:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching POS Orders:', error);
+      }
+    };
+
+    fetchPosOrders();
   }, []);
 
   // Handler for when an order is selected
@@ -418,7 +424,7 @@ const Salesssection = () => {
         <OrderDetails order={selectedOrder} />
       </div>
       <div className="hidden md:block w-1/3 h-full p-4 border-l border-gray-300 bg-white">
-        <CartSection order={selectedOrder} />
+        <CartSection order={selectedOrder} posOrders={posOrders} />
       </div>
     </div>
   );
