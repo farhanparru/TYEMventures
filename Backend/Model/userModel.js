@@ -10,6 +10,7 @@ const salesData = new mongoose.Schema({
     orderNumber: {
       type: String,
       required: true,
+      
     },
     invoiceNumber: {
       type: String,

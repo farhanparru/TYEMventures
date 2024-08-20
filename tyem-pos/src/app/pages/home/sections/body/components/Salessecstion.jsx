@@ -12,7 +12,7 @@ import 'jspdf-autotable';
 
 const OrderItem = ({ order, onClick, selected }) => {
   // Convert UTC to IST
-  const utcDate = DateTime.fromISO(order.orderMeta?.orderDate, { zone: "utc" });
+  const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
   const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
@@ -20,34 +20,28 @@ const OrderItem = ({ order, onClick, selected }) => {
   return (
     <div
       className={`relative p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
-        ${
-          selected
-            ? "bg-blue-500 border-blue-500 text-white"
-            : "bg-white border-gray-200"
-        }
+        ${selected ? "bg-blue-500 border-blue-500 text-white" : "bg-white border-gray-200"}
         ${selected ? "" : "hover:bg-blue-100 hover:border-blue-300"}
       `}
       onClick={() => onClick(order)}
-      aria-label={`Order ${order.orderMeta?.posOrderId || order.orderDetails?.orderNumber} details`}
+      aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
       {/* Badge to indicate the order type */}
-      <span className={`absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}>
+      <span className={`absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}>
         {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
       </span>
 
       <div>
-        <h3 className="text-lg font-semibold">
-          Order #{order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
-        </h3>
+        <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId}</h3>
         <p className="text-sm">
           {order.totalQuantity} Item{order.totalQuantity > 1 ? 's' : ''} | 
-          {order.orderMeta?.paymentTendered || order.total} {order.orderDetails[0]?.product_currency || 'INR'} | 
-          {order.orderMeta?.orderType || order.method}
+          {order.orderMeta?.paymentTendered} {order.orderDetails[0]?.product_currency} | 
+          {order.orderMeta?.orderType}
         </p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta?.paymentStatus === 'Completed' || order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'bg-red-200 text-red-800'}`}>
-            {order.orderMeta?.paymentStatus || order.status}
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-red-200 text-red-800'}`}>
+            {order.orderMeta.paymentStatus}
           </span>
         </div>
       </div>
@@ -64,11 +58,6 @@ const OrderItem = ({ order, onClick, selected }) => {
     </div>
   );
 };
-
-
-
-
-
 
 
 
