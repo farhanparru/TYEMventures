@@ -110,63 +110,74 @@ submitOrder:async (req, res) => {
   },
   
   // sales printe
-  printOrderReceipt:async (req, res) => {
-    const {
-      status,
-      orderDetails,
-      location,
-      itemDetails,
-      method,
-      total,
-      discount,
-      qrCodeData, // Make sure to include qrCodeData if needed
-    } = req.body;
-  
-    let printer = new ThermalPrinter({
-      type: PrinterTypes.ROCKET, // Updated printer type to Rocket
-      interface: "tcp://192.168.1.100", // Printer IP address
-    });
-  
-    
-    printer.alignCenter();
-    printer.println("Restaurant Name");
-    printer.drawLine();
-  
-    printer.alignLeft();
-    printer.println(`Order Number: ${orderDetails.orderNumber}`);
-    printer.println(`Invoice Number: ${orderDetails.invoiceNumber}`);
-    printer.println(`Customer: ${orderDetails.customerName}`);
-    printer.println(`Location: ${location}`);
-    printer.drawLine();
-  
-    itemDetails.itemName.forEach((item, index) => {
-      printer.println(`${index + 1}. ${item} x ${itemDetails.quantity[index]}`); // Fixed to use itemDetails.quantity[index]
-    });
-  
-    printer.drawLine();
-    printer.println(`Payment Method: ${method}`);
-    printer.println(`Total: ${total}`);
-    printer.println(`Discount: ${discount.value || "None"}`);
-    printer.drawLine();
-    printer.println("Thank you for dining with us!");
-  
-    // Print a QR code at the bottom of the receipt
-    if (qrCodeData) {
-      printer.println("Scan to View Details:");
-      printer.printQR(qrCodeData, {
-        cellSize: 8, // Adjust the size of the QR code
-        correction: 'M' // Error correction level
-      });
-    }
-  
+   printOrderReceipt:async (req, res) => {
     try {
-      printer.cut();
-      let execute = await printer.execute(); // Ensure you await the execute function
-      console.log("Print success:", execute);
-      res.status(200).send('Print job sent successfully'); // Send success response
-    } catch (error) {
-      console.error("Print failed:", error);
-      res.status(500).send('Failed to send print job'); // Send failure response
+      const {
+        status,
+        orderDetails,
+        location,
+        itemDetails,
+        method,
+        total,
+        discount,
+        qrCodeData,
+      } = req.body;
+  
+      let printer = new ThermalPrinter({
+        type: PrinterTypes.ROCKET, // Updated printer type to Rocket
+        interface: "tcp://192.168.1.100", // Printer IP address
+      });
+  
+      printer.alignCenter();
+      printer.println("Restaurant Name");
+      printer.drawLine();
+  
+      printer.alignLeft();
+      printer.println(`Order Number: ${orderDetails.orderNumber}`);
+      printer.println(`Invoice Number: ${orderDetails.invoiceNumber}`);
+      printer.println(`Customer: ${orderDetails.customerName}`);
+      printer.println(`Location: ${location}`);
+      printer.drawLine();
+  
+      itemDetails.itemName.forEach((item, index) => {
+        printer.println(`${index + 1}. ${item} x ${itemDetails.quantity[index]}`);
+      });
+  
+      printer.drawLine();
+      printer.println(`Payment Method: ${method}`);
+      printer.println(`Total: ${total}`);
+      printer.println(`Discount: ${discount.value || "None"}`);
+      printer.drawLine();
+      printer.println("Thank you for dining with us!");
+  
+      // Print a QR code at the bottom of the receipt
+      if (qrCodeData) {
+        printer.println("Scan to View Details:");
+        printer.printQR(qrCodeData, {
+          cellSize: 8,
+          correction: 'M'
+        });
+      }
+  
+      // Ensure the printer is connected before printing
+      const isConnected = await new Promise((resolve, reject) => {
+        printer.isPrinterConnected((err, connected) => {
+          if (err) return reject(err);
+          resolve(connected);
+        });
+      });
+  
+      if (isConnected) {
+        await printer.execute(); 
+        console.log("Receipt printed successfully.");
+        res.send('Receipt printed successfully');
+      } else {
+        console.error("Printer is not connected.");
+        res.status(500).send('Printer is not connected');
+      }
+    } catch (printError) {
+      console.error("Error printing receipt:", printError);
+      res.status(500).send("Error printing receipt");
     }
   },
   
