@@ -124,9 +124,10 @@ submitOrder:async (req, res) => {
       } = req.body;
   
       let printer = new ThermalPrinter({
-        type: PrinterTypes.ROCKET, // Updated printer type to Rocket
-        interface: "tcp://192.168.1.100", // Printer IP address
+        type: PrinterTypes.ROCKET,
+        interface: "tcp://192.168.1.100:9100", // Use the correct port
       });
+      
   
       printer.alignCenter();
       printer.println("Restaurant Name");
