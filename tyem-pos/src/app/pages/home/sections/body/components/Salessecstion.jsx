@@ -10,7 +10,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 
-const OrderItem = ({  order, onClick, selected }) => {
+const OrderItem = ({ order, onClick, selected }) => {
   // Convert UTC to IST
   const utcDate = DateTime.fromISO(order.orderMeta.orderDate, { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
@@ -19,29 +19,35 @@ const OrderItem = ({  order, onClick, selected }) => {
 
   return (
     <div
-       className={`p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
+      className={`relative p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
         ${
           selected
             ? "bg-blue-500 border-blue-500 text-white"
             : "bg-white border-gray-200"
         }
         ${selected ? "" : "hover:bg-blue-100 hover:border-blue-300"}
-       
       `}
       onClick={() => onClick(order)}
-      aria-label={`Order ${order.orderMeta?.posOrderId} details`}
+      aria-label={`Order ${order.orderMeta?.posOrderId || order.orderDetails?.orderNumber} details`}
     >
+      {/* Badge to indicate the order type */}
+      <span className={`absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}>
+        {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
+      </span>
+
       <div>
-        <h3 className="text-lg font-semibold">Order #{order.orderMeta?.posOrderId}</h3>
+        <h3 className="text-lg font-semibold">
+          Order #{order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
+        </h3>
         <p className="text-sm">
           {order.totalQuantity} Item{order.totalQuantity > 1 ? 's' : ''} | 
-          {order.orderMeta?.paymentTendered} {order.orderDetails[0]?.product_currency} | 
-          {order.orderMeta?.orderType}
+          {order.orderMeta?.paymentTendered || order.total} {order.orderDetails[0]?.product_currency || 'INR'} | 
+          {order.orderMeta?.orderType || order.method}
         </p>
 
         <div className="flex items-center mt-2">
-          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta.paymentStatus === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-red-200 text-red-800'}`}>
-            {order.orderMeta.paymentStatus}
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta?.paymentStatus === 'Completed' || order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'bg-red-200 text-red-800'}`}>
+            {order.orderMeta?.paymentStatus || order.status}
           </span>
         </div>
       </div>
@@ -58,7 +64,6 @@ const OrderItem = ({  order, onClick, selected }) => {
     </div>
   );
 };
-
 
 
 
@@ -317,50 +322,74 @@ const CartSection = ({ order }) => {
 
 const Salesssection = () => {
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(
-    orders.length > 0 ? orders[0] : null
-  );
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // WebSocket for real-time updates
+  // WebSocket for WhatsAppOrder real-time updates
   useEffect(() => {
-    const ws = new WebSocket('wss://tyem.invenro.site');
-  
-    ws.onmessage = (event) => {
+    const wsWhatsApp = new WebSocket('wss://tyem.invenro.site');
+
+    wsWhatsApp.onmessage = (event) => {
       const newOrder = JSON.parse(event.data);
-      console.log('New WebSocket Order:', newOrder);
-  
+      console.log('New WhatsApp WebSocket Order:', newOrder);
+
       if (newOrder.orderMeta.paymentStatus === 'Completed') {
+        newOrder.orderType = 'WhatsAppOrder';
         setOrders((prevOrders) => [newOrder, ...prevOrders]);
       }
     };
-  
+
     return () => {
-      ws.close();
+      wsWhatsApp.close();
     };
   }, []);
 
-  // Fetch completed orders from the API
+  // WebSocket for PosOrder real-time updates
+  useEffect(() => {
+    const wsPosOrder = new WebSocket('wss://tyem.invenro.site/pos');
+
+    wsPosOrder.onmessage = (event) => {
+      const newOrder = JSON.parse(event.data);
+      console.log('New PosOrder WebSocket Order:', newOrder);
+
+      if (newOrder.status === 'COMPLETED') {
+        newOrder.orderType = 'PosOrder';
+        setOrders((prevOrders) => [newOrder, ...prevOrders]);
+      }
+    };
+
+    return () => {
+      wsPosOrder.close();
+    };
+  }, []);
+
+  // Fetch completed WhatsAppOrders and PosOrders from the APIs
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
-        console.log('API Response:', response.data);
+        // Fetch WhatsApp Orders
+        const responseWhatsApp = await axios.get('https://tyem.invenro.site/api/tyem/Whatsappget');
+        console.log('WhatsApp API Response:', responseWhatsApp.data);
 
-        if (Array.isArray(response.data)) {
-          const completedOrders = response.data.filter(order => order.orderMeta.paymentStatus === 'Completed');
-          console.log('Filtered Completed Orders:', completedOrders);
+        // Fetch POS Orders
+        const responsePosOrder = await axios.get('https://tyem.invenro.site/api/user/PosOrder');
+        console.log('POS API Response:', responsePosOrder.data);
 
-          setOrders(completedOrders);
-        } else {
-          console.error('Unexpected API response format:', response.data);
-        }
+        // Filter completed orders and add orderType
+        const completedWhatsAppOrders = responseWhatsApp.data.filter(order => order.orderMeta.paymentStatus === 'Completed').map(order => ({
+          ...order,
+          orderType: 'WhatsAppOrder',
+        }));
+
+        const completedPosOrders = responsePosOrder.data.filter(order => order.status === 'COMPLETED').map(order => ({
+          ...order,
+          orderType: 'PosOrder',
+        }));
+
+        setOrders([...completedWhatsAppOrders, ...completedPosOrders]);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
-
-
-    
 
     fetchOrders();
   }, []);
@@ -370,34 +399,29 @@ const Salesssection = () => {
     setSelectedOrder(order);
   };
 
-
   return (
     <div className="flex h-screen">
-  <div
-         id="order-list"
-  className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100"
->
-
-      {orders.map((order) => (
-        <OrderItem
-          key={order._id}
-          order={order}
-          onClick={onOrderClick}
-          selected={selectedOrder?._id === order._id}
-        />
-      ))}
+      <div
+        id="order-list"
+        className="w-1/3 h-full p-4 border-r border-gray-300 bg-white overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100"
+      >
+        {orders.map((order) => (
+          <OrderItem
+            key={order._id}
+            order={order}
+            onClick={onOrderClick}
+            selected={selectedOrder?._id === order._id}
+          />
+        ))}
+      </div>
+      <div className="hidden md:block w-1/3 h-full p-4 bg-white overflow-auto">
+        <OrderDetails order={selectedOrder} />
+      </div>
+      <div className="hidden md:block w-1/3 h-full p-4 border-l border-gray-300 bg-white">
+        <CartSection order={selectedOrder} />
+      </div>
     </div>
-    <div className="hidden md:block w-1/3 h-full p-4 bg-white overflow-auto">
-      <OrderDetails order={selectedOrder} />
-    </div>
-    <div className="hidden md:block w-1/3 h-full p-4 border-l border-gray-300 bg-white">
-      <CartSection order={selectedOrder} />
-    </div>
-  </div>
-  
   );
 };
-
-
 
 export default Salesssection;

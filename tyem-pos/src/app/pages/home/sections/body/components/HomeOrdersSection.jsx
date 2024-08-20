@@ -397,18 +397,14 @@ const CartSection = ({
 
   // Retrieve order statuses for the current order
   //  const orderStatuses = getOrderStatuses(order._id);
-
   const handleAccept = (orderId) => {
-    setShowPlaceModal(true);
     pauseNotificationSound(); // Stop the sound when "Accept" is clicked
     setIsAccepted(true);
     setIsReady(false);
     setIsAssigned(false);
     onComplete(orderId); // Call the onComplete function if needed
     // sendMessage();
-    sendcustomeField()
     updatePaymentStatus(orderId, "status", "Accepted");
-
     updateOrderStatus(orderId, "isAccepted", true);
     updateOrderStatus(orderId, "confirmedDate", new Date().toISOString());
     onComplete(order._id); // Call the completion handler
@@ -449,7 +445,7 @@ const CartSection = ({
     updateOrderStatus(orderId, "isRejected", true);
   };
 
-  const handlecancle = (orderId) => {
+  const handleCancel = (orderId) => {
     setIsAccepted(false);
     setIsAssigned(false);
     setIsReady(false);
@@ -463,7 +459,6 @@ const CartSection = ({
     updatePaymentStatus(orderId, "status", "Assigned");
     updateOrderStatus(order._id, "isAssigned", true);
   };
-
   // Status History Data
 
   const handlePrintReceipt = async (orderData, orderId) => {
@@ -535,64 +530,95 @@ const CartSection = ({
         </div>
 
    
-          <div className="flex justify-between items-center gap-4 mt-6">
-          
-                {/* <button
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                  onClick={() => handleComplete(order._id)}
-                >
-                  Complete
-                </button>
-                <button
-                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                  onClick={() => handlecancle(order._id)}
-                >
-                  Cancel
-                </button> */}
-              
-                {/* <button
-                  className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
-                  onClick={() => handleAssigned(order._id)}
-                >
-                  Assigned
-                </button>
-                <button
-                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                  onClick={() => handlecancle(order._id)}
-                >
-                  Cancel
-                </button> */}
-            
-                {/* <button
-                  className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
-                  onClick={() => handleReady(order._id)}
-                >
-                  Ready
-                </button>
-                <button
-                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
-                  onClick={() => handlecancle(order._id)}
-                >
-                  Cancel
-                </button> */}
-          
-                <button
-                  className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
-                  onClick={() => handleAccept(order._id)}
-                >
-                  Accept
-                </button>
+             {/* Action Buttons */}
+        <div className="flex justify-between items-center gap-4 mt-6">
+          {/* Conditionally render buttons based on order status */}
+          {!order.isAccepted && !order.isRejected && (
+            <>
+              <button
+                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+                onClick={() => handleAccept(order._id)}
+              >
+                Accept
+              </button>
 
-                <button
-                  className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
-                  onClick={() => handleReject(order._id)}
-                >
-                  Reject
-                </button>
-              
-           
-          </div>
-        
+              <button
+                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+                onClick={() => handleReject(order._id)}
+              >
+                Reject
+              </button>
+            </>
+          )}
+
+          {order.isAccepted && !order.isReady && (
+            <>
+              <button
+                className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
+                onClick={() => handleReady(order._id)}
+              >
+                Ready
+              </button>
+
+              <button
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                onClick={() => handleCancel(order._id)}
+              >
+                Cancel
+              </button>
+            </>
+          )}
+
+          {order.isReady && !order.isAssigned && (
+            <>
+              <button
+                className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
+                onClick={() => handleAssigned(order._id)}
+              >
+                Assigned
+              </button>
+
+              <button
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                onClick={() => handleCancel(order._id)}
+              >
+                Cancel
+              </button>
+            </>
+          )}
+
+          {order.isAssigned && (
+            <>
+              <button
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                onClick={() => handleComplete(order._id)}
+              >
+                Complete
+              </button>
+
+              <button
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700"
+                onClick={() => handleCancel(order._id)}
+              >
+                Cancel
+              </button>
+              </>
+          )}
+
+          {/* Optionally handle the rejected state */}
+          {order.isRejected && (
+            <div className="text-red-500 font-semibold">
+              Order has been rejected
+            </div>
+          )}
+
+          {/* Optionally handle the completed state */}
+          {order.status === "Completed" && (
+            <div className="text-green-500 font-semibold">
+              Order has been completed
+            </div>
+          )}
+        </div>
       </div>
 
       {showPlaceModal && (

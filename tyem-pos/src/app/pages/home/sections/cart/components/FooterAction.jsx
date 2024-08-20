@@ -119,7 +119,7 @@ const FooterActions = () => {
     console.log("Sending order data:", orderData); // Debug log
     try {
       const response = await axios.post(
-        "https://tyem.invenro.site/api/user/orders",
+        "https://tyem.invenro.site/api/user/Posorder",
         orderData
       );
       console.log("API response:", response); // Log the API response
