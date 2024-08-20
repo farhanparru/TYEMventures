@@ -402,6 +402,7 @@ const CartSection = ({
     setIsAccepted(true);
     setIsReady(false);
     setIsAssigned(false);
+    setIsRejected(false);
     onComplete(orderId); // Call the onComplete function if needed
     // sendMessage();
     updatePaymentStatus(orderId, "status", "Accepted");
@@ -416,6 +417,7 @@ const CartSection = ({
     updateOrderStatus(order._id, "isReady", true);
     setIsReady(true);
     setIsAssigned(false);
+    setIsRejected(false);
   };
 
   const { addCompletedOrder } = useCompletedOrders();
@@ -437,9 +439,9 @@ const CartSection = ({
 
   const handleReject = (orderId) => {
     setIsAccepted(false);
-    setIsAssigned(false);
     setIsReady(false);
-    setIsRejected(true); // Update the state to indicate the order is rejected
+    setIsAssigned(false);
+    setIsRejected(true);// Update the state to indicate the order is rejected
     updatePaymentStatus(orderId, "status", "Rejected");
     updateOrderStatus(orderId, "isAccepted", false); // Update order status
     updateOrderStatus(orderId, "isRejected", true);
@@ -456,6 +458,7 @@ const CartSection = ({
   const handleAssigned = (orderId) => {
     setIsAssigned(true);
     setIsReady(false);
+    setIsRejected(false);
     updatePaymentStatus(orderId, "status", "Assigned");
     updateOrderStatus(order._id, "isAssigned", true);
   };
@@ -530,7 +533,6 @@ const CartSection = ({
         </div>
 
    
-        {/* Action Buttons */}
         <div className="flex justify-between items-center gap-4 mt-6">
         {/* Conditionally render buttons based on order status */}
         {!isAccepted && !isRejected && (
@@ -551,7 +553,7 @@ const CartSection = ({
           </>
         )}
 
-        {isAccepted && !isReady && (
+        {isAccepted && !isReady && !isAssigned && (
           <>
             <button
               className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
@@ -620,7 +622,7 @@ const CartSection = ({
     </div>
 
 
-    
+
       {showPlaceModal && (
         <CustomModal
           onClose={() => {

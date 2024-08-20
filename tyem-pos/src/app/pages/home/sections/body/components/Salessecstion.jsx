@@ -30,11 +30,10 @@ const OrderItem = ({ order, onClick, selected }) => {
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId || order.orderDetails?.orderNumber} details`}
     >
-    {/* Badge to indicate the order type */}
-    <span className={`absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 py-1 px-4 font-medium border text-green-900 bg-green-100 border-green-300 rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500 text-white border-red-400' : 'bg-green-100 text-green-900 border-green-300'}`}>
+      {/* Badge to indicate the order type */}
+      <span className={`absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}>
         {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
       </span>
-
 
       <div>
         <h3 className="text-lg font-semibold">
