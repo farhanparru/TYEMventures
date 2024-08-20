@@ -26,7 +26,7 @@ const OrderItem = ({ order, onClick, selected }) => {
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId} details`}
     >
-      {/* Badge to indicate the order type */}
+    
       <span className={`absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}>
         {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
       </span>
