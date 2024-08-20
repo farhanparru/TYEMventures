@@ -430,4 +430,4 @@ const SalesSection = () => {
   );
 };
 
-export default Salesssection;
+export default SalesSection;
