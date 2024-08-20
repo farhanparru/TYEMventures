@@ -41,7 +41,7 @@ const OrderItem = ({ order, onClick, selected }) => {
 
         <div className="flex items-center mt-2">
           <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta?.paymentStatus === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-red-200 text-red-800'}`}>
-            {order.orderMeta.paymentStatus}
+            {order.orderMeta?.paymentStatus}
           </span>
         </div>
       </div>
