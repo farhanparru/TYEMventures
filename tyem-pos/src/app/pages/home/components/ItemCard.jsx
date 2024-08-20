@@ -55,6 +55,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       id: item.Id,  // Make sure the 'id' matches the one used in the reducer
       name: item.ItemName,
       price: item.Price,
+      type: 'increase', // Add this line to specify the type
     };
     console.log(cartItem, "cartItem");
     dispatch(addToCart(cartItem));
