@@ -530,10 +530,10 @@ const CartSection = ({
         </div>
 
    
-             {/* Action Buttons */}
+        {/* Action Buttons */}
         <div className="flex justify-between items-center gap-4 mt-6">
           {/* Conditionally render buttons based on order status */}
-          {!order.isAccepted && !order.isRejected && (
+          {!isAccepted && !isRejected && (
             <>
               <button
                 className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
@@ -551,7 +551,7 @@ const CartSection = ({
             </>
           )}
 
-          {order.isAccepted && !order.isReady && (
+          {isAccepted && !isReady && (
             <>
               <button
                 className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
@@ -569,7 +569,7 @@ const CartSection = ({
             </>
           )}
 
-          {order.isReady && !order.isAssigned && (
+          {isReady && !isAssigned && (
             <>
               <button
                 className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700"
@@ -587,7 +587,7 @@ const CartSection = ({
             </>
           )}
 
-          {order.isAssigned && (
+          {isAssigned && (
             <>
               <button
                 className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
@@ -602,17 +602,15 @@ const CartSection = ({
               >
                 Cancel
               </button>
-              </>
+            </>
           )}
 
-          {/* Optionally handle the rejected state */}
-          {order.isRejected && (
+          {isRejected && (
             <div className="text-red-500 font-semibold">
               Order has been rejected
             </div>
           )}
 
-          {/* Optionally handle the completed state */}
           {order.status === "Completed" && (
             <div className="text-green-500 font-semibold">
               Order has been completed
@@ -621,6 +619,7 @@ const CartSection = ({
         </div>
       </div>
 
+      
       {showPlaceModal && (
         <CustomModal
           onClose={() => {
