@@ -17,7 +17,7 @@ const POSORDER = new mongoose.Schema({
     method: {
       type: String,
       required: true,
-      enum: ["cash", "card", "Split", "Talabat", "other"],
+      enum: ["cash", "card", "split", "Talabat", "other"], // 'split' should be lowercase to match your logic
     },
     total: {
       type: Number,
@@ -47,7 +47,8 @@ const POSORDER = new mongoose.Schema({
       required: true,
     },
     orderDate: {
-     orderDate: Date, // Store date as UTC
+      type: Date, // Store date as UTC
+      required: true,
     },
   },
   discount: {
@@ -60,6 +61,10 @@ const POSORDER = new mongoose.Schema({
       type: Number,
       required: true,
     },
+  },
+  type: {
+    type: String,
+    required: true,
   },
 });
 

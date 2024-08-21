@@ -82,7 +82,7 @@ const FooterActions = () => {
     other: PAYMENTSTATUS.PENDING,
   };
   
-  
+
   const handleSubmit = async () => {
     const invoiceNumber = generateInvoiceNumber();
   
@@ -1242,7 +1242,7 @@ const FooterActions = () => {
             <div className="flex gap-4">
               <button
                 className="bg-blue-500 w-[100px] items-center text-white justify-center rounded-lg hover:bg-blue-400 p-2 flex gap-2"
-                onClick={handleSave}
+              
               >
                 print
               </button>

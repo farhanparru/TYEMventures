@@ -13,17 +13,10 @@ const excelSheetDatas = require("../Model/ItemsModal");
 const XLSX = require("xlsx");
 require("dotenv").config();
 
-
-
 module.exports = {
-
   PosOrder: async (req, res) => {
     try {
-      const {
-        orderDetails,
-        itemDetails,
-        discount,
-      } = req.body;
+      const { orderDetails, itemDetails, discount } = req.body;
 
       // Convert current date and time to IST and store it in UTC
       const orderDate = moment().tz("Asia/Kolkata").utc().format();
@@ -43,7 +36,7 @@ module.exports = {
           invoiceNumber: orderDetails.invoiceNumber,
           customerName: orderDetails.customerName,
           location: orderDetails.location, // Keep location field intact
-          orderDate: orderDate, // Use converted date
+          orderDate: orderDate, // Use the formatted ISO string
         },
         discount: {
           type: discount.type,
@@ -56,13 +49,13 @@ module.exports = {
 
       // Send a success response
       return res.status(201).json({
-        message: 'PosOrder created successfully',
+        message: "PosOrder created successfully",
         order: newOrder,
       });
     } catch (error) {
       // Handle errors and send a failure response
       return res.status(500).json({
-        message: 'Error creating order',
+        message: "Error creating order",
         error: error.message,
       });
     }
@@ -247,12 +240,10 @@ module.exports = {
         });
       }
 
-      res
-        .status(200)
-        .json({
-          message: "Customer data processed successfully",
-          savedCustomer,
-        });
+      res.status(200).json({
+        message: "Customer data processed successfully",
+        savedCustomer,
+      });
     } catch (error) {
       console.error("Error processing customer data:", error);
       res.status(500).json({ message: "Internal Server Error" });
