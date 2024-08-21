@@ -11,11 +11,21 @@ import 'jspdf-autotable';
 
 
 const OrderItem = ({ order, onClick, selected }) => {
-  // Convert UTC to IST
-  const utcDate = DateTime.fromISO(order.orderMeta?.orderDate, { zone: "utc" });
-  const zonedDate = utcDate.setZone("Asia/Kolkata");
-  const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
-  const formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  let formattedDate = "";
+  let formattedTime = "";
+
+  // Check if the order is PosOrder or WhatsAppOrder and format the date/time accordingly
+  if (order.orderType === "PosOrder") {
+    const utcDate = DateTime.fromISO(order.orderDetails?.orderDate, { zone: "utc" });
+    const zonedDate = utcDate.setZone("Asia/Kolkata");
+    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+    formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  } else if (order.orderType === "WhatsAppOrder") {
+    const utcDate = DateTime.fromISO(order.orderMeta?.orderDate, { zone: "utc" });
+    const zonedDate = utcDate.setZone("Asia/Kolkata");
+    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+    formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  }
 
   return (
     <div
@@ -64,13 +74,6 @@ const OrderItem = ({ order, onClick, selected }) => {
     </div>
   );
 };
-
-
-
-
-
-
-
 
 
 const OrderDetails = ({ order }) => {
@@ -321,7 +324,7 @@ const CartSection = ({ order }) => {
 };
 
 
-const Salesssection = () => {
+const SalesSection = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
 

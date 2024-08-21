@@ -61,20 +61,19 @@ import CartNumpad from "../../../components/CartNumpad";
 
 const FooterActions = () => {
   const navigate = useNavigate();
-
   function generateInvoiceNumber() {
     const prefix = "INV";
     const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const randomPart = Math.floor(Math.random() * 1000000);
-
+  
     return `${prefix}${datePart}${randomPart.toString().padStart(6, "0")}`;
   }
-
+  
   const PAYMENTSTATUS = {
     PENDING: "PENDING",
     COMPLETED: "COMPLETED",
   };
-
+  
   const PAYMENT_METHOD_STATUS = {
     cash: PAYMENTSTATUS.COMPLETED,
     card: PAYMENTSTATUS.PENDING,
@@ -82,41 +81,43 @@ const FooterActions = () => {
     Talabat: PAYMENTSTATUS.PENDING,
     other: PAYMENTSTATUS.PENDING,
   };
-
+  
   
   const handleSubmit = async () => {
     const invoiceNumber = generateInvoiceNumber();
-
+  
     const paymentMethod = cartState?.paymentMethod;
     const status =
       PAYMENT_METHOD_STATUS[paymentMethod] || PAYMENTSTATUS.PENDING;
-
+  
     const orderData = {
       status: status,
       orderDetails: {
         orderNumber: orderId,
         invoiceNumber: invoiceNumber, // Use generated invoice number
         customerName: selectedCustomer?.name,
+        location: "Store",
+        orderDate: new Date().toISOString(), // Use the current date
       },
-      location: "Store",
       itemDetails: {
-        items: cartState?.orderitems?.length,
+        items: cartState?.orderitems?.length || 0,
         quantity: cartState?.orderitems?.reduce(
           (acc, item) => acc + item.quantity,
           0
-        ),
-        itemName: cartState?.orderitems?.map((item) => item.name), // Include item names
+        ) || 0,
+        itemName: cartState?.orderitems?.map((item) => item.name) || [], // Include item names
+        method: paymentMethod,
+        total: cartState?.totalPayableAmount || 0,
       },
-      method: paymentMethod,
-      total: cartState?.totalPayableAmount,
       discount: {
-        type: cartState?.discountType, // Include discount type
-        value: cartState?.discountValue, // Include discount value
+        type: cartState?.discountType || "fixed", // Default to "fixed" if undefined
+        value: cartState?.discountValue || 0, // Default to 0 if undefined
       },
       type: "SALE",
     };
-
+  
     console.log("Sending order data:", orderData); // Debug log
+  
     try {
       const response = await axios.post(
         "https://tyem.invenro.site/api/user/Posorder",
@@ -129,6 +130,7 @@ const FooterActions = () => {
         toast.error("Failed to create order.");
       }
     } catch (error) {
+      console.error("Error creating order:", error); // Log the error
       toast.error(
         `Error creating order: ${
           error.response?.data?.message || error.message
@@ -136,10 +138,6 @@ const FooterActions = () => {
       );
     }
   };
-
-
-
-
 
 
   const selectedTable = useSelector((state) => state.table.selectedTable);
@@ -687,9 +685,7 @@ const FooterActions = () => {
 
  
 
-  const handleSave = () => {
-    
-  };
+
 
   const printnodeThermal = async ({orderData}) => {
     console.log(orderData,'orderData');

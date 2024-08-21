@@ -7,7 +7,7 @@ const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded f
 
 
 
-router.post('/Posorder', userCtrl.submitOrder);
+router.post('/Posorder', userCtrl.PosOrder);
 router.post('/WhatsappOrder', userCtrl.onlineOrder);
 router.get('/Whatsappget', userCtrl.fetchOnlineOrder)
 router.get('/PosOrder', userCtrl.getOrders);

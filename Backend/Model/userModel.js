@@ -1,30 +1,6 @@
 const mongoose = require("mongoose");
 
-const salesData = new mongoose.Schema({
-  status: {
-    type: String,
-    required: true,
-    enum: ["PENDING", "COMPLETED"],
-  },
-  orderDetails: {
-    orderNumber: {
-      type: String,
-      required: true,
-      
-    },
-    invoiceNumber: {
-      type: String,
-      required: true,
-    },
-    customerName: {
-      type: String,
-      required: true,
-    },
-  },
-  location: {
-    type: String,
-    required: true,
-  },
+const POSORDER = new mongoose.Schema({
   itemDetails: {
     items: {
       type: Number,
@@ -38,15 +14,41 @@ const salesData = new mongoose.Schema({
       type: Number,
       required: true,
     },
+    method: {
+      type: String,
+      required: true,
+      enum: ["cash", "card", "Split", "Talabat", "other"],
+    },
+    total: {
+      type: Number,
+      required: true,
+    },
   },
-  method: {
-    type: String,
-    required: true,
-    enum: ["cash", "card", "Split", "Talabat", "other"],
-  },
-  total: {
-    type: Number,
-    required: true,
+  orderDetails: {
+    paymentStatus: {
+      type: String,
+      required: true,
+      enum: ["PENDING", "COMPLETED"],
+    },
+    orderNumber: {
+      type: String,
+      required: true,
+    },
+    invoiceNumber: {
+      type: String,
+      required: true,
+    },
+    customerName: {
+      type: String,
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
+    orderDate: {
+     orderDate: Date, // Store date as UTC
+    },
   },
   discount: {
     type: {
@@ -59,19 +61,7 @@ const salesData = new mongoose.Schema({
       required: true,
     },
   },
-  createdDate: {
-    type: Date,
-    default: Date.now,
-  },
-  type: {
-    type: String,
-    required: true,
-    enum: ["SALE", "PURCHASE"],
-  },
-  actions: {
-    type: [String],
-  },
 });
 
-const salesOrder = mongoose.model("Sales", salesData);
+const salesOrder = mongoose.model("POSORDER", POSORDER);
 module.exports = salesOrder;

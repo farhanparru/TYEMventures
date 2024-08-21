@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DateTime } from 'luxon';
 import Headr from './Headr';
 import Sidebar from './Sidebar';
 import { CCard, CCardHeader, CCardBody } from '@coreui/react';
@@ -47,7 +48,7 @@ function Odersale() {
         <div className="flex-grow p-5">
           <CCard className="mb-4" style={{ backgroundColor: '#ffffff' }}>
             <CCardHeader>
-              <h1 className="text-xl font-bold text-gray-800">Sales</h1>
+              <h1 className="text-xl font-bold text-gray-800">PosSales</h1>
             </CCardHeader>
             <CCardBody>
               {error ? (
@@ -65,51 +66,60 @@ function Odersale() {
                       </tr>
                     </thead>
                     <tbody>
-                      {orders.map(order => (
-                        <tr key={order._id} className="border-b border-gray-200">
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className="inline-block px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded">
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            Order #: {order.orderDetails.orderNumber}<br />
-                            Invoice Number #: {order.orderDetails.invoiceNumber}<br />
-                            Customer Name: {order.orderDetails.customerName}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">{order.location}</td>
-                          <td className="px-4 py-4 whitespace-pre-wrap">
-                            Items: {order.itemDetails.items}<br />
-                            Item Name: {order.itemDetails.itemName.join(', ')}<br />
-                            Quantity: {order.itemDetails.quantity}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">{order.method}</td>
-                          <td className="px-4 py-4 whitespace-nowrap">{order.total}</td>
-                          <td className="px-4 py-4 whitespace-pre-wrap">{order.createdDate}</td>
-                          <td className="px-4 py-4 whitespace-nowrap">{order.type}</td>
-                          <td className="px-4 py-4 whitespace-nowrap relative">
-                            <button
-                              onClick={() => toggleDropdown(order._id)}
-                              className="text-gray-600 hover:text-gray-900"
-                            >
-                              <FaEllipsisV />
-                            </button>
-                            {dropdownOpen === order._id && (
-                              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
-                                <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                  Invoice 1
-                                </button>
-                                <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                  Invoice 2
-                                </button>
-                                <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                  View
-                                </button>
-                              </div>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                      {orders.map(order => {
+                        const utcDate = DateTime.fromISO(order.orderDetails?.orderDate, { zone: "utc" });
+                        const zonedDate = utcDate.setZone("Asia/Kolkata");
+                        const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+                        const formattedTime = zonedDate.toFormat("hh:mm:ss a");
+
+                        return (
+                          <tr key={order._id} className="border-b border-gray-200">
+                            <td className="px-4 py-4 whitespace-nowrap">
+                              <span className="inline-block px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded">
+                                {order.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap">
+                              Order #: {order.orderDetails.orderNumber}<br />
+                              Invoice Number #: {order.orderDetails.invoiceNumber}<br />
+                              Customer Name: {order.orderDetails.customerName}<br />
+                              Date: {formattedDate}<br />
+                              Time: {formattedTime}
+                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap">{order.location}</td>
+                            <td className="px-4 py-4 whitespace-pre-wrap">
+                              Items: {order.itemDetails.items}<br />
+                              Item Name: {order.itemDetails.itemName.join(', ')}<br />
+                              Quantity: {order.itemDetails.quantity}
+                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap">{order.method}</td>
+                            <td className="px-4 py-4 whitespace-nowrap">{order.total}</td>
+                            <td className="px-4 py-4 whitespace-pre-wrap">{formattedDate}</td>
+                            <td className="px-4 py-4 whitespace-nowrap">{order.type}</td>
+                            <td className="px-4 py-4 whitespace-nowrap relative">
+                              <button
+                                onClick={() => toggleDropdown(order._id)}
+                                className="text-gray-600 hover:text-gray-900"
+                              >
+                                <FaEllipsisV />
+                              </button>
+                              {dropdownOpen === order._id && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
+                                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Invoice 1
+                                  </button>
+                                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Invoice 2
+                                  </button>
+                                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    View
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
