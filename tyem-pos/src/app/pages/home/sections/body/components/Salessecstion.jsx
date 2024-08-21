@@ -181,7 +181,7 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">OrderType</h4>
-            Order #{order?.type || WhatsAppOrder}
+            Order #{order?.type || 'WhatsAppOrder'}
           </div>
           <div className="text-right md:text-left">
             <h1 className="text-md text-black">
