@@ -16,11 +16,11 @@ require("dotenv").config();
 module.exports = {
   PosOrder: async (req, res) => {
     try {
-      const { orderDetails, itemDetails, discount } = req.body;
-
+      const { orderDetails, itemDetails, discount, type } = req.body; // Include `type` in the destructuring
+  
       // Convert current date and time to IST and store it in UTC
       const orderDate = moment().tz("Asia/Kolkata").utc().format();
-
+  
       // Create a new order using the POSorder model
       const newOrder = new POSorder({
         itemDetails: {
@@ -35,18 +35,19 @@ module.exports = {
           orderNumber: orderDetails.orderNumber,
           invoiceNumber: orderDetails.invoiceNumber,
           customerName: orderDetails.customerName,
-          location: orderDetails.location, // Keep location field intact
-          orderDate: orderDate, // Use the formatted ISO string
+          location: orderDetails.location,
+          orderDate: orderDate,
         },
         discount: {
           type: discount.type,
           value: discount.value,
         },
+        type: type, // Include `type` here
       });
-
+  
       // Save the order to the database
       await newOrder.save();
-
+  
       // Send a success response
       return res.status(201).json({
         message: "PosOrder created successfully",

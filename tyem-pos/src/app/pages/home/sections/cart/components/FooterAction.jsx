@@ -93,6 +93,7 @@ const FooterActions = () => {
     const orderData = {
       status: status,
       orderDetails: {
+        paymentStatus: status, // Include paymentStatus here
         orderNumber: orderId,
         invoiceNumber: invoiceNumber, // Use generated invoice number
         customerName: selectedCustomer?.name,

@@ -17,7 +17,7 @@ const POSORDER = new mongoose.Schema({
     method: {
       type: String,
       required: true,
-      enum: ["cash", "card", "split", "Talabat", "other"], // 'split' should be lowercase to match your logic
+      enum: ["cash", "card", "split", "Talabat", "other"], // Ensure 'split' is lowercase
     },
     total: {
       type: Number,
