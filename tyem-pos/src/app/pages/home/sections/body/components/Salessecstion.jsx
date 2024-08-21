@@ -285,7 +285,7 @@ const CartSection = ({ order }) => {
    const renderItemDetails = () => {
     if (!order) return null;
 
-    if (order.orderType === 'PosOrder') {
+    if (order?.orderType === 'PosOrder') {
       return order.itemDetails.items.map((item, index) => (
         <div
           key={index}
@@ -296,7 +296,7 @@ const CartSection = ({ order }) => {
           <span>{item.total}</span>
         </div>
       ));
-    } else if (order.orderType === 'WhatsAppOrder') {
+    } else if (order?.orderType === 'WhatsAppOrder') {
       return order.orderDetails.items.map((item, index) => (
         <div
           key={index}
