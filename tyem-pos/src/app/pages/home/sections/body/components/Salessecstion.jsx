@@ -288,45 +288,42 @@ const CartSection = ({ order }) => {
    // Handle item details based on the order type
    const renderItemDetails = () => {
     if (!order) return null;
-
-    if (order?.orderType === 'PosOrder') {
-      return order.itemDetails.items.map((item, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
-        >
-          <span className="font-semibold">{item.itemName}</span>
-          <span>{item.quantity}</span>
-          <span>{item.total}</span>
-        </div>
-      ));
-    } else if (order?.orderType === 'WhatsAppOrder') {
-      return order.orderDetails.items.map((item, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
-        >
-          <span className="font-semibold">{item.product_name}</span>
-          <span>{item.product_quantity}</span>
-          <span>{item.unit_price}</span>
-          <span>{item.product_currency}</span>
-        </div>
-      ));
+  
+    if (order.orderType === 'PosOrder') {
+      // Ensure items is an array
+      if (Array.isArray(order.itemDetails.items)) {
+        return order.itemDetails.items.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+          >
+            <span className="font-semibold">{item.itemName}</span>
+            <span>{item.quantity}</span>
+            <span>{item.total}</span>
+          </div>
+        ));
+      } else {
+        return <p>No items found.</p>;
+      }
+    } else if (order.orderType === 'WhatsAppOrder') {
+      // Ensure items is an array
+      if (Array.isArray(order.orderDetails?.items)) {
+        return order.orderDetails.items.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+          >
+            <span className="font-semibold">{item.product_name}</span>
+            <span>{item.product_quantity}</span>
+            <span>{item.unit_price}</span>
+            <span>{item.product_currency}</span>
+          </div>
+        ));
+      } else {
+        return <p>No items found.</p>;
+      }
     }
     return null;
-  };
-
-  // Handle the total calculation based on order type
-  const calculateTotal = () => {
-    if (!order) return 0;
-
-    if (order.orderType === 'PosOrder') {
-      return order.itemDetails.total; // Use the total from PosOrder details
-    } else if (order.orderType === 'WhatsAppOrder') {
-      // Assuming you have a way to calculate total for WhatsAppOrder
-      return order.orderDetails.reduce((acc, item) => acc + (item.unit_price * item.product_quantity), 0);
-    }
-    return 0;
   };
 
   return (
