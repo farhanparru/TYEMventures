@@ -40,6 +40,13 @@ const OrderItem = ({ order, onClick, selected }) => {
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId || order.orderDetails?.orderNumber} details`}
     >
+      {/* Smaller Badge for Order Type */}
+      <span
+        className={`bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}
+      >
+        {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
+      </span>
+  
       <div className="flex-1">
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
@@ -56,6 +63,7 @@ const OrderItem = ({ order, onClick, selected }) => {
           </span>
         </div>
       </div>
+      
       <div className="text-right">
         <h1 className="text-md text-black">
           <FaCalendar className="inline mr-1" />
@@ -66,13 +74,9 @@ const OrderItem = ({ order, onClick, selected }) => {
           {formattedTime}
         </h2>
       </div>
-      <span
-        className={`absolute top-2 left-2 transform px-3 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}
-      >
-        {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
-      </span>
     </div>
   );
+
 };
 
 
@@ -144,9 +148,7 @@ const OrderDetails = ({ order }) => {
 
   // Define delivery charge and discount values
   const deliveryCharge = '98 INR';
-  const discountValue = order?.discount?.type === 'fixed' 
-    ? `${order.discount.value} INR` 
-    : deliveryCharge;
+  const discountValue = order?.discount?.type === 'fixed'  ? `${order.discount.value} INR` : deliveryCharge;
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
@@ -290,7 +292,8 @@ const CartSection = ({ order }) => {
     if (!order) return null;
   
     if (order.orderType === 'PosOrder') {
-      // Ensure items is an array
+      console.log("PosOrder items:", order.itemDetails.items);
+
       if (Array.isArray(order.itemDetails.items)) {
         return order.itemDetails.items.map((item, index) => (
           <div
@@ -306,7 +309,9 @@ const CartSection = ({ order }) => {
         return <p>No items found.</p>;
       }
     } else if (order.orderType === 'WhatsAppOrder') {
-      // Ensure items is an array
+
+      console.log("WhatsAppOrder items:", order.orderDetails?.items);
+
       if (Array.isArray(order.orderDetails?.items)) {
         return order.orderDetails.items.map((item, index) => (
           <div
@@ -325,8 +330,6 @@ const CartSection = ({ order }) => {
     }
     return null;
   };
-
-
     // Handle the total calculation based on order type
     const calculateTotal = () => {
       if (!order) return 0;
@@ -351,7 +354,7 @@ const CartSection = ({ order }) => {
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
           <span>
-            {order?.orderMeta?.paymentTendered || '0'} {order?.orderDetails[0]?.product_currency || 'INR'}
+            {order?.orderMeta?.paymentTendered || order?.itemDetails?.total} {order?.orderDetails[0]?.product_currency || 'INR'}
           </span>
         </div>
 
