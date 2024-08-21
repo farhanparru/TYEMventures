@@ -76,7 +76,7 @@ function Odersale() {
                           <tr key={order._id} className="border-b border-gray-200">
                             <td className="px-4 py-4 whitespace-nowrap">
                               <span className="inline-block px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded">
-                                {order.status}
+                                {order.orderDetails.paymentStatus}
                               </span>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">

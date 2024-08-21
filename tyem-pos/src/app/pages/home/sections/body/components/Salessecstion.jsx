@@ -384,10 +384,13 @@ const SalesSection = () => {
           orderType: 'WhatsAppOrder',
         }));
 
-        const completedPosOrders = responsePosOrder.data.filter(order => order.status === 'COMPLETED').map(order => ({
+        const completedPosOrders = responsePosOrder.data.filter(order => order.orderDetails.paymentStatus === 'COMPLETED').map(order => ({
           ...order,
           orderType: 'PosOrder',
         }));
+
+        console.log(completedPosOrders,"completedPosOrders");
+        
 
         setOrders([...completedWhatsAppOrders, ...completedPosOrders]);
       } catch (error) {
