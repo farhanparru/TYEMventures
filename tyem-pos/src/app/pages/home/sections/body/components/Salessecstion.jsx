@@ -347,10 +347,10 @@ const CartSection = ({ order }) => {
     if (!order) return null;
 
     if (order.orderType === "PosOrder") {
-      console.log("PosOrder items:", order.itemDetails.items);
+      console.log("PosOrder items:", order.itemDetails);
 
-      if (Array.isArray(order.itemDetails.items)) {
-        return order.itemDetails.items.map((item, index) => (
+      if (Array.isArray(order.itemDetails)) {
+        return order.itemDetails.map((item, index) => (
           <div
             key={index}
             className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
