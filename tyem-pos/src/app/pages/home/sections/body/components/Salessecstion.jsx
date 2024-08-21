@@ -29,7 +29,7 @@ const OrderItem = ({ order, onClick, selected }) => {
 
   return (
     <div
-      className={`relative p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer 
+      className={`relative p-3 mb-3 rounded-lg shadow-md flex justify-between items-center border cursor-pointer
         ${
           selected
             ? "bg-blue-500 border-blue-500 text-white"
@@ -40,13 +40,7 @@ const OrderItem = ({ order, onClick, selected }) => {
       onClick={() => onClick(order)}
       aria-label={`Order ${order.orderMeta?.posOrderId || order.orderDetails?.orderNumber} details`}
     >
-    <span
-    className={`absolute top-2 left-2 transform px-3 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}>
-    {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
-  </span>
-
-  
-      <div>
+      <div className="flex-1">
         <h3 className="text-lg font-semibold">
           Order #{order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
         </h3>
@@ -55,7 +49,7 @@ const OrderItem = ({ order, onClick, selected }) => {
           {order.orderMeta?.paymentTendered || order.total} {order.orderDetails[0]?.product_currency || 'INR'} | 
           {order.orderMeta?.orderType || order.method}
         </p>
-
+  
         <div className="flex items-center mt-2">
           <span className={`px-2 py-1 text-xs font-semibold rounded ${order.orderMeta?.paymentStatus === 'Completed' || order.orderDetails.paymentStatus === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'bg-red-200 text-red-800'}`}>
             {order.orderMeta?.paymentStatus || order.status}
@@ -72,6 +66,11 @@ const OrderItem = ({ order, onClick, selected }) => {
           {formattedTime}
         </h2>
       </div>
+      <span
+        className={`absolute top-2 left-2 transform px-3 py-1 text-xs font-semibold text-white rounded-full ${order.orderType === 'WhatsAppOrder' ? 'bg-red-500' : 'bg-green-500'}`}
+      >
+        {order.orderType === 'WhatsAppOrder' ? 'WhatsApp Order' : 'POS Order'}
+      </span>
     </div>
   );
 };
@@ -126,11 +125,26 @@ const OrderDetails = ({ order }) => {
     doc.save(`order_${order?.orderMeta?.posOrderId}.pdf`);
   };
 
-  const utcDate = DateTime.fromISO(order?.orderMeta?.orderDate || new Date().toISOString(), { zone: "utc" });
-  const zonedDate = utcDate.setZone("Asia/Kolkata");
-  const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
-  const formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  // Check if the order is PosOrder or WhatsAppOrder and format the date/time accordingly
+  if (order.orderType === "PosOrder") {
+    const utcDate = DateTime.fromISO(order.orderDetails?.orderDate, { zone: "utc" });
+    const zonedDate = utcDate.setZone("Asia/Kolkata");
+    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+    formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  } else if (order.orderType === "WhatsAppOrder") {
+    const utcDate = DateTime.fromISO(order.orderMeta?.orderDate, { zone: "utc" });
+    const zonedDate = utcDate.setZone("Asia/Kolkata");
+    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+    formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  }
 
+
+    // Define delivery charge and discount values
+    const deliveryCharge = '98 INR';
+    const discountValue = order?.discount?.type === 'fixed' 
+      ? `${order.discount.value} INR` 
+      : deliveryCharge;
+  
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
@@ -163,11 +177,11 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Invoice Number</h4>
-            <p>Order #{order?.orderMeta?.posOrderId} | INV# {order?._id}</p>
+            Order #{order.orderMeta?.orderType || order.orderDetails?.invoiceNumber}
           </div>
           <div>
-            <h4 className="font-semibold">Notes</h4>
-            <p>WhatsAppOrder</p>
+            <h4 className="font-semibold">OrderType</h4>
+            Order #{order?.type || WhatsAppOrder}
           </div>
           <div className="text-right md:text-left">
             <h1 className="text-md text-black">
@@ -181,15 +195,15 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Subtotal</h4>
-            <p>{order?.orderDetails?.[0]?.unit_price || '0'} INR</p>
+            <p>{order?.orderDetails?.[0]?.unit_price || order.itemDetails?.total} INR</p>
           </div>
           <div>
             <h4 className="font-semibold">Delivery Charge</h4>
-            <p>98 INR</p>
+            <p>{discountValue}</p>
           </div>
           <div>
             <h4 className="font-semibold">Total Amount</h4>
-            <p>{order?.orderMeta?.paymentTendered || '0'} {order?.orderDetails?.[0]?.product_currency || 'INR'}</p>
+            <p>{order?.orderMeta?.paymentTendered || order.itemDetails?.total }</p>
           </div>
           <div>
             <h4 className="font-semibold">Payment Method</h4>
@@ -203,7 +217,7 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Name</h4>
-            <p>{order?.customer?.name || 'N/A'}</p>
+            <p>{order?.customer?.name ||order.orderDetails?.customerName }</p>
           </div>
           <div>
             <h4 className="font-semibold">Phone Number</h4>
@@ -267,20 +281,54 @@ const CartSection = ({ order }) => {
   //   );
   // }
 
+   // Handle item details based on the order type
+   const renderItemDetails = () => {
+    if (!order) return null;
+
+    if (order.orderType === 'PosOrder') {
+      return order.itemDetails.items.map((item, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+        >
+          <span className="font-semibold">{item.itemName}</span>
+          <span>{item.quantity}</span>
+          <span>{item.total}</span>
+        </div>
+      ));
+    } else if (order.orderType === 'WhatsAppOrder') {
+      return order.orderDetails.items.map((item, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
+        >
+          <span className="font-semibold">{item.product_name}</span>
+          <span>{item.product_quantity}</span>
+          <span>{item.unit_price}</span>
+          <span>{item.product_currency}</span>
+        </div>
+      ));
+    }
+    return null;
+  };
+
+  // Handle the total calculation based on order type
+  const calculateTotal = () => {
+    if (!order) return 0;
+
+    if (order.orderType === 'PosOrder') {
+      return order.itemDetails.total; // Use the total from PosOrder details
+    } else if (order.orderType === 'WhatsAppOrder') {
+      // Assuming you have a way to calculate total for WhatsAppOrder
+      return order.orderDetails.reduce((acc, item) => acc + (item.unit_price * item.product_quantity), 0);
+    }
+    return 0;
+  };
+
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
       <div className="flex-grow overflow-auto max-h-96">
-        {order?.orderDetails.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
-          >
-            <span className="font-semibold">{item.product_name}</span>
-            <span>{item.product_quantity}</span>
-            <span>{item.unit_price}</span>
-            <span>{item.product_currency}</span>
-          </div>
-        ))}
+        {renderItemDetails()}
       </div>
 
       {/* Summary and Actions */}
@@ -288,14 +336,14 @@ const CartSection = ({ order }) => {
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Subtotal</span>
           <span>
-            {order?.orderMeta.paymentTendered} {order?.orderDetails[0]?.product_currency}
+            {order?.orderMeta?.paymentTendered || '0'} {order?.orderDetails[0]?.product_currency || 'INR'}
           </span>
         </div>
 
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold">Total</span>
           <span>
-            <h1>{/* Display total price if needed */}</h1>
+            <h1>{calculateTotal()} {order?.orderDetails[0]?.product_currency || 'INR'}</h1>
           </span>
         </div>
 
@@ -305,7 +353,12 @@ const CartSection = ({ order }) => {
             <FaUndoAlt className="mr-2" /> Refund
           </button>
           <Dropdown
-            overlay={menu}
+            overlay={
+              <div className="p-2">
+                <button className="w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Print</button>
+                <button className="w-full px-4 py-2 text-gray-700 hover:bg-gray-100">Download</button>
+              </div>
+            }
             trigger={["click"]}
             onVisibleChange={(visible) => setDropdownVisible(visible)}
           >
@@ -323,8 +376,6 @@ const CartSection = ({ order }) => {
     </div>
   );
 };
-
-
 const SalesSection = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
