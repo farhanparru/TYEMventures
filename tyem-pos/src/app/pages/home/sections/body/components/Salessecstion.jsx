@@ -79,6 +79,23 @@ const OrderItem = ({ order, onClick, selected }) => {
 const OrderDetails = ({ order }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Declare formattedDate and formattedTime variables
+  let formattedDate = '';
+  let formattedTime = '';
+
+  // Check if the order is PosOrder or WhatsAppOrder and format the date/time accordingly
+  if (order?.orderType === "PosOrder") {
+    const utcDate = DateTime.fromISO(order.orderDetails?.orderDate, { zone: "utc" });
+    const zonedDate = utcDate.setZone("Asia/Kolkata");
+    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+    formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  } else if (order?.orderType === "WhatsAppOrder") {
+    const utcDate = DateTime.fromISO(order.orderMeta?.orderDate, { zone: "utc" });
+    const zonedDate = utcDate.setZone("Asia/Kolkata");
+    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
+    formattedTime = zonedDate.toFormat("hh:mm:ss a");
+  }
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -125,26 +142,12 @@ const OrderDetails = ({ order }) => {
     doc.save(`order_${order?.orderMeta?.posOrderId}.pdf`);
   };
 
-  // Check if the order is PosOrder or WhatsAppOrder and format the date/time accordingly
-  if (order?.orderType === "PosOrder") {
-    const utcDate = DateTime.fromISO(order.orderDetails?.orderDate, { zone: "utc" });
-    const zonedDate = utcDate.setZone("Asia/Kolkata");
-    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
-    formattedTime = zonedDate.toFormat("hh:mm:ss a");
-  } else if (order?.orderType === "WhatsAppOrder") {
-    const utcDate = DateTime.fromISO(order.orderMeta?.orderDate, { zone: "utc" });
-    const zonedDate = utcDate.setZone("Asia/Kolkata");
-    formattedDate = zonedDate.toFormat("MMM dd, yyyy");
-    formattedTime = zonedDate.toFormat("hh:mm:ss a");
-  }
+  // Define delivery charge and discount values
+  const deliveryCharge = '98 INR';
+  const discountValue = order?.discount?.type === 'fixed' 
+    ? `${order.discount.value} INR` 
+    : deliveryCharge;
 
-
-    // Define delivery charge and discount values
-    const deliveryCharge = '98 INR';
-    const discountValue = order?.discount?.type === 'fixed' 
-      ? `${order.discount.value} INR` 
-      : deliveryCharge;
-  
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
@@ -203,7 +206,7 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Total Amount</h4>
-            <p>{order?.orderMeta?.paymentTendered || order?.itemDetails?.total }</p>
+            <p>{order?.orderMeta?.paymentTendered || order?.itemDetails?.total}</p>
           </div>
           <div>
             <h4 className="font-semibold">Payment Method</h4>
@@ -217,7 +220,7 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Name</h4>
-            <p>{order?.customer?.name ||order.orderDetails?.customerName }</p>
+            <p>{order?.customer?.name || order.orderDetails?.customerName}</p>
           </div>
           <div>
             <h4 className="font-semibold">Phone Number</h4>
@@ -247,6 +250,7 @@ const OrderDetails = ({ order }) => {
     </div>
   );
 };
+
 
 
 
