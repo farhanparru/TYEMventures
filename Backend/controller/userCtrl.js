@@ -47,7 +47,9 @@ module.exports = {
   
       // Save the order to the database
       await newOrder.save();
-  
+    console.log(newOrder,"newOrder");
+    
+
       // Send a success response
       return res.status(201).json({
         message: "PosOrder created successfully",
@@ -139,7 +141,7 @@ module.exports = {
 
   getOrders: async (req, res) => {
     try {
-      const orders = await orderData.find({});
+      const orders = await POSorder.find({});
       return res.status(200).json(orders);
     } catch (error) {
       console.error("Error retrieving orders:", error.message);
