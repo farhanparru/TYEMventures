@@ -80,10 +80,6 @@ const OrderItem = ({ order, onClick, selected }) => {
 const OrderDetails = ({ order }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  if (!order) {
-    return <div>Select an order to view details.</div>;
-  }
-
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -95,46 +91,42 @@ const OrderDetails = ({ order }) => {
   const handleDownload = () => {
     const doc = new jsPDF();
 
+    // Add title and date
     doc.text("Order Details", 20, 20);
+    doc.text(`Date: ${formattedDate}`, 20, 30);
+    doc.text(`Time: ${formattedTime}`, 20, 40);
 
-    if (order.orderType === 'PosOrder') {
-      doc.autoTable({
-        startY: 30,
-        head: [['Order Number', 'Invoice Number', 'Payment Status', 'Customer Name', 'Location', 'Order Date']],
-        body: [
-          [
-            order?.orderDetails?.orderNumber || 'N/A',
-            order?.orderDetails?.invoiceNumber || 'N/A',
-            order?.orderDetails?.paymentStatus || 'N/A',
-            order?.orderDetails?.customerName || 'N/A',
-            order?.orderDetails?.location || 'N/A',
-            order?.orderDetails?.orderDate || 'N/A',
-          ],
+    // Add order details
+    doc.autoTable({
+      startY: 50,
+      head: [['Invoice Number', 'Notes', 'Subtotal', 'Delivery Charge', 'Total Amount', 'Payment Method']],
+      body: [
+        [
+          order?.orderMeta?.posOrderId || 'N/A',
+          "WhatsAppOrder",
+          `${order?.orderDetails?.[0]?.unit_price || '0'} INR`,
+          "98 INR",
+          `${order?.orderMeta?.paymentTendered || '0'} ${order?.orderDetails?.[0]?.product_currency || 'INR'}`,
+          order?.orderMeta?.paymentMethod || 'Cash',
         ],
-      });
-    } else if (order.orderType === 'WhatsAppOrder') {
-      doc.autoTable({
-        startY: 30,
-        head: [['Order Number', 'Invoice Number', 'Payment Status', 'Customer Name', 'Location', 'Order Date', 'Discount Type', 'Discount Value']],
-        body: [
-          [
-            order?.orderDetails?.orderNumber || 'N/A',
-            order?.orderDetails?.invoiceNumber || 'N/A',
-            order?.orderDetails?.paymentStatus || 'N/A',
-            order?.orderDetails?.customerName || 'N/A',
-            order?.orderDetails?.location || 'N/A',
-            order?.orderDetails?.orderDate || 'N/A',
-            order?.discount?.type || 'N/A',
-            order?.discount?.value || 'N/A',
-          ],
-        ],
-      });
-    }
+      ],
+    });
 
-    doc.save(`order_${order?.orderDetails?.orderNumber || 'unknown'}.pdf`);
+    // Add customer details
+    doc.text("Customer Details", 20, doc.lastAutoTable.finalY + 20);
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 30,
+      head: [['Name', 'Phone Number', 'Place', 'Order Outstanding']],
+      body: [
+        [order?.customer?.name || 'N/A', order?.customer?.phone || 'N/A', "Kasaragod", ""],
+      ],
+    });
+
+    // Save the PDF
+    doc.save(`order_${order?.orderMeta?.posOrderId}.pdf`);
   };
 
-  const utcDate = DateTime.fromISO(order?.orderDetails?.orderDate || new Date().toISOString(), { zone: "utc" });
+  const utcDate = DateTime.fromISO(order?.orderMeta?.orderDate || new Date().toISOString(), { zone: "utc" });
   const zonedDate = utcDate.setZone("Asia/Kolkata");
   const formattedDate = zonedDate.toFormat("MMM dd, yyyy");
   const formattedTime = zonedDate.toFormat("hh:mm:ss a");
@@ -142,15 +134,13 @@ const OrderDetails = ({ order }) => {
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h3 className="text-2xl font-bold mb-4 border-b pb-2">
-          Order Details #{order.orderDetails?.orderNumber || order.orderMeta?.posOrderId}
-        </h3>
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2">Payment Details</h3>
         <div className="relative mb-8">
           <button
             onClick={toggleDropdown}
             className="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-900 flex items-center"
           >
-            Options
+            Invoice Options
             <FaChevronDown className="ml-2" />
           </button>
           {dropdownOpen && (
@@ -171,97 +161,78 @@ const OrderDetails = ({ order }) => {
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          {order.orderType === 'PosOrder' && (
-            <>
-              <div>
-                <h4 className="font-semibold">Order Number</h4>
-                <p>{order?.orderDetails?.orderNumber || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Invoice Number</h4>
-                <p>{order?.orderDetails?.invoiceNumber || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Payment Status</h4>
-                <p>{order?.orderDetails?.paymentStatus || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Customer Name</h4>
-                <p>{order?.orderDetails?.customerName || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Location</h4>
-                <p>{order?.orderDetails?.location || 'N/A'}</p>
-              </div>
-              <div className="text-right md:text-left">
-                <h1 className="text-md text-black">
-                  <FaCalendar className="inline mr-1" />
-                  {formattedDate}
-                </h1>
-                <h2 className="text-sm text-black">
-                  <FaClock className="inline mr-1" />
-                  {formattedTime}
-                </h2>
-              </div>
-            </>
-          )}
-          {order.orderType === 'WhatsAppOrder' && (
-            <>
-              <div>
-                <h4 className="font-semibold">Order Number</h4>
-                <p>{order?.orderDetails?.orderNumber || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Invoice Number</h4>
-                <p>{order?.orderDetails?.invoiceNumber || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Payment Status</h4>
-                <p>{order?.orderDetails?.paymentStatus || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Customer Name</h4>
-                <p>{order?.customer?.name || 'N/A'}</p>
-              </div>
-              <div>
-            <h4 className="font-semibold">Phone Number</h4>
-            <p>{order?.customer?.phone || 'N/A'}</p>
+          <div>
+            <h4 className="font-semibold">Invoice Number</h4>
+            <p>Order #{order?.orderMeta?.posOrderId} | INV# {order?._id}</p>
           </div>
-              <div>
-                <h4 className="font-semibold">Location</h4>
-                <p>{order?.orderDetails?.location || 'N/A'}</p>
-              </div>
-              <div>
-              <h4 className="font-semibold">Total Amount</h4>
-                <p>{order?.orderMeta?.paymentTendered || '0'} {order?.orderDetails?.[0]?.product_currency || 'INR'}</p>
-              </div>
-              <div>
-              <div>
+          <div>
+            <h4 className="font-semibold">Notes</h4>
+            <p>WhatsAppOrder</p>
+          </div>
+          <div className="text-right md:text-left">
+            <h1 className="text-md text-black">
+              <FaCalendar className="inline mr-1" />
+              {formattedDate}
+            </h1>
+            <h2 className="text-sm text-black">
+              <FaClock className="inline mr-1" />
+              {formattedTime}
+            </h2>
+          </div>
+          <div>
             <h4 className="font-semibold">Subtotal</h4>
             <p>{order?.orderDetails?.[0]?.unit_price || '0'} INR</p>
           </div>
-              <h4 className="font-semibold">Payment Method</h4>
-              <p>{order?.orderMeta?.paymentMethod || 'Cash'}</p>
-              </div>
-              
-              <div className="text-right md:text-left">
-                <h1 className="text-md text-black">
-                  <FaCalendar className="inline mr-1" />
-                  {formattedDate}
-                </h1>
-                <h2 className="text-sm text-black">
-                  <FaClock className="inline mr-1" />
-                  {formattedTime}
-                </h2>
-              </div>
-            </>
-          )}
+          <div>
+            <h4 className="font-semibold">Delivery Charge</h4>
+            <p>98 INR</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Total Amount</h4>
+            <p>{order?.orderMeta?.paymentTendered || '0'} {order?.orderDetails?.[0]?.product_currency || 'INR'}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Payment Method</h4>
+            <p>{order?.orderMeta?.paymentMethod || 'Cash'}</p>
+          </div>
         </div>
+      </div>
+
+      <div className="mb-8">
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2">Customer Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <h4 className="font-semibold">Name</h4>
+            <p>{order?.customer?.name || 'N/A'}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Phone Number</h4>
+            <p>{order?.customer?.phone || 'N/A'}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Place</h4>
+            <p>Kasaragod</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Order Outstanding</h4>
+            <p></p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-8 text-center">
+        <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
+          Pay Outstanding
+        </button>
+      </div>
+
+      <div className="flex justify-center items-center">
+        <FaCheckCircle className="w-6 h-6 text-green-500 mr-2" />
+        <span className="text-green-500 font-semibold">Transaction Synced</span>
       </div>
     </div>
   );
 };
-
 
 
 
