@@ -220,7 +220,7 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Name</h4>
-            <p>{order?.customer?.name || order.orderDetails?.customerName}</p>
+            <p>{order?.customer?.name || order?.orderDetails?.customerName}</p>
           </div>
           <div>
             <h4 className="font-semibold">Phone Number</h4>
