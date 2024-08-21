@@ -177,7 +177,7 @@ const OrderDetails = ({ order }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-semibold">Invoice Number</h4>
-            Order #{order.orderMeta?.orderType || order.orderDetails?.invoiceNumber}
+            Order #{order?.orderMeta?.orderType || order.orderDetails?.invoiceNumber}
           </div>
           <div>
             <h4 className="font-semibold">OrderType</h4>
@@ -203,7 +203,7 @@ const OrderDetails = ({ order }) => {
           </div>
           <div>
             <h4 className="font-semibold">Total Amount</h4>
-            <p>{order?.orderMeta?.paymentTendered || order.itemDetails?.total }</p>
+            <p>{order?.orderMeta?.paymentTendered || order?.itemDetails?.total }</p>
           </div>
           <div>
             <h4 className="font-semibold">Payment Method</h4>
