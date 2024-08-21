@@ -56,41 +56,44 @@ const OrderItem = ({ order, onClick, selected }) => {
         order.orderMeta?.posOrderId || order.orderDetails?.orderNumber
       } details`}
     >
-      {/* Smaller Badge for Order Type */}
-      <span
-        className={`absolute top-2 left-2 transform px-2 py-0.5 text-[10px] font-semibold text-white rounded-full ${
-          order.orderType === "WhatsAppOrder" ? "bg-red-500" : "bg-green-500"
-        }`}
-      >
-        {order.orderType === "WhatsAppOrder" ? "WhatsApp Order" : "POS Order"}
-      </span>
-
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold">
-          Order #
-          {order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
-        </h3>
-        <p className="text-sm">
-          {order.totalQuantity} Item{order.totalQuantity > 1 ? "s" : ""} |
-          {order.orderMeta?.paymentTendered || order.total}{" "}
-          {order.orderDetails[0]?.product_currency || "INR"} |
-          {order.orderMeta?.orderType || order.method}
-        </p>
-
-        <div className="flex items-center mt-2">
-          <span
-            className={`px-2 py-1 text-xs font-semibold rounded ${
-              order.orderMeta?.paymentStatus === "Completed" ||
-              order.orderDetails.paymentStatus === "COMPLETED"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-200 text-red-800"
-            }`}
-          >
-            {order.orderMeta?.paymentStatus || order.status}
-          </span>
+      <div className="flex flex-1 items-center">
+        {/* Smaller Badge for Order Type */}
+        <span
+          className={`px-1.5 py-1 text-xs font-medium text-gray-700 rounded-full bg-gray-100 ${
+            order.orderType === "WhatsAppOrder" ? "bg-red-500 text-white" : "bg-green-500 text-white"
+          }`}
+        >
+          {order.orderType === "WhatsAppOrder" ? "WhatsApp Order" : "POS Order"}
+        </span>
+  
+        <div className="ml-4">
+          <h3 className="text-lg font-semibold">
+            Order #
+            {order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
+          </h3>
+          <p className="text-sm">
+            {order.totalQuantity} Item{order.totalQuantity > 1 ? "s" : ""} |{" "}
+            {order.orderMeta?.paymentTendered || order.total}{" "}
+            {order.orderDetails[0]?.product_currency || "INR"} |{" "}
+            {order.orderMeta?.orderType || order.method}
+          </p>
+  
+          <div className="flex items-center mt-2">
+            <span
+              className={`px-2 py-1 text-xs font-semibold rounded ${
+                order.orderMeta?.paymentStatus === "Completed" ||
+                order.orderDetails.paymentStatus === "COMPLETED"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-200 text-red-800"
+              }`}
+            >
+              {order.orderMeta?.paymentStatus || order.status}
+            </span>
+          </div>
         </div>
       </div>
-
+  
+      {/* Date and Time Section */}
       <div className="text-right">
         <h1 className="text-md text-black">
           <FaCalendar className="inline mr-1" />
@@ -345,21 +348,21 @@ const CartSection = ({ order }) => {
 
   const renderItemDetails = () => {
     if (!order) return null;
-
+  
     if (order.orderType === "PosOrder") {
       console.log("PosOrder items:", order.itemDetails);
-
-      if (Array.isArray(order.itemDetails)) {
-        return order.itemDetails.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4"
-          >
-            <span className="font-semibold">{item.itemName}</span>
-            <span>{item.quantity}</span>
-            <span>{item.total}</span>
+  
+      // Check if order.itemDetails exists and has the expected properties
+      if (order.itemDetails && order.itemDetails.items > 0) {
+        return (
+          <div className="flex items-center justify-between p-4 bg-white rounded-md text-black mb-4">
+            <span className="font-semibold">
+              {order.itemDetails.itemName.join(", ")}
+            </span>
+            <span>{order.itemDetails.quantity}</span>
+            <span>{order.itemDetails.total}</span>
           </div>
-        ));
+        );
       } else {
         return <p>No items found.</p>;
       }
