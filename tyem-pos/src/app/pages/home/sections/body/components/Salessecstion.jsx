@@ -126,12 +126,12 @@ const OrderDetails = ({ order }) => {
   };
 
   // Check if the order is PosOrder or WhatsAppOrder and format the date/time accordingly
-  if (order.orderType === "PosOrder") {
+  if (order?.orderType === "PosOrder") {
     const utcDate = DateTime.fromISO(order.orderDetails?.orderDate, { zone: "utc" });
     const zonedDate = utcDate.setZone("Asia/Kolkata");
     formattedDate = zonedDate.toFormat("MMM dd, yyyy");
     formattedTime = zonedDate.toFormat("hh:mm:ss a");
-  } else if (order.orderType === "WhatsAppOrder") {
+  } else if (order?.orderType === "WhatsAppOrder") {
     const utcDate = DateTime.fromISO(order.orderMeta?.orderDate, { zone: "utc" });
     const zonedDate = utcDate.setZone("Asia/Kolkata");
     formattedDate = zonedDate.toFormat("MMM dd, yyyy");
