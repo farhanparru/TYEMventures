@@ -326,6 +326,20 @@ const CartSection = ({ order }) => {
     return null;
   };
 
+
+    // Handle the total calculation based on order type
+    const calculateTotal = () => {
+      if (!order) return 0;
+  
+      if (order.orderType === 'PosOrder') {
+        return order.itemDetails.total; // Use the total from PosOrder details
+      } else if (order.orderType === 'WhatsAppOrder') {
+        // Assuming you have a way to calculate total for WhatsAppOrder
+        return order.orderDetails.reduce((acc, item) => acc + (item.unit_price * item.product_quantity), 0);
+      }
+      return 0;
+    };
+
   return (
     <div className="flex flex-col h-full p-4 bg-gray-800 text-white">
       <div className="flex-grow overflow-auto max-h-96">
