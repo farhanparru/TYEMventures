@@ -71,9 +71,9 @@ const ItemCard = React.memo(({ selectedCategory }) => {
 
 
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className="flex justify-between gap-x-10 p-6">
