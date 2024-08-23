@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,7 +12,7 @@ import {
   FaWhatsapp,
   FaShoppingCart,
   FaChartBar,
-  FaChartLine
+  FaChartLine,
 } from "react-icons/fa";
 import Modal from "react-modal";
 
@@ -55,47 +55,56 @@ function Reports() {
   const [charges, setCharges] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
-  console.log(totalSales,"totalSales");
-  console.log(whatsappSales,"whatsappSales");
-  console.log(posDiscount,"posDiscount");
-  
-  
-  
+  const [subtotal, setSubtotal] = useState(0);
+
+
+  console.log(totalSales, "totalSales");
+  console.log(whatsappSales, "whatsappSales");
+  console.log(posDiscount, "posDiscount");
 
   useEffect(() => {
     // Fetch POS Orders
-    axios.get('https://tyem.invenro.site/api/user/PosOrder')
-      .then(response => {
+    axios
+      .get("https://tyem.invenro.site/api/user/PosOrder")
+      .then((response) => {
         const posData = response.data;
         let totalPosSales = 0;
         let totalPosDiscount = 0;
+        let totalPosSubtotal = 0;
 
         posData.forEach(order => {
           totalPosSales += order.itemDetails.total || 0; // Ensure total is a number
           if (order.discount) {
             totalPosDiscount += order.discount.value || 0; // Ensure discount is a number
           }
+          totalPosSubtotal += (order.itemDetails.total || 0) - (order.discount ? order.discount.value || 0 : 0);
         });
 
         setPosSales(totalPosSales);
         setPosDiscount(totalPosDiscount);
+        setSubtotal(totalPosSubtotal);
       })
-      .catch(error => console.error('Error fetching POS orders:', error));
+      .catch((error) => console.error("Error fetching POS orders:", error));
 
     // Fetch WhatsApp Orders
-    axios.get('https://tyem.invenro.site/api/tyem/Whatsappget')
-      .then(response => {
+    axios
+      .get("https://tyem.invenro.site/api/tyem/Whatsappget")
+      .then((response) => {
         const whatsappData = response.data;
         let totalWhatsappSales = 0;
+        let totalWhatsappSubtotal = 0;
 
-        whatsappData.forEach(order => {
+        whatsappData.forEach((order) => {
           totalWhatsappSales += order.paymentTendered || 0; // Ensure paymentTendered is a number
+          totalWhatsappSubtotal += order.paymentTendered || 0;
         });
 
         setWhatsappSales(totalWhatsappSales);
+        setSubtotal(totalWhatsappSubtotal);
       })
-      .catch(error => console.error('Error fetching WhatsApp orders:', error));
-
+      .catch((error) =>
+        console.error("Error fetching WhatsApp orders:", error)
+      );
   }, []);
 
   useEffect(() => {
@@ -107,19 +116,18 @@ function Reports() {
     const calculatedNetSales = totalSalesSum - (posDiscount || 0); // Ensure posDiscount is a number
     setNetSales(calculatedNetSales);
 
-    // Calculate Grand Total (Net Sales + Tax - Refund + Charges)
-    const calculatedGrandTotal = calculatedNetSales + (taxCollected || 0) - (refund || 0) + (charges || 0); 
-    setGrandTotal(calculatedGrandTotal);
-  }, [posSales, whatsappSales, posDiscount, taxCollected, refund, charges]);
+   // Calculate Grand Total (Net Sales + Tax - Refund + Charges)
+   const calculatedGrandTotal = calculatedNetSales + (taxCollected || 0) - (refund || 0) + (charges || 0);
+   setGrandTotal(calculatedGrandTotal);
+ }, [posSales, whatsappSales, posDiscount, taxCollected, refund, charges]);
 
+ 
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2 bg-blue-500 text-white p-4 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300">
           <FaChartBar className="text-2xl animate-pulse" />
-          <h2 className="text-xl font-bold tracking-wide ">
-            Shift Summary
-          </h2>
+          <h2 className="text-xl font-bold tracking-wide ">Shift Summary</h2>
         </div>
         <div className="flex space-x-4">
           <button className="relative inline-flex items-center justify-center px-6 py-2 overflow-hidden font-medium text-blue-600 transition duration-300 ease-out border-2 border-blue-600 rounded-full shadow-md group">
@@ -175,24 +183,24 @@ function Reports() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-     {/* Total Sales Summary Card */}
-  <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
-    <div className="flex items-center space-x-4">
-      <FaChartLine className="text-indigo-500 text-3xl animate-bounce" />
-      <div>
-        <h3 className="text-lg font-bold">Total Sales Summary</h3>
-        <p>Total Sales: ₹{totalSales.toFixed(2)}</p> {/* Total Sales = POS Sales + WhatsApp Sales */}
-        <p>Net Sales (after discount): ₹{netSales.toFixed(2)}</p> {/* Net Sales = Total Sales - POS Discount */}
-        <p>Tax Collected: ₹0.00</p>
-        <p>Refund: -₹0.00</p>
-        <p>Charges: ₹0.00</p>
-        <p>Discount: -₹{posDiscount.toFixed(2)}</p>
-        <p className="font-bold">Grand Total: ₹0.00</p>
-      </div>
-    </div>
-  </div>
-
+        {/* Total Sales Summary Card */}
+        <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
+          <div className="flex items-center space-x-4">
+            <FaChartLine className="text-indigo-500 text-3xl animate-bounce" />
+            <div>
+              <h3 className="text-lg font-bold">Total Sales Summary</h3>
+              <p>Total Sales: ₹{totalSales.toFixed(2)}</p>{" "}
+              {/* Total Sales = POS Sales + WhatsApp Sales */}
+              <p>Net Sales (after discount): ₹{netSales.toFixed(2)}</p>{" "}
+              {/* Net Sales = Total Sales - POS Discount */}
+              <p>Tax Collected: ₹0.00</p>
+              <p>Refund: -₹0.00</p>
+              <p>Charges: ₹0.00</p>
+              <p>Discount: -₹{posDiscount.toFixed(2)}</p>
+              <p className="font-bold">Grand Total: ₹0.00</p>
+            </div>
+          </div>
+        </div>
 
         {/* POS Sales Report Card */}
         <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
@@ -200,12 +208,12 @@ function Reports() {
             <FaShoppingCart className="text-blue-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">POS Sales Report</h3>
-              <p>Net Sales: ₹0.00</p>
+              <p>Net Sales: ₹{posSales.toFixed(2)}</p>
               <p>Tax Collected: ₹0.00</p>
               <p>Refund: -₹0.00</p>
               <p>Charges: ₹0.00</p>
-              <p>Discount: -₹0.00</p>
-              <p className="font-bold">Subtotal: ₹0.00</p>
+              <p>Discount: -₹{posDiscount.toFixed(2)}</p>
+              <p className="font-bold">Subtotal: ₹{subtotal.toFixed(2)}</p> {/* Subtotal = POS Sales - POS Discount */}
             </div>
           </div>
         </div>
@@ -216,12 +224,12 @@ function Reports() {
             <FaWhatsapp className="text-green-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">WhatsApp Ordering Report</h3>
-              <p>Net Sales: ₹0.00</p>
+              <p>Net Sales: ₹{whatsappSales.toFixed(2)}</p>
               <p>Tax Collected: ₹0.00</p>
               <p>Refund: -₹0.00</p>
               <p>Charges: ₹0.00</p>
               <p>Discount: -₹0.00</p>
-              <p className="font-bold">Subtotal: ₹0.00</p>
+              <p className="font-bold">Subtotal: ₹{whatsappSales.toFixed(2)}</p> {/* Subtotal = WhatsApp Sales */}
             </div>
           </div>
         </div>
