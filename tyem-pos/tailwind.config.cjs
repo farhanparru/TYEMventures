@@ -80,7 +80,7 @@ module.exports = {
         //   900: "#5c0105",
         //   "side-border": "#5A5151",
         //   "cart-head":"#FF3838",
-z
+
         // },
       },
     },

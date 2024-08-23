@@ -24,7 +24,7 @@ import { getOrders } from "./store/orderSlice";
 import { getStoreCustomers } from "./store/customerSlice";
 import { useNavigate } from 'react-router-dom';
 import EditCart from "./sections/editCart";
-import ChatBot from "../../layout/navbar/ChatBotComponent"; // Import the ChatBot component
+
 import { connectWebSocket,fetchOrders} from "../../../services/apiService.js";
 import notificationSound from '../../../assets/Moto Notification Ringtone Download - MobCup.Com.Co.mp3'
 import { useOrderContext } from "./sections/body/components/OrderContext.jsx";
