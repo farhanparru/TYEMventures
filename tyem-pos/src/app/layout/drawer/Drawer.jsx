@@ -213,7 +213,11 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       className="bg-gray-900"
     >
       <div className="flex flex-col items-center py-4">
-        <img src={logo} alt="logo" className="w-12 mb-4" />
+      <div className="flex items-center justify-center">
+  <img src={logo} alt="logo" className="w-15 h-15 mb-2 max-w-[70%] animate-zoom" />
+</div>
+
+
         {menuItems.map((item) => (
           <DrawerMenuItem
             Icon={item.icon}

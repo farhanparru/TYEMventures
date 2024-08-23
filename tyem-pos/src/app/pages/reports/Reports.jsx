@@ -57,14 +57,14 @@ function Reports() {
   const [totalSales, setTotalSales] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
 
+  console.log(subtotal,"subtotal");
+  
+
   const [cashSales, setCashSales] = useState(0);
   const [upiSales, setUpiSales] = useState(0);
   const [creditSales, setCreditSales] = useState(0);
   const [cardSales, setCardSales] = useState(0);
 
-  console.log(totalSales, "totalSales");
-  console.log(whatsappSales, "whatsappSales");
-  console.log(posDiscount, "posDiscount");
 
   useEffect(() => {
     // Fetch POS Orders
@@ -74,7 +74,6 @@ function Reports() {
         const posData = response.data;
         let totalPosSales = 0;
         let totalPosDiscount = 0;
-        let totalPosSubtotal = 0;
         let totalCashSales = 0;
         let totalUpiSales = 0;
         let totalCreditSales = 0;
@@ -85,7 +84,7 @@ function Reports() {
   
           totalPosSales += orderTotal;
           totalPosDiscount += orderDiscount;
-          totalPosSubtotal += orderTotal - orderDiscount;
+         
   
           // Determine payment method
           const paymentMethod = order.itemDetails.method?.toLowerCase(); // Ensure it's in lowercase for consistency
@@ -106,17 +105,22 @@ function Reports() {
               console.warn("Unknown payment method:", paymentMethod);
           }
         });
+
+        const calculatedSubtotal = totalPosSales - totalPosDiscount;
+       
+        console.log(calculatedSubtotal,"calculatedSubtotal");
   
         setPosSales(totalPosSales);
         setPosDiscount(totalPosDiscount);
-        setSubtotal(totalPosSubtotal);
+        setSubtotal(calculatedSubtotal);
         setCashSales(totalCashSales);  // Update the state with total cash sales
         setUpiSales(totalUpiSales);    // Update the state with total UPI sales
         setCreditSales(totalCreditSales); // Update the state with total credit sales
         setCardSales(totalCardSales);  // Update the state with total card sales
 
-        const calculatedSubtotal = totalPosSales - totalPosDiscount;
-        setSubtotal(calculatedSubtotal);
+        
+        
+        
 
       })
       .catch((error) => console.error("Error fetching POS orders:", error));
@@ -127,7 +131,7 @@ function Reports() {
       .then((response) => {
         console.log(response.data); // Check the actual data returned
         const whatsappData = response.data;
-        console.log(whatsappData, "kk");
+     
         let totalWhatsappSales = 0;
         let totalWhatsappSubtotal = 0;
 
