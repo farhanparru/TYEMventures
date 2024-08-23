@@ -57,6 +57,8 @@ function Reports() {
   const [totalSales, setTotalSales] = useState(0);
   console.log(totalSales,"totalSales");
   console.log(whatsappSales,"whatsappSales");
+  console.log(posDiscount,"posDiscount");
+  
   
   
 
@@ -65,17 +67,18 @@ function Reports() {
     axios.get('https://tyem.invenro.site/api/user/PosOrder')
       .then(response => {
         const posData = response.data;
-        console.log(posData,"hh");
-        
-        let totalSales = 0;
-        let totalDiscount = 0;
-        posData.forEach(order => { totalSales += order.itemDetails.total;
+        let totalPosSales = 0;
+        let totalPosDiscount = 0;
+
+        posData.forEach(order => {
+          totalPosSales += order.itemDetails.total || 0; // Ensure total is a number
           if (order.discount) {
-            totalDiscount += order.discount.value;
+            totalPosDiscount += order.discount.value || 0; // Ensure discount is a number
           }
         });
-        setPosSales(totalSales);
-        setPosDiscount(totalDiscount);
+
+        setPosSales(totalPosSales);
+        setPosDiscount(totalPosDiscount);
       })
       .catch(error => console.error('Error fetching POS orders:', error));
 
@@ -83,11 +86,13 @@ function Reports() {
     axios.get('https://tyem.invenro.site/api/tyem/Whatsappget')
       .then(response => {
         const whatsappData = response.data;
-        let totalSales = 0;
+        let totalWhatsappSales = 0;
+
         whatsappData.forEach(order => {
-          totalSales += order.paymentTendered;
+          totalWhatsappSales += order.paymentTendered || 0; // Ensure paymentTendered is a number
         });
-        setWhatsappSales(totalSales);
+
+        setWhatsappSales(totalWhatsappSales);
       })
       .catch(error => console.error('Error fetching WhatsApp orders:', error));
 
@@ -95,15 +100,15 @@ function Reports() {
 
   useEffect(() => {
     // Calculate Total Sales (POS + WhatsApp)
-    const totalSalesSum = posSales + whatsappSales;
+    const totalSalesSum = (posSales || 0) + (whatsappSales || 0); // Ensure both values are numbers
     setTotalSales(totalSalesSum);
 
     // Calculate Net Sales (Total Sales - POS Discount)
-    const calculatedNetSales = totalSalesSum - posDiscount;
+    const calculatedNetSales = totalSalesSum - (posDiscount || 0); // Ensure posDiscount is a number
     setNetSales(calculatedNetSales);
 
     // Calculate Grand Total (Net Sales + Tax - Refund + Charges)
-    const calculatedGrandTotal = calculatedNetSales + taxCollected - refund + charges;
+    const calculatedGrandTotal = calculatedNetSales + (taxCollected || 0) - (refund || 0) + (charges || 0); 
     setGrandTotal(calculatedGrandTotal);
   }, [posSales, whatsappSales, posDiscount, taxCollected, refund, charges]);
 
@@ -177,12 +182,12 @@ function Reports() {
       <FaChartLine className="text-indigo-500 text-3xl animate-bounce" />
       <div>
         <h3 className="text-lg font-bold">Total Sales Summary</h3>
-        <p>Total Sales: ₹{totalSales}</p> {/* Total Sales = POS Sales + WhatsApp Sales */}
-        <p>Net Sales (after discount): ₹{netSales}</p> {/* Net Sales = Total Sales - POS Discount */}
+        <p>Total Sales: ₹{totalSales.toFixed(2)}</p> {/* Total Sales = POS Sales + WhatsApp Sales */}
+        <p>Net Sales (after discount): ₹{netSales.toFixed(2)}</p> {/* Net Sales = Total Sales - POS Discount */}
         <p>Tax Collected: ₹0.00</p>
         <p>Refund: -₹0.00</p>
         <p>Charges: ₹0.00</p>
-        <p>Discount: -₹{posDiscount}</p>
+        <p>Discount: -₹{posDiscount.toFixed(2)}</p>
         <p className="font-bold">Grand Total: ₹0.00</p>
       </div>
     </div>
