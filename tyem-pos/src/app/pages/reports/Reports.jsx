@@ -55,16 +55,21 @@ function Reports() {
   const [charges, setCharges] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
+  console.log(totalSales,"totalSales");
+  console.log(whatsappSales,"whatsappSales");
+  
+  
 
   useEffect(() => {
     // Fetch POS Orders
     axios.get('https://tyem.invenro.site/api/user/PosOrder')
       .then(response => {
         const posData = response.data;
+        console.log(posData,"hh");
+        
         let totalSales = 0;
         let totalDiscount = 0;
-        posData.forEach(order => {
-          totalSales += order.itemDetails.total;
+        posData.forEach(order => { totalSales += order.itemDetails.total;
           if (order.discount) {
             totalDiscount += order.discount.value;
           }
