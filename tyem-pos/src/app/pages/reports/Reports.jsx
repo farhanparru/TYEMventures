@@ -57,6 +57,10 @@ function Reports() {
   const [totalSales, setTotalSales] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
 
+  const [cashSales, setCashSales] = useState(0);
+  const [upiSales, setUpiSales] = useState(0);
+  const [creditSales, setCreditSales] = useState(0);
+  const [cardSales, setCardSales] = useState(0);
 
   console.log(totalSales, "totalSales");
   console.log(whatsappSales, "whatsappSales");
@@ -71,18 +75,49 @@ function Reports() {
         let totalPosSales = 0;
         let totalPosDiscount = 0;
         let totalPosSubtotal = 0;
-
-        posData.forEach(order => {
-          totalPosSales += order.itemDetails.total || 0; // Ensure total is a number
-          if (order.discount) {
-            totalPosDiscount += order.discount.value || 0; // Ensure discount is a number
+        let totalCashSales = 0;
+        let totalUpiSales = 0;
+        let totalCreditSales = 0;
+        let totalCardSales = 0;
+        posData.forEach((order) => {
+          const orderTotal = order.itemDetails.total || 0;
+          const orderDiscount = order.discount ? order.discount.value || 0 : 0;
+  
+          totalPosSales += orderTotal;
+          totalPosDiscount += orderDiscount;
+          totalPosSubtotal += orderTotal - orderDiscount;
+  
+          // Determine payment method
+          const paymentMethod = order.itemDetails.method?.toLowerCase(); // Ensure it's in lowercase for consistency
+          switch (paymentMethod) {
+            case "cash":
+              totalCashSales += orderTotal;
+              break;
+            case "upi":
+              totalUpiSales += orderTotal;
+              break;
+            case "credit":
+              totalCreditSales += orderTotal;
+              break;
+            case "card":
+              totalCardSales += orderTotal;
+              break;
+            default:
+              console.warn("Unknown payment method:", paymentMethod);
           }
-          totalPosSubtotal += (order.itemDetails.total || 0) - (order.discount ? order.discount.value || 0 : 0);
         });
-
+  
         setPosSales(totalPosSales);
         setPosDiscount(totalPosDiscount);
         setSubtotal(totalPosSubtotal);
+        setCashSales(totalCashSales);  // Update the state with total cash sales
+        setUpiSales(totalUpiSales);    // Update the state with total UPI sales
+        setCreditSales(totalCreditSales); // Update the state with total credit sales
+        setCardSales(totalCardSales);  // Update the state with total card sales
+
+        const calculatedSubtotal = totalPosSales - totalPosDiscount;
+        setSubtotal(calculatedSubtotal);
+
       })
       .catch((error) => console.error("Error fetching POS orders:", error));
 
@@ -92,17 +127,20 @@ function Reports() {
       .then((response) => {
         console.log(response.data); // Check the actual data returned
         const whatsappData = response.data;
-        console.log(whatsappData,"kk");
+        console.log(whatsappData, "kk");
         let totalWhatsappSales = 0;
         let totalWhatsappSubtotal = 0;
 
         whatsappData.forEach((order) => {
           console.log("Order Data:", order); // Inspect individual order data
-          if (order.orderMeta && typeof order.orderMeta.paymentTendered === 'number') {
+          if (
+            order.orderMeta &&
+            typeof order.orderMeta.paymentTendered === "number"
+          ) {
             totalWhatsappSales += order.orderMeta.paymentTendered;
           }
         });
-  
+
         setWhatsappSales(totalWhatsappSales);
         setSubtotal(totalWhatsappSubtotal);
       })
@@ -120,11 +158,11 @@ function Reports() {
     const calculatedNetSales = totalSalesSum - (posDiscount || 0); // Ensure posDiscount is a number
     setNetSales(calculatedNetSales);
 
-   // Calculate Grand Total (Net Sales + Tax - Refund + Charges)
-   const calculatedGrandTotal = calculatedNetSales + (taxCollected || 0) - (refund || 0) + (charges || 0);
-   setGrandTotal(calculatedGrandTotal);
- }, [posSales, whatsappSales, posDiscount, taxCollected, refund, charges]);
-
+    // Calculate Grand Total (Net Sales + Tax - Refund + Charges)
+    const calculatedGrandTotal =
+      calculatedNetSales + (taxCollected || 0) - (refund || 0) + (charges || 0);
+    setGrandTotal(calculatedGrandTotal);
+  }, [posSales, whatsappSales, posDiscount, taxCollected, refund, charges]);
 
   return (
     <div className="p-4">
@@ -193,14 +231,20 @@ function Reports() {
             <FaChartLine className="text-indigo-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">Total Sales Summary</h3>
-              <p>Total Sales: ₹{totalSales.toFixed(2)}</p>{" "}
+              <p className="text-lg font-semibold">
+                Total Sales: ₹{totalSales.toFixed(2)}
+              </p>{" "}
               {/* Total Sales = POS Sales + WhatsApp Sales */}
-              <p>Net Sales (after discount): ₹{netSales.toFixed(2)}</p>{" "}
+              <p className="text-lg font-semibold">
+                Net Sales (after discount): ₹{netSales.toFixed(2)}
+              </p>{" "}
               {/* Net Sales = Total Sales - POS Discount */}
-              <p>Tax Collected: ₹0.00</p>
-              <p>Refund: -₹0.00</p>
-              <p>Charges: ₹0.00</p>
-              <p>Discount: -₹{posDiscount.toFixed(2)}</p>
+              <p className="text-lg font-semibold">Tax Collected: ₹0.00</p>
+              <p className="text-lg font-semibold">Refund: -₹0.00</p>
+              <p className="text-lg font-semibold">Charges: ₹0.00</p>
+              <p className="text-lg font-semibold">
+                Discount: -₹{posDiscount.toFixed(2)}
+              </p>
               <p className="font-bold">Grand Total: ₹0.00</p>
             </div>
           </div>
@@ -212,12 +256,17 @@ function Reports() {
             <FaShoppingCart className="text-blue-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">POS Sales Report</h3>
-              <p>Net Sales: ₹{posSales.toFixed(2)}</p>
-              <p>Tax Collected: ₹0.00</p>
-              <p>Refund: -₹0.00</p>
-              <p>Charges: ₹0.00</p>
-              <p>Discount: -₹{posDiscount.toFixed(2)}</p>
-              <p className="font-bold">Subtotal: ₹{subtotal.toFixed(2)}</p> {/* Subtotal = POS Sales - POS Discount */}
+              <p className="text-lg font-semibold">
+                Net Sales: ₹{posSales.toFixed(2)}
+              </p>
+              <p className="text-lg font-semibold">Tax Collected: ₹0.00</p>
+              <p className="text-lg font-semibold">Refund: -₹0.00</p>
+              <p className="text-lg font-semibold">Charges: ₹0.00</p>
+              <p className="text-lg font-semibold">
+                Discount: -₹{posDiscount.toFixed(2)}
+              </p>
+              <p className="font-bold">Subtotal: ₹{subtotal.toFixed(2)}</p>{" "}
+              {/* Subtotal = POS Sales - POS Discount */}
             </div>
           </div>
         </div>
@@ -228,12 +277,17 @@ function Reports() {
             <FaWhatsapp className="text-green-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">WhatsApp Ordering Report</h3>
-              <p>Net Sales: ₹{whatsappSales.toFixed(2)}</p>
-              <p>Tax Collected: ₹0.00</p>
-              <p>Refund: -₹0.00</p>
-              <p>Charges: ₹0.00</p>
-              <p>Discount: -₹0.00</p>
-              <p className="font-bold">Subtotal: ₹{whatsappSales.toFixed(2)}</p> {/* Subtotal = WhatsApp Sales */}
+              <p className="text-lg font-semibold">
+                Net Sales: ₹{whatsappSales.toFixed(2)}
+              </p>
+              <p className="text-lg font-semibold">Tax Collected: ₹0.00</p>
+              <p className="text-lg font-semibold">Refund: -₹0.00</p>
+              <p className="text-lg font-semibold">Charges: ₹0.00</p>
+              <p className="text-lg font-semibold">Discount: -₹0.00</p>
+              <p className="font-bold">
+                Subtotal: ₹{whatsappSales.toFixed(2)}
+              </p>{" "}
+              {/* Subtotal = WhatsApp Sales */}
             </div>
           </div>
         </div>
@@ -244,10 +298,10 @@ function Reports() {
             <FaCashRegister className="text-yellow-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">Payment Method Report</h3>
-              <p>Cash: ₹0.00</p>
-              <p>UPI: ₹0.00</p>
-              <p>Credit: ₹0.00</p>
-              <p>Card: ₹0.00</p>
+             <p className="text-lg font-semibold">Cash: ₹{cashSales.toFixed(2)}</p>
+              <p className="text-lg font-semibold">UPI: ₹0.00</p>
+              <p className="text-lg font-semibold">Credit: ₹0.00</p>
+              <p className="text-lg font-semibold">Card: ₹0.00</p>
             </div>
           </div>
         </div>
@@ -258,9 +312,9 @@ function Reports() {
             <FaCreditCard className="text-red-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">Price Category Sales</h3>
-              <p>Dine-in: ₹0.00</p>
-              <p>Takeaway: ₹0.00</p>
-              <p>Delivery: ₹0.00</p>
+              <p className="text-lg font-semibold">Dine-in: ₹0.00</p>
+              <p className="text-lg font-semibold">Takeaway: ₹0.00</p>
+              <p className="text-lg font-semibold">Delivery: ₹0.00</p>
             </div>
           </div>
         </div>
@@ -271,8 +325,8 @@ function Reports() {
             <FaUser className="text-teal-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">Employee Sales</h3>
-              <p>X = ₹0.00</p>
-              <p>Y = ₹0.00</p>
+              <p className="text-lg font-semibold">X = ₹0.00</p>
+              <p className="text-lg font-semibold">Y = ₹0.00</p>
             </div>
           </div>
         </div>
@@ -283,8 +337,8 @@ function Reports() {
             <FaTruck className="text-purple-500 text-3xl animate-bounce" />
             <div>
               <h3 className="text-lg font-bold">Credit Summary</h3>
-              <p>X = ₹0.00</p>
-              <p>Y = ₹0.00</p>
+              <p className="text-lg font-semibold">X = ₹0.00</p>
+              <p className="text-lg font-semibold">Y = ₹0.00</p>
             </div>
           </div>
         </div>
