@@ -90,7 +90,9 @@ function Reports() {
     axios
       .get("https://tyem.invenro.site/api/tyem/Whatsappget")
       .then((response) => {
+        console.log(response.data); // Check the actual data returned
         const whatsappData = response.data;
+        console.log(whatsappData,"kk");
         let totalWhatsappSales = 0;
         let totalWhatsappSubtotal = 0;
 
@@ -121,7 +123,7 @@ function Reports() {
    setGrandTotal(calculatedGrandTotal);
  }, [posSales, whatsappSales, posDiscount, taxCollected, refund, charges]);
 
- 
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
