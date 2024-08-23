@@ -46,53 +46,61 @@ function Reports() {
     closeModal();
   };
 
-
-  const [totalSales, setTotalSales] = useState(0);
+  const [posSales, setPosSales] = useState(0);
+  const [whatsappSales, setWhatsappSales] = useState(0);
+  const [posDiscount, setPosDiscount] = useState(0);
   const [netSales, setNetSales] = useState(0);
   const [taxCollected, setTaxCollected] = useState(0);
   const [refund, setRefund] = useState(0);
   const [charges, setCharges] = useState(0);
-  const [discount, setDiscount] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
+  const [totalSales, setTotalSales] = useState(0);
 
   useEffect(() => {
-    const fetchPosOrderData = async () => {
-      try {
-        const response = await axios.get('https://tyem.invenro.site/api/user/PosOrder');
-        const data = response.data;
-
-        let totalSalesSum = 0;
-        let netSalesSum = 0;
-        let discountSum = 0;
-
-        data.forEach(order => {
-          const orderTotal = order.itemDetails.total;
-          const orderDiscount = order.discount ? order.discount.value : 0;
-
-          totalSalesSum += orderTotal;
-          discountSum += orderDiscount;
-          netSalesSum += orderTotal - orderDiscount;
+    // Fetch POS Orders
+    axios.get('https://tyem.invenro.site/api/user/PosOrder')
+      .then(response => {
+        const posData = response.data;
+        let totalSales = 0;
+        let totalDiscount = 0;
+        posData.forEach(order => {
+          totalSales += order.itemDetails.total;
+          if (order.discount) {
+            totalDiscount += order.discount.value;
+          }
         });
+        setPosSales(totalSales);
+        setPosDiscount(totalDiscount);
+      })
+      .catch(error => console.error('Error fetching POS orders:', error));
 
-        setTotalSales(totalSalesSum);
-        setNetSales(netSalesSum);
-        setDiscount(discountSum);
+    // Fetch WhatsApp Orders
+    axios.get('https://tyem.invenro.site/api/tyem/Whatsappget')
+      .then(response => {
+        const whatsappData = response.data;
+        let totalSales = 0;
+        whatsappData.forEach(order => {
+          totalSales += order.paymentTendered;
+        });
+        setWhatsappSales(totalSales);
+      })
+      .catch(error => console.error('Error fetching WhatsApp orders:', error));
 
-        // Assuming you have tax, refund, and charges fields to calculate
-        // setTaxCollected(taxCollectedSum);
-        // setRefund(refundSum);
-        // setCharges(chargesSum);
-
-        setGrandTotal(netSalesSum); // Adjust this as needed based on tax, charges, etc.
-
-      } catch (error) {
-        console.error('Error fetching POS Order data:', error);
-      }
-    };
-
-    fetchPosOrderData();
   }, []);
 
+  useEffect(() => {
+    // Calculate Total Sales (POS + WhatsApp)
+    const totalSalesSum = posSales + whatsappSales;
+    setTotalSales(totalSalesSum);
+
+    // Calculate Net Sales (Total Sales - POS Discount)
+    const calculatedNetSales = totalSalesSum - posDiscount;
+    setNetSales(calculatedNetSales);
+
+    // Calculate Grand Total (Net Sales + Tax - Refund + Charges)
+    const calculatedGrandTotal = calculatedNetSales + taxCollected - refund + charges;
+    setGrandTotal(calculatedGrandTotal);
+  }, [posSales, whatsappSales, posDiscount, taxCollected, refund, charges]);
 
   return (
     <div className="p-4">
@@ -164,12 +172,12 @@ function Reports() {
       <FaChartLine className="text-indigo-500 text-3xl animate-bounce" />
       <div>
         <h3 className="text-lg font-bold">Total Sales Summary</h3>
-        <p>Total Sales: ₹{totalSales}</p>
-        <p>Net Sales: ₹0.00</p>
+        <p>Total Sales: ₹{totalSales}</p> {/* Total Sales = POS Sales + WhatsApp Sales */}
+        <p>Net Sales (after discount): ₹{netSales}</p> {/* Net Sales = Total Sales - POS Discount */}
         <p>Tax Collected: ₹0.00</p>
         <p>Refund: -₹0.00</p>
         <p>Charges: ₹0.00</p>
-        <p>Discount: -₹{discount}</p>
+        <p>Discount: -₹{posDiscount}</p>
         <p className="font-bold">Grand Total: ₹0.00</p>
       </div>
     </div>
