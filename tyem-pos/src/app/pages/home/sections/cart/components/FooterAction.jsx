@@ -65,15 +65,15 @@ const FooterActions = () => {
     const prefix = "INV";
     const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const randomPart = Math.floor(Math.random() * 1000000);
-  
+
     return `${prefix}${datePart}${randomPart.toString().padStart(6, "0")}`;
   }
-  
+
   const PAYMENTSTATUS = {
     PENDING: "PENDING",
     COMPLETED: "COMPLETED",
   };
-  
+
   const PAYMENT_METHOD_STATUS = {
     cash: PAYMENTSTATUS.COMPLETED,
     card: PAYMENTSTATUS.PENDING,
@@ -81,15 +81,14 @@ const FooterActions = () => {
     Talabat: PAYMENTSTATUS.PENDING,
     other: PAYMENTSTATUS.PENDING,
   };
-  
 
   const handleSubmit = async () => {
     const invoiceNumber = generateInvoiceNumber();
-  
+
     const paymentMethod = cartState?.paymentMethod;
     const status =
       PAYMENT_METHOD_STATUS[paymentMethod] || PAYMENTSTATUS.PENDING;
-  
+
     const orderData = {
       status: status,
       orderDetails: {
@@ -102,10 +101,11 @@ const FooterActions = () => {
       },
       itemDetails: {
         items: cartState?.orderitems?.length || 0,
-        quantity: cartState?.orderitems?.reduce(
-          (acc, item) => acc + item.quantity,
-          0
-        ) || 0,
+        quantity:
+          cartState?.orderitems?.reduce(
+            (acc, item) => acc + item.quantity,
+            0
+          ) || 0,
         itemName: cartState?.orderitems?.map((item) => item.name) || [], // Include item names
         method: paymentMethod,
         total: cartState?.totalPayableAmount || 0,
@@ -116,9 +116,9 @@ const FooterActions = () => {
       },
       type: "SALE",
     };
-  
+
     console.log("Sending order data:", orderData); // Debug log
-  
+
     try {
       const response = await axios.post(
         "https://tyem.invenro.site/api/user/Posorder",
@@ -139,7 +139,6 @@ const FooterActions = () => {
       );
     }
   };
-
 
   const selectedTable = useSelector((state) => state.table.selectedTable);
   // console.log(selectedTable);
@@ -684,13 +683,9 @@ const FooterActions = () => {
     setHoldCartModal(false);
   };
 
- 
+  const printnodeThermal = async ({ orderData }) => {
+    console.log(orderData, "orderData");
 
-
-
-  const printnodeThermal = async ({orderData}) => {
-    console.log(orderData,'orderData');
-    
     try {
       const response = await axios.post(
         "https://tyem.invenro.site/api/print/salesPrint",
@@ -701,7 +696,6 @@ const FooterActions = () => {
       console.error("Error printing receipt:", error);
     }
   };
-
 
   const [holdCartModal, setHoldCartModal] = useState(false);
 
@@ -737,21 +731,19 @@ const FooterActions = () => {
             </p>
           </button>
 
-         
-            <button
-              className={`${actionBtnClass} bg-orange-500 text-white hover:bg-orange-300 p-2 flex items-center gap-2 justify-center`}
-              onClick={() => setHoldCartModal(true)}
-            >
-              <UilPauseCircle color="#fff" />
-              <p className="text-sm font-semibold text-white">Hold</p>
-            </button>
+          <button
+            className={`${actionBtnClass} bg-orange-500 text-white hover:bg-orange-300 p-2 flex items-center gap-2 justify-center`}
+            onClick={() => setHoldCartModal(true)}
+          >
+            <UilPauseCircle color="#fff" />
+            <p className="text-sm font-semibold text-white">Hold</p>
+          </button>
 
-            <HoldSaleModal
-              visible={holdCartModal}
-              onClose={() => setHoldCartModal(false)}
-              onConfirm={handleConfirm}
-            />
-          
+          <HoldSaleModal
+            visible={holdCartModal}
+            onClose={() => setHoldCartModal(false)}
+            onConfirm={handleConfirm}
+          />
 
           {editOrder?.orderitems && editOrder?.orderitems?.length !== 0 ? (
             <>
@@ -1081,12 +1073,13 @@ const FooterActions = () => {
                       }, 200);
                     }}
                   >
-                    <div className="flex text-white items-center mt-3">
-                      <button
-                        onClick={() => {
-                          handleSubmit();
-                        }}
-                      >
+                    <div
+                      className="flex text-white items-center mt-3"
+                      onClick={() => {
+                        handleSubmit();
+                      }}
+                    >
+                      <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700">
                         Save
                       </button>
                     </div>
@@ -1104,12 +1097,13 @@ const FooterActions = () => {
 
                       setTimeout(() => {
                         placeOrder(2);
-                     
                       }, 200);
                     }}
                   >
-                    <p className="text-sm font-semibold mt-[0.2rem] "
-                      onClick={printnodeThermal}>
+                    <p
+                      className="text-sm font-semibold mt-[0.2rem] "
+                      onClick={printnodeThermal}
+                    >
                       Receipt
                     </p>
                   </button>
@@ -1241,10 +1235,7 @@ const FooterActions = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <button
-                className="bg-blue-500 w-[100px] items-center text-white justify-center rounded-lg hover:bg-blue-400 p-2 flex gap-2"
-              
-              >
+              <button className="bg-blue-500 w-[100px] items-center text-white justify-center rounded-lg hover:bg-blue-400 p-2 flex gap-2">
                 print
               </button>
               <button
@@ -1260,8 +1251,6 @@ const FooterActions = () => {
           </div>
         </CustomModal>
       )}
-
-      
     </div>
   );
 };

@@ -14,6 +14,7 @@ import SearchInput from "../../../../components/SearchInput";
 import { CiDiscount1 } from "react-icons/ci";
 import { UilTrashAlt } from "@iconscout/react-unicons";
 import { Popconfirm } from "antd";
+import { FaUser } from 'react-icons/fa';  
 
 import { setWholeCartDiscount } from "../../store/cartSlice";
 import { clearCart  } from "../../store/cartSlice";
@@ -84,7 +85,7 @@ const HomeCartSection = () => {
 
   return (
     <div className="w-[35%] relative h-full bg-white text-white border-l-[3px] border-chicket-border flex flex-col">
-      {/* <div className="home__cart-top flex gap-3 ml-3 mr-3 mt-2 w-full overflow-x-scroll">
+      <div className="home__cart-top flex gap-3 ml-3 mr-3 mt-2 w-full overflow-x-scroll">
         {homePriceCategories.map((item, index) => {
           const isSelected = item.id === selectedTab.id;
           return (
@@ -107,9 +108,13 @@ const HomeCartSection = () => {
             </div>
           );
         })}
-      </div>  */}
+      </div> 
       <div className="search__section w-full flex gap-4 items-center mb-2 p-3">
-        <h3 className="text-black font-bold text-base text-center">Customer</h3>
+      <div className="flex items-center justify-center space-x-2">
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 animate-bounce">
+          <FaUser className="text-black text-xl" />
+        </div>
+      </div>
         <div
           className="w-full relative"
           tabIndex={0}
@@ -123,7 +128,7 @@ const HomeCartSection = () => {
           <SearchInput
             onInputChange={(e) => onSearch(e.target.value)}
             trailingTitle="⌘ k"
-            defaultValue={selectedCustomerName}
+            // defaultValue={selectedCustomerName}
           />
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
