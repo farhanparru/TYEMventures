@@ -86,31 +86,31 @@ function Reports() {
       })
       .catch((error) => console.error("Error fetching POS orders:", error));
 
-      useEffect(() => {
-        // Fetch WhatsApp Orders
-        axios
-          .get("https://tyem.invenro.site/api/tyem/Whatsappget")
-          .then((response) => {
-            console.log(response.data); // Check the actual data returned
-            const whatsappData = response.data;
-            let totalWhatsappSales = 0;
-            let totalWhatsappSubtotal = 0;
-      
-            whatsappData.forEach((order) => {
-              if (order.orderMeta && typeof order.orderMeta.paymentTendered === 'number') {
-                totalWhatsappSales += order.orderMeta.paymentTendered;
-                totalWhatsappSubtotal += order.orderMeta.paymentTendered;
-              }
-            });
-      
-            setWhatsappSales(totalWhatsappSales);
-            setSubtotal(totalWhatsappSubtotal);
-          })
-          .catch((error) =>
-            console.error("Error fetching WhatsApp orders:", error)
-          );
-      }, []);
-      
+    // Fetch WhatsApp Orders
+    axios
+      .get("https://tyem.invenro.site/api/tyem/Whatsappget")
+      .then((response) => {
+        console.log(response.data); // Check the actual data returned
+        const whatsappData = response.data;
+        console.log(whatsappData,"kk");
+        let totalWhatsappSales = 0;
+        let totalWhatsappSubtotal = 0;
+
+        whatsappData.forEach((order) => {
+          console.log("Order Data:", order); // Inspect individual order data
+          if (order.orderMeta && typeof order.orderMeta.paymentTendered === 'number') {
+            totalWhatsappSales += order.orderMeta.paymentTendered;
+          }
+        });
+  
+        setWhatsappSales(totalWhatsappSales);
+        setSubtotal(totalWhatsappSubtotal);
+      })
+      .catch((error) =>
+        console.error("Error fetching WhatsApp orders:", error)
+      );
+  }, []);
+
   useEffect(() => {
     // Calculate Total Sales (POS + WhatsApp)
     const totalSalesSum = (posSales || 0) + (whatsappSales || 0); // Ensure both values are numbers
