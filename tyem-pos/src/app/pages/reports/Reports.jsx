@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import DatePicker from "react-datepicker";
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   FaPrint,
@@ -44,6 +45,54 @@ function Reports() {
     console.log("Expense added:", expense);
     closeModal();
   };
+
+
+  const [totalSales, setTotalSales] = useState(0);
+  const [netSales, setNetSales] = useState(0);
+  const [taxCollected, setTaxCollected] = useState(0);
+  const [refund, setRefund] = useState(0);
+  const [charges, setCharges] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+
+  useEffect(() => {
+    const fetchPosOrderData = async () => {
+      try {
+        const response = await axios.get('https://tyem.invenro.site/api/user/PosOrder');
+        const data = response.data;
+
+        let totalSalesSum = 0;
+        let netSalesSum = 0;
+        let discountSum = 0;
+
+        data.forEach(order => {
+          const orderTotal = order.itemDetails.total;
+          const orderDiscount = order.discount ? order.discount.value : 0;
+
+          totalSalesSum += orderTotal;
+          discountSum += orderDiscount;
+          netSalesSum += orderTotal - orderDiscount;
+        });
+
+        setTotalSales(totalSalesSum);
+        setNetSales(netSalesSum);
+        setDiscount(discountSum);
+
+        // Assuming you have tax, refund, and charges fields to calculate
+        // setTaxCollected(taxCollectedSum);
+        // setRefund(refundSum);
+        // setCharges(chargesSum);
+
+        setGrandTotal(netSalesSum); // Adjust this as needed based on tax, charges, etc.
+
+      } catch (error) {
+        console.error('Error fetching POS Order data:', error);
+      }
+    };
+
+    fetchPosOrderData();
+  }, []);
+
 
   return (
     <div className="p-4">
@@ -115,12 +164,12 @@ function Reports() {
       <FaChartLine className="text-indigo-500 text-3xl animate-bounce" />
       <div>
         <h3 className="text-lg font-bold">Total Sales Summary</h3>
-        <p>Total Sales: ₹0.00</p>
+        <p>Total Sales: ₹{totalSales}</p>
         <p>Net Sales: ₹0.00</p>
         <p>Tax Collected: ₹0.00</p>
         <p>Refund: -₹0.00</p>
         <p>Charges: ₹0.00</p>
-        <p>Discount: -₹0.00</p>
+        <p>Discount: -₹{discount}</p>
         <p className="font-bold">Grand Total: ₹0.00</p>
       </div>
     </div>
