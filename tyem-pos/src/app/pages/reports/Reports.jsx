@@ -86,29 +86,31 @@ function Reports() {
       })
       .catch((error) => console.error("Error fetching POS orders:", error));
 
-    // Fetch WhatsApp Orders
-    axios
-      .get("https://tyem.invenro.site/api/tyem/Whatsappget")
-      .then((response) => {
-        console.log(response.data); // Check the actual data returned
-        const whatsappData = response.data;
-        console.log(whatsappData,"kk");
-        let totalWhatsappSales = 0;
-        let totalWhatsappSubtotal = 0;
-
-        whatsappData.forEach((order) => {
-          totalWhatsappSales += order.paymentTendered || 0; // Ensure paymentTendered is a number
-          totalWhatsappSubtotal += order.paymentTendered || 0;
-        });
-
-        setWhatsappSales(totalWhatsappSales);
-        setSubtotal(totalWhatsappSubtotal);
-      })
-      .catch((error) =>
-        console.error("Error fetching WhatsApp orders:", error)
-      );
-  }, []);
-
+      useEffect(() => {
+        // Fetch WhatsApp Orders
+        axios
+          .get("https://tyem.invenro.site/api/tyem/Whatsappget")
+          .then((response) => {
+            console.log(response.data); // Check the actual data returned
+            const whatsappData = response.data;
+            let totalWhatsappSales = 0;
+            let totalWhatsappSubtotal = 0;
+      
+            whatsappData.forEach((order) => {
+              if (order.orderMeta && typeof order.orderMeta.paymentTendered === 'number') {
+                totalWhatsappSales += order.orderMeta.paymentTendered;
+                totalWhatsappSubtotal += order.orderMeta.paymentTendered;
+              }
+            });
+      
+            setWhatsappSales(totalWhatsappSales);
+            setSubtotal(totalWhatsappSubtotal);
+          })
+          .catch((error) =>
+            console.error("Error fetching WhatsApp orders:", error)
+          );
+      }, []);
+      
   useEffect(() => {
     // Calculate Total Sales (POS + WhatsApp)
     const totalSalesSum = (posSales || 0) + (whatsappSales || 0); // Ensure both values are numbers
