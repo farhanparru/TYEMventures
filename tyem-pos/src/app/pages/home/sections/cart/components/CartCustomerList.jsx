@@ -52,7 +52,7 @@ const CartCustomerList = ({ searchTerm }) => {
   useEffect(() => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     setFilteredCustomers(customers.filter(customer => 
-      customer.phone.includes(searchTerm) || 
+      customer.number.includes(searchTerm) || 
       customer.name.toLowerCase().includes(lowerCaseSearchTerm)
     ));
   }, [searchTerm, customers]);
