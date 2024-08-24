@@ -53,7 +53,6 @@ const CartItem = ({ item, index }) => {
       updatedQuantity(item.id, updatedQuantity);
     }
   };
-  
 
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
@@ -209,29 +208,38 @@ const CartItem = ({ item, index }) => {
             ₹ {parseFloat(item.price).toFixed(2)}
           </div>
 
-          <div className="cart__item-quantity flex items-center bg-green-600 rounded-lg overflow-hidden">
+          <div className="qty-input qty-input--combined inline-flex items-center w-full">
             <button
+              type="button"
               onClick={onDecreaseQuantity}
-              className="bg-green-700 text-white p-2 hover:bg-green-800"
+              className="qty-input__btn btn btn--minus no-js-hidden"
+              name="minus"
             >
-              <AiOutlineMinus size={16} />
+              <span className="visually-hidden">-</span>
             </button>
-
             <input
               type="number"
+              className="qty-input__input input"
+              id="quantity-template--17142010183880__featured-collection"
+              name="updates[]"
               min="0"
               value={item.quantity}
               onChange={(e) => onQuantityChange(e.target.value)}
-              className="w-14 text-center bg-white text-black outline-none border-none"
+              data-index="1"
+              data-initial-value="0"
+              aria-label="Quantity"
+              data-variant-id="43390086414536"
+              data-gtm-form-interact-field-id="0"
               inputMode="numeric"
               pattern="[0-9]*"
             />
-
             <button
+              type="button"
               onClick={onIncreaseQuantity}
-              className="bg-green-700 text-white p-2 hover:bg-green-800"
+              className="qty-input__btn btn btn--plus no-js-hidden"
+              name="plus"
             >
-              <AiOutlinePlus size={16} />
+              <span className="visually-hidden">+</span>
             </button>
           </div>
 
