@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CartItem from "../../components/CartItem";
 import { homeBodySection, homeTopBarTabs } from "../../constants";
@@ -46,15 +46,48 @@ const HomeCartSection = () => {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [customerFocused, setCustomerFocused] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCustomerName, setselectedCustomerName] = useState("");
+  const [selectedCustomerName, setSelectedCustomerName] = useState('');
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
+
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+    // Update selectedPhoneNumber if it's a phone number
+    if (value.match(/^\d+$/)) {
+      setSelectedPhoneNumber(value);
+    } else {
+      setSelectedPhoneNumber('');
+    }
+  };
 
   const [form] = Form.useForm(); // Initialize form
+
+  const customerListRef = useRef(null);
+
+  useEffect(() => {
+    if (selectedCustomer?.name) {
+      setSelectedCustomerName(selectedCustomer?.name);
+    }
+
+    const handleClickOutside = (event) => {
+      if (customerListRef.current && !customerListRef.current.contains(event.target)) {
+        setCustomerFocused(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [selectedCustomer]);
 
   useEffect(() => {
     if (selectedCustomer?.name) {
       setselectedCustomerName(selectedCustomer?.name);
     }
   }, [selectedCustomer]);
+
+  
 
   const __discountCart = () => {
     dispatch(
@@ -120,16 +153,17 @@ const HomeCartSection = () => {
           className="w-full relative"
           tabIndex={0}
           onFocus={() => setCustomerFocused(true)}
+          ref={customerListRef}
           onBlur={() => {
             if (!customerFocused) {
               setCustomerFocused(false);
             }
           }}
         >
-          <SearchInput
-            onInputChange={(e) => onSearch(e.target.value)}
-            // defaultValue={selectedCustomerName}
-          />
+         <SearchInput
+          onInputChange={(e) => handleSearch(e.target.value)}
+          // defaultValue={selectedCustomerName}
+        />
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList

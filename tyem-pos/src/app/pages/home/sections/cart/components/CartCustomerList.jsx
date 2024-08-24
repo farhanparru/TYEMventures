@@ -1,48 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaUserCircle, FaPlusCircle, FaPhone, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
-import Modal from 'react-modal';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  FaUserCircle,
+  FaPlusCircle,
+  FaPhone,
+  FaUser,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import Modal from "react-modal";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const customStyles = {
   content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    padding: '20px',
-    borderRadius: '10px',
-    width: '400px',
-    border: 'none',
-    boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.2)',
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    padding: "20px",
+    borderRadius: "10px",
+    width: "400px",
+    border: "none",
+    boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 };
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm }) => {
+const CartCustomerList = ({ searchTerm, selectedPhoneNumber }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [newCustomerName, setNewCustomerName] = useState('');
-  const [newCustomerPhone, setNewCustomerPhone] = useState('');
-  const [newCustomerPlace, setNewCustomerPlace] = useState('');
+  const [newCustomerName, setNewCustomerName] = useState("");
+  const [newCustomerPhone, setNewCustomerPhone] = useState(selectedPhoneNumber);
+  const [newCustomerPlace, setNewCustomerPlace] = useState("");
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get('https://tyem.invenro.site/api/user/getCustomer');
+        const response = await axios.get(
+          "https://tyem.invenro.site/api/user/getCustomer"
+        );
         setCustomers(response.data.customers); // Adjust based on your API response structure
         setFilteredCustomers(response.data.customers);
       } catch (error) {
-        console.error('Failed to fetch customers:', error);
+        console.error("Failed to fetch customers:", error);
       }
     };
 
@@ -53,14 +60,14 @@ const CartCustomerList = ({ searchTerm }) => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     let filtered = [];
 
-    if (searchTerm.startsWith('+') || searchTerm.match(/^\d+$/)) {
+    if (searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)) {
       // Filtering by phone number
-      filtered = customers.filter(customer =>
+      filtered = customers.filter((customer) =>
         customer.number.includes(searchTerm)
       );
     } else {
       // Filtering by name
-      filtered = customers.filter(customer =>
+      filtered = customers.filter((customer) =>
         customer.name.toLowerCase().includes(lowerCaseSearchTerm)
       );
     }
@@ -70,31 +77,40 @@ const CartCustomerList = ({ searchTerm }) => {
 
   const handleAddCustomer = async () => {
     try {
-      const response = await axios.post('https://tyem.invenro.site/api/user/addCustomer', {
-        name: newCustomerName,
-        number: newCustomerPhone,
-        place: newCustomerPlace,
-      });
+      const response = await axios.post(
+        "https://tyem.invenro.site/api/user/addCustomer",
+        {
+          name: newCustomerName,
+          number: newCustomerPhone,
+          place: newCustomerPlace,
+        }
+      );
 
-      toast.success('Customer added successfully!', {
+      toast.success("Customer added successfully!", {
         position: toast.POSITION?.TOP_RIGHT,
         autoClose: 3000,
       });
 
       // Close the modal and reset form fields
       setModalIsOpen(false);
-      setNewCustomerName('');
-      setNewCustomerPhone('');
-      setNewCustomerPlace('');
+      setNewCustomerName("");
+      setNewCustomerPhone("");
+      setNewCustomerPlace("");
 
       // Refresh customer list
-      const updatedResponse = await axios.get('https://tyem.invenro.site/api/user/getCustomer');
+      const updatedResponse = await axios.get(
+        "https://tyem.invenro.site/api/user/getCustomer"
+      );
       setCustomers(updatedResponse.data.customers);
     } catch (error) {
-      toast.error('Failed to add customer: ' + (error.response?.data.message || error.message), {
-        position: toast.POSITION?.TOP_RIGHT,
-        autoClose: 3000,
-      });
+      toast.error(
+        "Failed to add customer: " +
+          (error.response?.data.message || error.message),
+        {
+          position: toast.POSITION?.TOP_RIGHT,
+          autoClose: 3000,
+        }
+      );
     }
   };
 
@@ -113,7 +129,6 @@ const CartCustomerList = ({ searchTerm }) => {
           <FaPlusCircle className="mr-2" /> New Customer
         </button>
       </div>
-     
       <div className="max-h-64 overflow-y-auto mt-4">
         <ul className="space-y-3">
           {filteredCustomers.map((customer) => (
@@ -123,22 +138,28 @@ const CartCustomerList = ({ searchTerm }) => {
             >
               <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
               <span className="text-gray-800">
-                {searchTerm.startsWith('+') || searchTerm.match(/^\d+$/)
+                {searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)
                   ? customer.number
-                  : customer.name} {/* Display number or name based on search term */}
+                  : customer.name}{" "}
+                {/* Display number or name based on search term */}
               </span>
             </li>
           ))}
         </ul>
       </div>
-
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={customStyles}
         contentLabel="Add New Customer"
       >
-        <h2 className="text-xl font-semibold mb-4 text-center">Add New Customer</h2>
+        <div className="flex items-center justify-center space-x-2">
+          <FaUserPlus className="text-blue-500 text-2xl animate-pulse" />
+          <h2 className="text-xl font-semibold mb-4 text-center">
+            Add New Customer
+          </h2>
+        </div>
+
         <form
           onSubmit={(e) => {
             e.preventDefault();

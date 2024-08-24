@@ -65,7 +65,7 @@ const CustomerList = () => {
           </button>
         </div>
       </div>
-      // Inside your JSX
+    
       <div className="flex justify-between mb-2">
         <span>
           Showing {customers.length} / {customers.length} customers
