@@ -50,10 +50,10 @@ const CartItem = ({ item, index }) => {
   const onQuantityChange = (newQuantity) => {
     const updatedQuantity = parseInt(newQuantity, 10);
     if (!isNaN(updatedQuantity) && updatedQuantity >= 0) {
-      // Update the item's quantity here, e.g., by dispatching an action or updating state
-      updateItemQuantity(item.id, updatedQuantity);
+      updatedQuantity(item.id, updatedQuantity);
     }
   };
+  
 
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
@@ -209,24 +209,27 @@ const CartItem = ({ item, index }) => {
             ₹ {parseFloat(item.price).toFixed(2)}
           </div>
 
-          <div className="cart__item-quantity flex items-center gap-2 bg-green-600 rounded-md">
+          <div className="cart__item-quantity flex items-center bg-green-600 rounded-lg overflow-hidden">
             <button
               onClick={onDecreaseQuantity}
-              className="bg-green-700 p-2 rounded-l-md text-white hover:bg-green-800"
+              className="bg-green-700 text-white p-2 hover:bg-green-800"
             >
               <AiOutlineMinus size={16} />
             </button>
 
             <input
               type="number"
+              min="0"
               value={item.quantity}
               onChange={(e) => onQuantityChange(e.target.value)}
-              className="w-12 text-center bg-white text-green-600 border-none outline-none"
+              className="w-14 text-center bg-white text-black outline-none border-none"
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
 
             <button
               onClick={onIncreaseQuantity}
-              className="bg-green-700 p-2 rounded-r-md text-white hover:bg-green-800"
+              className="bg-green-700 text-white p-2 hover:bg-green-800"
             >
               <AiOutlinePlus size={16} />
             </button>
@@ -243,10 +246,7 @@ const CartItem = ({ item, index }) => {
         >
           <UilTrashAlt className="w-5 text-white" />
         </div>
-        
       </div>
-
-    
     </div>
   );
 };
