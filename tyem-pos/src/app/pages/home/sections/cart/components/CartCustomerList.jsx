@@ -6,6 +6,7 @@ import {
   FaPhone,
   FaUser,
   FaMapMarkerAlt,
+  FaUserPlus
 } from "react-icons/fa";
 import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
