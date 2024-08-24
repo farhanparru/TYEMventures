@@ -26,6 +26,8 @@ import { getSelectedCustomer, searchCustomer } from "../../store/customerSlice";
 import { clearEditOrder } from "../../store/orderSlice";
 
 const HomeCartSection = () => {
+
+  
   const dispatch = useDispatch();
 
   const { orderitems, totalAmount } = useSelector((state) => state.cart);
@@ -127,7 +129,6 @@ const HomeCartSection = () => {
         >
           <SearchInput
             onInputChange={(e) => onSearch(e.target.value)}
-            trailingTitle="⌘ k"
             // defaultValue={selectedCustomerName}
           />
           {customerFocused && (

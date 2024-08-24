@@ -27,7 +27,7 @@ const SearchInput = ({ placeholder, trailingTitle, onInputChange, defaultValue }
           placeholder={placeholder ?? "Search"}
           onChange={onInputChange}
           defaultValue={defaultValue}
-          className="w-full py-3 pl-12 pr-4 text-gray-800 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600 transition-all duration-300 ease-in-out transform focus:scale-105"
+          className="w-full py-3 pl-12 pr-4 text-gray-800 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600 "
         />
         {trailingTitle && (
           <h2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400">

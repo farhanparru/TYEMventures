@@ -482,6 +482,11 @@ module.exports = {
     }
   },
 
+
+  // get customer
+
+
+
   // payment status
   statusUpdate: async (req, res) => {
     const { status } = req.body;

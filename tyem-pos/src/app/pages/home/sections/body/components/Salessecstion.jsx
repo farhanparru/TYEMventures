@@ -14,7 +14,7 @@ import {
   UpOutlined,
   DownOutlined,
 } from "@ant-design/icons"; // Import from @ant-design/icons
-
+import { FaWhatsapp, FaCashRegister } from 'react-icons/fa'; // Import icons
 import axios from "axios";
 import { DateTime } from "luxon";
 import jsPDF from "jspdf";
@@ -57,26 +57,35 @@ const OrderItem = ({ order, onClick, selected }) => {
       } details`}
     >
       <div className="flex flex-1 items-center">
-        {/* Smaller Badge for Order Type */}
-        <span
-          className={`px-1.5 py-1 text-xs font-medium text-gray-700 rounded-full bg-gray-100 ${
-            order.orderType === "WhatsAppOrder" ? "bg-red-500 text-white" : "bg-green-500 text-white"
-          }`}
-        >
-          {order.orderType === "WhatsAppOrder" ? "WhatsApp Order" : "POS Order"}
-        </span>
-  
-        <div className="ml-4">
-          <h3 className="text-lg font-semibold">
-            Order #
-            {order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
-          </h3>
-          <p className="text-sm">
-            {order.totalQuantity} Item{order.totalQuantity > 1 ? "s" : ""} |{" "}
-            {order.orderMeta?.paymentTendered || order.total}{" "}
-            {order.orderDetails[0]?.product_currency || "INR"} |{" "}
-            {order.orderMeta?.orderType || order.method}
-          </p>
+      {/* Badge for Order Type with Icon */}
+      <span
+        className={`px-1.5 py-1 text-xs font-medium text-gray-700 rounded-full bg-gray-100 flex items-center ${
+          order.orderType === "WhatsAppOrder" ? "bg-red-500 text-white" : "bg-green-500 text-white"
+        }`}
+      >
+        {order.orderType === "WhatsAppOrder" ? (
+          <>
+            <FaWhatsapp className="mr-2" />
+          </>
+        ) : (
+          <>
+            <FaCashRegister className="mr-2" />
+          </>
+        )}
+      </span>
+
+      <div className="ml-4">
+        <h3 className="text-lg font-semibold">
+          Order #
+          {order.orderMeta?.posOrderId || order.orderDetails?.orderNumber}
+        </h3>
+        <p className="text-sm">
+          {order.totalQuantity} Item{order.totalQuantity > 1 ? "s" : ""} |{" "}
+          {order.orderMeta?.paymentTendered || order.total}{" "}
+          {order.orderDetails[0]?.product_currency || "INR"} |{" "}
+          {order.orderMeta?.orderType || order.method}
+        </p>
+
   
           <div className="flex items-center mt-2">
             <span
