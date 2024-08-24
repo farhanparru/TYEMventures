@@ -36,12 +36,24 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
  
 
   const handleInputChange = (e) => {
-    const newQuantity = e.target.value;
+    const newQuantity = parseInt(e.target.value, 10);
 
-    if (/^\d+$/.test(newQuantity) && newQuantity >= 0) {
+    // Ensure the value is a valid number and greater than or equal to 0
+    if (!isNaN(newQuantity) && newQuantity >= 0) {
+      const difference = newQuantity - quantity;
       setQuantity(newQuantity);
-      console.log("Dispatching addToCart with direct input change for id:", item.id);
-      dispatch(addToCart({ id: item.id, type: 'update', quantity: newQuantity }));
+
+      if (difference > 0) {
+        // Dispatch 'increase' actions for each increment
+        for (let i = 0; i < difference; i++) {
+          dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
+        }
+      } else if (difference < 0) {
+        // Dispatch 'decrease' actions for each decrement
+        for (let i = 0; i < Math.abs(difference); i++) {
+          dispatch(addToCart({ id: item.id, type: 'decrease' }));
+        }
+      }
     }
   };
 
@@ -49,7 +61,6 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
     e.stopPropagation();
     const newQuantity = parseInt(quantity) + 1;
     setQuantity(newQuantity);
-    console.log("Dispatching addToCart with increase type for id:", item.id);
     dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
   };
 
@@ -58,13 +69,9 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
     if (quantity > 0) {
       const newQuantity = parseInt(quantity) - 1;
       setQuantity(newQuantity);
-      console.log("Dispatching addToCart with decrease type for id:", item.id);
       dispatch(addToCart({ id: item.id, type: 'decrease' }));
     }
   };
-  
-
-
   
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
@@ -252,7 +259,7 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
         <AiOutlinePlus size={16} />
       </button>
     </div>
-    
+
     <div className="cart__item-total text-sm font-bold">
       ₹ {parseFloat(item.totalPrice).toFixed(2)}
     </div>
