@@ -20,41 +20,52 @@ import {
   setSelectedAddon,
   setSingleItemDiscount,
   updateItemNote,
+  
 } from "../store/cartSlice";
+
+
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
 import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
-const CartItem = ({ item, index , initialQuantity = 0, onQuantityChange}) => {
+const CartItem = ({ item, index, initialQuantity = 1 }) => {
 
   const [quantity, setQuantity] = useState(initialQuantity);
+ 
 
   const handleInputChange = (e) => {
     const newQuantity = e.target.value;
 
-    // Ensure the value is a number and greater than or equal to 0
     if (/^\d+$/.test(newQuantity) && newQuantity >= 0) {
       setQuantity(newQuantity);
-      onQuantityChange(newQuantity);
+      console.log("Dispatching addToCart with direct input change for id:", item.id);
+      dispatch(addToCart({ id: item.id, type: 'update', quantity: newQuantity }));
     }
   };
 
-  const onIncreaseQuantity = () => {
+  const onIncreaseQuantity = (e) => {
+    e.stopPropagation();
     const newQuantity = parseInt(quantity) + 1;
     setQuantity(newQuantity);
-    onQuantityChange(newQuantity);
+    console.log("Dispatching addToCart with increase type for id:", item.id);
+    dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
   };
 
-  const onDecreaseQuantity = () => {
+  const onDecreaseQuantity = (e) => {
+    e.stopPropagation();
     if (quantity > 0) {
       const newQuantity = parseInt(quantity) - 1;
       setQuantity(newQuantity);
-      onQuantityChange(newQuantity);
+      console.log("Dispatching addToCart with decrease type for id:", item.id);
+      dispatch(addToCart({ id: item.id, type: 'decrease' }));
     }
   };
+  
 
+
+  
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
 
@@ -64,6 +75,7 @@ const CartItem = ({ item, index , initialQuantity = 0, onQuantityChange}) => {
   const [itemNote, setitemNote] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
 
+  
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
     dispatch(
@@ -188,27 +200,26 @@ const CartItem = ({ item, index , initialQuantity = 0, onQuantityChange}) => {
   );
   return (
     <div>
-      <div
-        className={`w-full border border-zinc-300 rounded-lg flex justify-between items-center p-2 cursor-pointer transition-all bg-gray-100 text-gray-800`}
-      >
-        <div onClick={() => setShowModal(true)} className="flex-1 flex gap-4">
-          <div className="cart__item-details flex-1">
-            <p className="text-sm font-black">
-              {item.name}
-              {item?.selectedAddon && (
-                <span className="text-xs font-semibold ml-1">
-                  ({item.selectedAddon.name})
-                </span>
-              )}
-            </p>
-            <p className="text-xs font-normal">{item.size}</p>{" "}
-            {/* Assuming you have a size or other detail */}
-          </div>
+     <div
+  className={`w-full border border-zinc-300 rounded-lg flex justify-between items-center p-2 cursor-pointer transition-all bg-gray-100 text-gray-800`}
+>
+  <div onClick={() => setShowModal(true)} className="flex-1 flex gap-4">
+    <div className="cart__item-details flex-1">
+      <p className="text-sm font-black">
+        {item.name}
+        {item?.selectedAddon && (
+          <span className="text-xs font-semibold ml-1">
+            ({item.selectedAddon.name})
+          </span>
+        )}
+      </p>
+      <p className="text-xs font-normal">{item.size}</p> {/* Assuming you have a size or other detail */}
+    </div>
 
-          <div className="cart__item-price text-sm font-bold">
-            ₹ {parseFloat(item.price).toFixed(2)}
-          </div>
-          <div className="cart__item-quantity flex items-center bg-green-600 rounded-lg overflow-hidden">
+    <div className="cart__item-price text-sm font-bold">
+      ₹ {parseFloat(item.price).toFixed(2)}
+    </div>
+    <div className="cart__item-quantity flex items-center bg-green-600 rounded-lg overflow-hidden">
       <button
         onClick={onDecreaseQuantity}
         className="bg-green-700 text-white p-2 hover:bg-green-800"
@@ -241,19 +252,21 @@ const CartItem = ({ item, index , initialQuantity = 0, onQuantityChange}) => {
         <AiOutlinePlus size={16} />
       </button>
     </div>
+    
+    <div className="cart__item-total text-sm font-bold">
+      ₹ {parseFloat(item.totalPrice).toFixed(2)}
+    </div>
+  </div>
+  
+  <div
+    onClick={(e) => onRemoveItem(e, true)}
+    className="mx-2 p-1 rounded-md bg-red-500 cursor-pointer transition-all hover:scale-90"
+  >
+    <UilTrashAlt className="w-5 text-white" />
+  </div>
+</div>
 
-          <div className="cart__item-total text-sm font-bold">
-            ₹ {parseFloat(item.totalPrice).toFixed(2)}
-          </div>
-        </div>
-
-        <div
-          onClick={(e) => onRemoveItem(e, true)}
-          className="mx-2 p-1 rounded-md bg-red-500 cursor-pointer transition-all hover:scale-90"
-        >
-          <UilTrashAlt className="w-5 text-white" />
-        </div>
-      </div>
+   
     </div>
   );
 };
