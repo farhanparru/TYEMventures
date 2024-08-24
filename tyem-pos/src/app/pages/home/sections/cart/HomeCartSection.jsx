@@ -83,7 +83,7 @@ const HomeCartSection = () => {
 
   useEffect(() => {
     if (selectedCustomer?.name) {
-      setselectedCustomerName(selectedCustomer?.name);
+      setSelectedCustomerName(selectedCustomer?.name);
     }
   }, [selectedCustomer]);
 
