@@ -51,10 +51,21 @@ const CartCustomerList = ({ searchTerm }) => {
 
   useEffect(() => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    setFilteredCustomers(customers.filter(customer => 
-      customer.number.includes(searchTerm) || 
-      customer.name.toLowerCase().includes(lowerCaseSearchTerm)
-    ));
+    let filtered = [];
+
+    if (searchTerm.startsWith('+') || searchTerm.match(/^\d+$/)) {
+      // Filtering by phone number
+      filtered = customers.filter(customer =>
+        customer.number.includes(searchTerm)
+      );
+    } else {
+      // Filtering by name
+      filtered = customers.filter(customer =>
+        customer.name.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+    }
+
+    setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
 
   const handleAddCustomer = async () => {
@@ -66,7 +77,7 @@ const CartCustomerList = ({ searchTerm }) => {
       });
 
       toast.success('Customer added successfully!', {
-        position: toast.POSITION.TOP_RIGHT,
+        position: toast.POSITION?.TOP_RIGHT,
         autoClose: 3000,
       });
 
@@ -81,7 +92,7 @@ const CartCustomerList = ({ searchTerm }) => {
       setCustomers(updatedResponse.data.customers);
     } catch (error) {
       toast.error('Failed to add customer: ' + (error.response?.data.message || error.message), {
-        position: toast.POSITION.TOP_RIGHT,
+        position: toast.POSITION?.TOP_RIGHT,
         autoClose: 3000,
       });
     }
@@ -111,7 +122,11 @@ const CartCustomerList = ({ searchTerm }) => {
               className="flex items-center p-2 border-b border-gray-200"
             >
               <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
-              <span className="text-gray-800">{customer.name} - {customer.number}</span>
+              <span className="text-gray-800">
+                {searchTerm.startsWith('+') || searchTerm.match(/^\d+$/)
+                  ? customer.number
+                  : customer.name} {/* Display number or name based on search term */}
+              </span>
             </li>
           ))}
         </ul>
