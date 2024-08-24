@@ -1023,12 +1023,12 @@ const FooterActions = () => {
                     ₹ {parseFloat(cartState?.discount)?.toFixed(3)}
                   </div>
                 </div>
-                <div className="flex items-center justify-between ">
+                {/* <div className="flex items-center justify-between ">
                   <div className="text-black text-sm font-medium">VAT</div>
                   <div className="text-black text-lg font-bold">
                     ₹ {cartState?.tax.toFixed(3)}
                   </div>
-                </div>
+                </div> */}
                 <div className="flex items-center justify-between ">
                   <div className="text-black text-sm font-medium">
                     Amount to be returned
@@ -1073,16 +1073,14 @@ const FooterActions = () => {
                       }, 200);
                     }}
                   >
-                    <div
-                      className="flex text-white items-center mt-3"
+                      <p
+                      className="text-sm font-semibold mt-[0.2rem] "
                       onClick={() => {
                         handleSubmit();
                       }}
                     >
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700">
-                        Save
-                      </button>
-                    </div>
+                      Save
+                    </p>
                   </button>
                   <button
                     className={`${actionBtnClass}  bg-blue-500 mt-5  hover:bg-blue-400 p-2 flex gap-2 justify-center text-white`}

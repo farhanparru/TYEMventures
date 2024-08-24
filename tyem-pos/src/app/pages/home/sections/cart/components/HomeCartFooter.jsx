@@ -122,7 +122,7 @@ const HomeCartFooter = () => {
           <CartNumpad totalPayableAmount={totalPayableAmount} />
           <div className="detailed__amount border border-blue-500 border-dotted rounded-md bg-gray-100 p-2">
             <AmountDetailTile label={"Total"} value={totalAmount} />
-            <AmountDetailTile label={"Tax"} value={tax} />
+            {/* <AmountDetailTile label={"Tax"} value={tax} /> */}
             <AmountDetailTile label={"Discount"} value={discount} />
             <AmountDetailTile
               label={"Amount to be returned"}
@@ -141,12 +141,12 @@ const HomeCartFooter = () => {
       </div>
 
       <div className="cart__footer-total flex justify-between gap-5  ">
-        <p className="text-sm font-bold ">
+        {/* <p className="text-sm font-bold ">
           {taxLists && taxLists?.length > 0
             ? taxLists[0]?.name + `(${taxLists[0]?.amount}%)`
             : "VAT"}{" "}
-        </p>
-        <p className="text-sm font-black text-black">₹ {tax?.toFixed(3)}</p>
+        </p> */}
+        {/* <p className="text-sm font-black text-black">₹ {tax?.toFixed(3)}</p> */}
       </div>
       {discount > 0 ? (
         <div className="cart__footer-total flex justify-between gap-5 text-green-500 ">

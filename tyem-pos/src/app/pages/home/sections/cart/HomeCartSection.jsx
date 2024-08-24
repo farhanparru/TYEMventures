@@ -96,13 +96,13 @@ const HomeCartSection = () => {
                   dispatch(clearCart());
                   dispatch(clearEditOrder());
                 }}
-                className={`flex px-3 py-2 items-center rounded-md border-gray-300 cursor-pointer transition-all ${isSelected
-                  ? "bg-ch-headers-500 text-white"
-                  : "hover:bg-ch-headers-300 bg-ch-headers-100 hover:text-white hover:scale-90 text-ch-headers-500"
-                  }`}
+                // className={`flex px-3 py-2 items-center rounded-md border-gray-300 cursor-pointer transition-all ${isSelected
+                //   ? "bg-ch-headers-500 text-white"
+                //   : "hover:bg-ch-headers-300 bg-ch-headers-100 hover:text-white hover:scale-90 text-ch-headers-500"
+                //   }`}
               >
                 <h3 className="font-bold text-base text-center">
-                  {item.name}
+                  {/* {item.name} */}
                 </h3>
               </div>
             </div>

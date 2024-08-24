@@ -20,10 +20,7 @@ import {
   setSelectedAddon,
   setSingleItemDiscount,
   updateItemNote,
-  
 } from "../store/cartSlice";
-
-
 
 import { Avatar, Dropdown, Form, Input, Select } from "antd";
 import CustomModal from "../../../components/CustomModal";
@@ -31,23 +28,33 @@ import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
-
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
     console.log("Dispatching addToCart with decrease type for id:", item.id);
-    dispatch(addToCart({ id: item.id, type: 'decrease' }));
+    dispatch(addToCart({ id: item.id, type: "decrease" }));
   };
-  
+
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
     console.log("Dispatching addToCart with increase type for id:", item.id);
-    dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
+    dispatch(
+      addToCart({
+        id: item.id,
+        type: "increase",
+        name: item.name,
+        price: item.price,
+      })
+    );
   };
-  
-  
 
+  const onQuantityChange = (newQuantity) => {
+    const updatedQuantity = parseInt(newQuantity, 10);
+    if (!isNaN(updatedQuantity) && updatedQuantity >= 0) {
+      // Update the item's quantity here, e.g., by dispatching an action or updating state
+      updateItemQuantity(item.id, updatedQuantity);
+    }
+  };
 
-  
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
 
@@ -57,7 +64,6 @@ const CartItem = ({ item, index }) => {
   const [itemNote, setitemNote] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  
   const onRemoveItem = (e, isRemoveAll) => {
     e.stopPropagation();
     dispatch(
@@ -182,56 +188,62 @@ const CartItem = ({ item, index }) => {
   );
   return (
     <div>
-     <div
-  className={`w-full border border-zinc-300 rounded-lg flex justify-between items-center p-2 cursor-pointer transition-all bg-gray-100 text-gray-800`}
->
-  <div onClick={() => setShowModal(true)} className="flex-1 flex gap-4">
-    <div className="cart__item-details flex-1">
-      <p className="text-sm font-black">
-        {item.name}
-        {item?.selectedAddon && (
-          <span className="text-xs font-semibold ml-1">
-            ({item.selectedAddon.name})
-          </span>
-        )}
-      </p>
-      <p className="text-xs font-normal">{item.size}</p> {/* Assuming you have a size or other detail */}
-    </div>
-
-    <div className="cart__item-price text-sm font-bold">
-      ₹ {parseFloat(item.price).toFixed(2)}
-    </div>
-
-    <div className="cart__item-quantity flex items-center gap-2">
-      <button
-        onClick={onDecreaseQuantity}
-        className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
+      <div
+        className={`w-full border border-zinc-300 rounded-lg flex justify-between items-center p-2 cursor-pointer transition-all bg-gray-100 text-gray-800`}
       >
-        <AiOutlineMinus size={16} />
-      </button>
+        <div onClick={() => setShowModal(true)} className="flex-1 flex gap-4">
+          <div className="cart__item-details flex-1">
+            <p className="text-sm font-black">
+              {item.name}
+              {item?.selectedAddon && (
+                <span className="text-xs font-semibold ml-1">
+                  ({item.selectedAddon.name})
+                </span>
+              )}
+            </p>
+            <p className="text-xs font-normal">{item.size}</p>{" "}
+            {/* Assuming you have a size or other detail */}
+          </div>
 
-      <p className="text-sm">{item.quantity}</p>
+          <div className="cart__item-price text-sm font-bold">
+            ₹ {parseFloat(item.price).toFixed(2)}
+          </div>
 
-      <button
-        onClick={onIncreaseQuantity}
-        className="bg-blue-500 p-1 rounded-full text-white hover:bg-blue-600"
-      >
-        <AiOutlinePlus size={16} />
-      </button>
-    </div>
+          <div className="cart__item-quantity flex items-center gap-2 bg-green-600 rounded-md">
+            <button
+              onClick={onDecreaseQuantity}
+              className="bg-green-700 p-2 rounded-l-md text-white hover:bg-green-800"
+            >
+              <AiOutlineMinus size={16} />
+            </button>
 
-    <div className="cart__item-total text-sm font-bold">
-      ₹ {parseFloat(item.totalPrice).toFixed(2)}
-    </div>
-  </div>
-  
-  <div
-    onClick={(e) => onRemoveItem(e, true)}
-    className="mx-2 p-1 rounded-md bg-red-500 cursor-pointer transition-all hover:scale-90"
-  >
-    <UilTrashAlt className="w-5 text-white" />
-  </div>
-</div>
+            <input
+              type="number"
+              value={item.quantity}
+              onChange={(e) => onQuantityChange(e.target.value)}
+              className="w-12 text-center bg-white text-green-600 border-none outline-none"
+            />
+
+            <button
+              onClick={onIncreaseQuantity}
+              className="bg-green-700 p-2 rounded-r-md text-white hover:bg-green-800"
+            >
+              <AiOutlinePlus size={16} />
+            </button>
+          </div>
+
+          <div className="cart__item-total text-sm font-bold">
+            ₹ {parseFloat(item.totalPrice).toFixed(2)}
+          </div>
+        </div>
+
+        <div
+          onClick={(e) => onRemoveItem(e, true)}
+          className="mx-2 p-1 rounded-md bg-red-500 cursor-pointer transition-all hover:scale-90"
+        >
+          <UilTrashAlt className="w-5 text-white" />
+        </div>
+      </div>
 
       {showModal && (
         <CustomModal

@@ -1,39 +1,30 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const customerSchema = new mongoose.Schema(
-  {
-    fullName: {
-      type: String,
-      required: true,
+const customerSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2
     },
-    Email: {
-      type: String,
-      required: true,
+    place: {
+        type: String,
+        required: true,
+        trim: true,
     },
-    phoneNo: {
-      type: Number,
-      required: true,
-    },
-    TaxNo: {
-      type: Number,
-      required: true,
-    },
-    Address: {
-      type: String,
-      required: true,
-    },
-    language: {
-      type: String,
-      required: true,
-    },
-    messageSent:{
-     type:Boolean,
-      default:false
+    number: {
+        type: String,
+        required: true,
+        unique: true,
+        validate: {
+            validator: function(v) {
+                return /\d{10}/.test(v); // Validates a 10-digit number
+            },
+            message: props => `${props.value} is not a valid phone number!`
+        }
     }
-  },
-  
-  { timestamps: true }
-); // Add this line to enable timestamps
+}, {
+    timestamps: true // Automatically adds createdAt and updatedAt fields
+});
 
-const Customers = mongoose.model("customer", customerSchema);
-module.exports = Customers;
+module.exports = mongoose.model('Customer', customerSchema);

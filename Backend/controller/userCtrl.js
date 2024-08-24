@@ -17,10 +17,10 @@ module.exports = {
   PosOrder: async (req, res) => {
     try {
       const { orderDetails, itemDetails, discount, type } = req.body; // Include `type` in the destructuring
-  
+
       // Convert current date and time to IST and store it in UTC
       const orderDate = moment().tz("Asia/Kolkata").utc().format();
-  
+
       // Create a new order using the POSorder model
       const newOrder = new POSorder({
         itemDetails: {
@@ -44,11 +44,10 @@ module.exports = {
         },
         type: type, // Include `type` here
       });
-  
+
       // Save the order to the database
       await newOrder.save();
-    console.log(newOrder,"newOrder");
-    
+      console.log(newOrder, "newOrder");
 
       // Send a success response
       return res.status(201).json({
@@ -456,35 +455,30 @@ module.exports = {
   // Add Customer
 
   addCustomer: async (req, res) => {
-    const { fullName, Email, phoneNo, TaxNo, Address, language } = req.body;
+    const { name, place, number } = req.body;
 
     try {
-      const newCustomer = new Customer({
-        fullName,
-        Email,
-        phoneNo,
-        TaxNo,
-        Address,
-        language,
+      const newCustomer = Customer({
+        name,
+        place,
+        number,
       });
 
+      // Save the customer to the database
       await newCustomer.save();
-      try {
-        // await sendWhatsAppMessage(phoneNo, 'Thank you for visiting.');
-        // newCustomer.messageSent = true;
-        await newCustomer.save();
-        res
-          .status(201)
-          .json({ message: "Customer added and message sent successfully" });
-      } catch (error) {
-        console.log(error);
-        res.status(500).json({
-          error: "Customer added but failed to send WhatsApp message",
+
+      // Send a success response
+      res
+        .status(201)
+        .json({
+          message: "Customer added successfully",
+          customer: newCustomer,
         });
-      }
     } catch (error) {
-      console.error("Error adding customer:", error.message);
-      res.status(500).json({ error: error.message });
+      // Handle errors and send a failure response
+      res
+        .status(500)
+        .json({ message: "Failed to add customer", error: error.message });
     }
   },
 
