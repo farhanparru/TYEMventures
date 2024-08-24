@@ -34,6 +34,8 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 const CartCustomerList = ({ searchTerm, selectedPhoneNumber }) => {
+  console.log(selectedPhoneNumber ,"selectedPhoneNumber ");
+  
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
   const [newCustomerPhone, setNewCustomerPhone] = useState(selectedPhoneNumber);
