@@ -28,15 +28,23 @@ import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
+
+  const [quantity, setQuantity] = useState(item.quantity);
+
+
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
-    console.log("Dispatching addToCart with decrease type for id:", item.id);
-    dispatch(addToCart({ id: item.id, type: "decrease" }));
+    if (quantity > 1) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      dispatch(addToCart({ id: item.id, type: "decrease" }));
+    }
   };
 
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
-    console.log("Dispatching addToCart with increase type for id:", item.id);
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
     dispatch(
       addToCart({
         id: item.id,
@@ -47,12 +55,34 @@ const CartItem = ({ item, index }) => {
     );
   };
 
-  const onQuantityChange = (newQuantity) => {
-    const updatedQuantity = parseInt(newQuantity, 10);
-    if (!isNaN(updatedQuantity) && updatedQuantity >= 0) {
-      updatedQuantity(item.id, updatedQuantity);
+  const handleInputChange = (e) => {
+    const newQuantity = parseInt(e.target.value, 10);
+    if (!isNaN(newQuantity) && newQuantity >= 0) {
+      setQuantity(newQuantity);
+
+      // Dispatch the action to update the quantity directly
+      if (newQuantity > quantity) {
+        dispatch(
+          addToCart({
+            id: item.id,
+            type: "increase",
+            name: item.name,
+            price: item.price,
+            quantity: newQuantity - quantity, // Handle the difference
+          })
+        );
+      } else {
+        dispatch(
+          addToCart({
+            id: item.id,
+            type: "decrease",
+            quantity: quantity - newQuantity, // Handle the difference
+          })
+        );
+      }
     }
   };
+
 
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
@@ -208,40 +238,31 @@ const CartItem = ({ item, index }) => {
             ₹ {parseFloat(item.price).toFixed(2)}
           </div>
 
-          <div className="qty-input qty-input--combined inline-flex items-center w-full">
-            <button
-              type="button"
-              onClick={onDecreaseQuantity}
-              className="qty-input__btn btn btn--minus no-js-hidden"
-              name="minus"
-            >
-              <span className="visually-hidden">-</span>
-            </button>
-            <input
-              type="number"
-              className="qty-input__input input"
-              id="quantity-template--17142010183880__featured-collection"
-              name="updates[]"
-              min="0"
-              value={item.quantity}
-              onChange={(e) => onQuantityChange(e.target.value)}
-              data-index="1"
-              data-initial-value="0"
-              aria-label="Quantity"
-              data-variant-id="43390086414536"
-              data-gtm-form-interact-field-id="0"
-              inputMode="numeric"
-              pattern="[0-9]*"
-            />
-            <button
-              type="button"
-              onClick={onIncreaseQuantity}
-              className="qty-input__btn btn btn--plus no-js-hidden"
-              name="plus"
-            >
-              <span className="visually-hidden">+</span>
-            </button>
-          </div>
+          <div className="cart__item-quantity flex items-center bg-green-600 rounded-lg overflow-hidden">
+      <button
+        onClick={onDecreaseQuantity}
+        className="bg-green-700 text-white p-2 hover:bg-green-800"
+      >
+        <AiOutlineMinus size={16} />
+      </button>
+
+      <input
+        type="number"
+        min="0"
+        value={quantity}
+        onChange={handleInputChange}
+        className="w-14 text-center bg-white text-black outline-none border-none"
+        inputMode="numeric"
+        pattern="[0-9]*"
+      />
+
+      <button
+        onClick={onIncreaseQuantity}
+        className="bg-green-700 text-white p-2 hover:bg-green-800"
+      >
+        <AiOutlinePlus size={16} />
+      </button>
+    </div>
 
           <div className="cart__item-total text-sm font-bold">
             ₹ {parseFloat(item.totalPrice).toFixed(2)}
