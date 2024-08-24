@@ -29,60 +29,31 @@ import TextArea from "antd/es/input/TextArea";
 
 const CartItem = ({ item, index }) => {
 
-  const [quantity, setQuantity] = useState(item.quantity);
-
-
-  const onDecreaseQuantity = (e) => {
-    e.stopPropagation();
-    if (quantity > 1) {
-      const newQuantity = quantity - 1;
-      setQuantity(newQuantity);
-      dispatch(addToCart({ id: item.id, type: "decrease" }));
-    }
-  };
-
-  const onIncreaseQuantity = (e) => {
-    e.stopPropagation();
-    const newQuantity = quantity + 1;
-    setQuantity(newQuantity);
-    dispatch(
-      addToCart({
-        id: item.id,
-        type: "increase",
-        name: item.name,
-        price: item.price,
-      })
-    );
-  };
+  const [quantity, setQuantity] = useState(initialQuantity);
 
   const handleInputChange = (e) => {
-    const newQuantity = parseInt(e.target.value, 10);
-    if (!isNaN(newQuantity) && newQuantity >= 0) {
-      setQuantity(newQuantity);
+    const newQuantity = e.target.value;
 
-      // Dispatch the action to update the quantity directly
-      if (newQuantity > quantity) {
-        dispatch(
-          addToCart({
-            id: item.id,
-            type: "increase",
-            name: item.name,
-            price: item.price,
-            quantity: newQuantity - quantity, // Handle the difference
-          })
-        );
-      } else {
-        dispatch(
-          addToCart({
-            id: item.id,
-            type: "decrease",
-            quantity: quantity - newQuantity, // Handle the difference
-          })
-        );
-      }
+    // Ensure the value is a number and greater than or equal to 0
+    if (/^\d+$/.test(newQuantity) && newQuantity >= 0) {
+      setQuantity(newQuantity);
+      onQuantityChange(newQuantity);
     }
   };
 
+  const onIncreaseQuantity = () => {
+    const newQuantity = parseInt(quantity) + 1;
+    setQuantity(newQuantity);
+    onQuantityChange(newQuantity);
+  };
+
+  const onDecreaseQuantity = () => {
+    if (quantity > 0) {
+      const newQuantity = parseInt(quantity) - 1;
+      setQuantity(newQuantity);
+      onQuantityChange(newQuantity);
+    }
+  };
 
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
@@ -237,11 +208,11 @@ const CartItem = ({ item, index }) => {
           <div className="cart__item-price text-sm font-bold">
             ₹ {parseFloat(item.price).toFixed(2)}
           </div>
-
           <div className="cart__item-quantity flex items-center bg-green-600 rounded-lg overflow-hidden">
       <button
         onClick={onDecreaseQuantity}
         className="bg-green-700 text-white p-2 hover:bg-green-800"
+        aria-label="Decrease quantity"
       >
         <AiOutlineMinus size={16} />
       </button>
@@ -254,11 +225,18 @@ const CartItem = ({ item, index }) => {
         className="w-14 text-center bg-white text-black outline-none border-none"
         inputMode="numeric"
         pattern="[0-9]*"
+        aria-label="Quantity input"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.target.blur(); // Optional: Blur to trigger any onBlur event if needed
+          }
+        }}
       />
 
       <button
         onClick={onIncreaseQuantity}
         className="bg-green-700 text-white p-2 hover:bg-green-800"
+        aria-label="Increase quantity"
       >
         <AiOutlinePlus size={16} />
       </button>
