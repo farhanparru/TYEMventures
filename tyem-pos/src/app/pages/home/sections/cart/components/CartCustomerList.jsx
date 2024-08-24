@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaUserCircle, FaPlusCircle, FaPhone, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
 import Modal from 'react-modal';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import SearchInput from './SearchInput';
 
 const customStyles = {
   content: {
@@ -24,14 +27,35 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-const CartCustomerList = () => {
+const CartCustomerList = ({ searchTerm }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
   const [newCustomerPhone, setNewCustomerPhone] = useState('');
   const [newCustomerPlace, setNewCustomerPlace] = useState('');
+  const [customers, setCustomers] = useState([]);
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
 
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await axios.get('https://tyem.invenro.site/api/user/getCustomer');
+        setCustomers(response.data.customers); // Adjust based on your API response structure
+        setFilteredCustomers(response.data.customers);
+      } catch (error) {
+        console.error('Failed to fetch customers:', error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  useEffect(() => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    setFilteredCustomers(customers.filter(customer => 
+      customer.phone.includes(searchTerm) || 
+      customer.name.toLowerCase().includes(lowerCaseSearchTerm)
+    ));
+  }, [searchTerm, customers]);
 
   const handleAddCustomer = async () => {
     try {
@@ -41,32 +65,34 @@ const CartCustomerList = () => {
         place: newCustomerPlace,
       });
 
-      console.log('Customer added successfully:', response.data);
+      toast.success('Customer added successfully!', {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+
       // Close the modal and reset form fields
       setModalIsOpen(false);
       setNewCustomerName('');
       setNewCustomerPhone('');
       setNewCustomerPlace('');
+
+      // Refresh customer list
+      const updatedResponse = await axios.get('https://tyem.invenro.site/api/user/getCustomer');
+      setCustomers(updatedResponse.data.customers);
     } catch (error) {
-      console.error('Failed to add customer:', error.response?.data || error.message);
+      toast.error('Failed to add customer: ' + (error.response?.data.message || error.message), {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
     }
   };
 
-  const customers = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Emily Johnson' },
-    { id: 4, name: 'Michael Brown' },
-    { id: 5, name: 'Sarah Davis' },
-    { id: 6, name: 'Chris Green' },
-    { id: 7, name: 'Nancy White' },
-    { id: 8, name: 'Robert Black' },
-    { id: 9, name: 'Patricia Gray' },
-    { id: 10, name: 'Laura Pink' },
-  ];
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
 
   return (
     <div className="p-4 bg-white rounded-md shadow-md">
+      <ToastContainer /> {/* Add this to render the toast notifications */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Customer List</h2>
         <button
@@ -76,23 +102,16 @@ const CartCustomerList = () => {
           <FaPlusCircle className="mr-2" /> New Customer
         </button>
       </div>
-      <div className="max-h-64 overflow-y-auto">
+     
+      <div className="max-h-64 overflow-y-auto mt-4">
         <ul className="space-y-3">
-          <li
-            key="new"
-            className="flex items-center p-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
-            onClick={openModal}
-          >
-            <FaPlusCircle className="w-8 h-8 text-blue-500 mr-3" />
-            <span className="text-blue-500">Add New Customer</span>
-          </li>
-          {customers.map((customer) => (
+          {filteredCustomers.map((customer) => (
             <li
-              key={customer.id}
+              key={customer._id} // Use a unique identifier from your API
               className="flex items-center p-2 border-b border-gray-200"
             >
               <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
-              <span className="text-gray-800">{customer.name}</span>
+              <span className="text-gray-800">{customer.name} - {customer.number}</span>
             </li>
           ))}
         </ul>

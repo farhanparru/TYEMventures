@@ -485,6 +485,21 @@ module.exports = {
 
   // get customer
 
+  getCustomer:async(req,res)=>{
+    try {
+      // Retrieve all customers from the database
+      const customers = await Customer.find();
+  
+      // Send a success response with the list of customers
+      res.status(200).json({
+        message: "Customers retrieved successfully",
+        customers,
+      });
+    } catch (error) {
+      // Handle errors and send a failure response
+      res.status(500).json({ message: "Failed to retrieve customers", error: error.message });
+    }
+  },
 
 
   // payment status

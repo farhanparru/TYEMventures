@@ -76,7 +76,7 @@ const HomeItemsSection = (props) => {
           className="px-7 py-3 w-1/2 bg-gray-200 rounded-md text-xs border border-gray-500 shadow-2xl cursor-pointer transition-all ease-in hover:shadow-sm hover:bg-blue-500 hover:text-white hover:scale-95"
         >
           + Add Item
-        </button> */}
+        </button>  */}
 
         <div className="flex items-center justify-end mr-[25px] text-blue-500 w-[40%] font-semibold">
          {/* <div

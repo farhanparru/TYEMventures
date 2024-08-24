@@ -15,6 +15,7 @@ router.post('/createCategory', userCtrl.category)
 router.get('/getCategory', userCtrl.getCategory)
 router.post('/Expense', userCtrl.expense)
 router.post('/addCustomer', userCtrl.addCustomer)
+router.get('/getCustomer', userCtrl.getCustomer);
 router.put('/orders/:id/status',userCtrl.statusUpdate)
 router.post('/printreceipt', userCtrl.handleReciptprinter)
 router.patch('/Googlesheet',userCtrl.ItemsUpdate)

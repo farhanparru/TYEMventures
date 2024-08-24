@@ -45,7 +45,7 @@ const HomeCartSection = () => {
   const [discountType, setDiscountType] = useState("fixed");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [customerFocused, setCustomerFocused] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setselectedCustomerName] = useState("");
 
   const [form] = Form.useForm(); // Initialize form
@@ -77,9 +77,8 @@ const HomeCartSection = () => {
   );
 
   const onSearch = (value) => {
-    setSearchValue(value.toLowerCase());
-    dispatch(searchCustomer(value.toLowerCase()));
-  };
+    setSearchTerm(value);
+  }
 
   const handleSetCustomerFocused = (status) => {
     setCustomerFocused(status);
@@ -134,9 +133,7 @@ const HomeCartSection = () => {
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList
-                isCart={false}
-                selectedCustomer={selectedCustomer}
-                handleSetCustomerFocused={handleSetCustomerFocused}
+                 searchTerm={searchTerm}
               />
             </div>
           )}
