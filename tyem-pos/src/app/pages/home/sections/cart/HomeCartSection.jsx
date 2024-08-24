@@ -153,7 +153,7 @@ const HomeCartSection = () => {
           className="w-full relative"
           tabIndex={0}
           onFocus={() => setCustomerFocused(true)}
-          ref={customerListRef}
+      
           onBlur={() => {
             if (!customerFocused) {
               setCustomerFocused(false);
@@ -167,6 +167,7 @@ const HomeCartSection = () => {
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList
+                  ref={customerListRef}
                  searchTerm={searchTerm}
               />
             </div>
