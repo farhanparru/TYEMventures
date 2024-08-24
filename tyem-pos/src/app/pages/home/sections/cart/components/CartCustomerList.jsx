@@ -4,7 +4,7 @@ import { FaUserCircle, FaPlusCircle, FaPhone, FaUser, FaMapMarkerAlt } from 'rea
 import Modal from 'react-modal';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import SearchInput from './SearchInput';
+
 
 const customStyles = {
   content: {
