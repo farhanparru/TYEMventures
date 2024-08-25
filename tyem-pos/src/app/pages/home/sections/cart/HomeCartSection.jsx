@@ -34,23 +34,21 @@ const HomeCartSection = () => {
   const cartState = useSelector((state) => state.cart);
   const editOrder = useSelector((state) => state.order.editOrder);
 
-  // const homePriceCategories = useSelector(getPriceGroupsList);
+  const homePriceCategories = useSelector(getPriceGroupsList);
 
   const selectedBodySection = useSelector(getSelectedBodySection);
- 
+  const selectedTab = useSelector(getSelectedTab);
+
+  const selectedCustomer = useSelector(getSelectedCustomer);
 
   const [showModal, setShowModal] = useState(false);
   const [discountType, setDiscountType] = useState("fixed");
   const [discountAmount, setDiscountAmount] = useState(0);
-
+  const [customerFocused, setCustomerFocused] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
 
- const [customerFocused, setCustomerFocused] = useState(false);
-  const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
-  const homePriceCategories = useSelector((state) => state.home.homePriceCategories);
-  const selectedTab = useSelector((state) => state.home.selectedTab);
 
 
   // pass to number 
@@ -135,28 +133,30 @@ const HomeCartSection = () => {
       </div> 
       <div className="search__section w-full flex gap-4 items-center mb-2 p-3">
       <div className="flex items-center justify-center space-x-2">
-      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 animate-bounce">
-            <FaUser className="text-black text-xl" />
-          </div>
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 animate-bounce">
+          <FaUser className="text-black text-xl" />
         </div>
-        
+      </div>
         <div
           className="w-full relative"
           tabIndex={0}
           onFocus={() => setCustomerFocused(true)}
-          onBlur={() => setCustomerFocused(false)}
+      
+          onBlur={() => {
+            if (!customerFocused) {
+              setCustomerFocused(false);
+            }
+          }}
         >
-          <SearchInput
-            onInputChange={(e) => handleSearch(e.target.value)}
-          />
+         <SearchInput
+          onInputChange={(e) => handleSearch(e.target.value)}
+          // defaultValue={selectedCustomerName}
+        />
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList
-                searchTerm={searchTerm}
-                onSelectCustomer={(customer) => {
-                  dispatch(selectedCustomer(customer));
-                  setCustomerFocused(false);
-                }}
+                
+                 searchTerm={searchTerm}
               />
             </div>
           )}
