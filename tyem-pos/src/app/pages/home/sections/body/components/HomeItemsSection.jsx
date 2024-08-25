@@ -69,7 +69,7 @@ const HomeItemsSection = (props) => {
       <div className="search__section w-full flex gap-4 items-center mb-2 p-3">
         <SearchInput
           onInputChange={(e) => onSearch(e.target.value)}
-          trailingTitle="⌘ k"
+       
         />
         {/* <button
           onClick={showModal}
