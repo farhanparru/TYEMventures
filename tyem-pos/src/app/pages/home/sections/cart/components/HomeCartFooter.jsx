@@ -83,37 +83,36 @@ const HomeCartFooter = () => {
     totalPayableAmount,
     totalAmountWithoutDiscount,
   } = useSelector((state) => state.cart);
-  // const selectedTable = useSelector(getselectedTable);
-  // const selectedCustomer = useSelector(getSelectedCustomer);
+  const selectedTable = useSelector(getselectedTable);
+  const selectedCustomer = useSelector(getSelectedCustomer);
   const taxLists = useSelector(getTaxTypeList);
-  // const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
   // const [isExpanded, setIsExpanded] = React.useState(false);
  
   // const {ipcRenderer} = window.require("electron");
   const cartState = useSelector((state) => state.cart);
 
-  const selectedTable = useSelector((state) => state.table.selectedTable);
-  const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
-  const isExpanded = useSelector((state) => state.cart.isExpanded);
-
-
   return (
-    <div className={`home__cart-footer absolute bottom-0 w-full flex flex-col p-3 bg-gray-100 text-black border-t border-gray-300 gap-3 ${isExpanded ? " overflow-y-scroll h-[90%]" : ""}`}>
-    <Toaster position="bottom-center" richColors />
+    <div
+      className={`home__cart-footer absolute bottom-0 w-full flex flex-col p-3 bg-gray-100 text-black border-t  border-gray-300 gap-3 ${
+        isExpanded ? " overflow-y-scroll h-[90%]" : ""
+      }`}
+    >
+      <Toaster position="bottom-center" richColors />
 
-    <div className="flex justify-between gap-2">
-      <p className="text-xs font-semibold">
-        {selectedTable === null
-          ? "No Table Selected"
-          : `Table : ${selectedTable.name} is Selected`}
-      </p>
-      <p className="text-xs font-semibold">
-        Customer: 
-        {selectedCustomer === null
-          ? "No Customer Selected"
-          : `${selectedCustomer?.name}`}
-      </p>
-    </div>
+      <div className="flex justify-between gap-2">
+        <p className="text-xs font-semibold">
+          {selectedTable === null
+            ? "No Table Selected"
+            : `Table :  ${selectedTable.name} is Selected`}
+        </p>
+        <p className="text-xs font-semibold">
+          Customer :
+          {selectedCustomer === null
+            ? "No Customer Selected"
+            : `${selectedCustomer?.name}`}
+        </p>
+      </div>
 
       <div className=" h-full  overflow-y-scroll">
         <div
@@ -158,7 +157,7 @@ const HomeCartFooter = () => {
       <div className="cart__footer-total flex justify-between gap-5  ">
         <p className="text-lg font-bold ">Payable Amount</p>
         <p className="text-lg font-black text-black">
-        ₹ {totalAmount?.toFixed(3)}
+          ₹ {totalAmount?.toFixed(3)}
         </p>
       </div>
 
