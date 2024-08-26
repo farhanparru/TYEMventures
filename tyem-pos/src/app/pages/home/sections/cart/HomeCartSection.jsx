@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState,useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CartItem from "../../components/CartItem";
 import { homeBodySection, homeTopBarTabs } from "../../constants";
@@ -48,9 +48,9 @@ const HomeCartSection = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  // const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-
+  const selectedCustomer = useSelector((state) => state.customer.selectedCustomer);
 
 
 
@@ -92,10 +92,11 @@ const HomeCartSection = () => {
     setSearchTerm(value);
   };
 
-  const handleCustomerSelect  = (customer) => {
-    setSelectedCustomer(customer);
-    setCustomerFocused(false); // Close the customer list after selection
-  };
+  const handleCustomerSelectInternal = useCallback((customer) => {
+    dispatch(selectedCustomer(customer));
+    setCustomerFocused(false);
+  }, [dispatch]);
+  
 
   return (
     <div className="w-[35%] relative h-full bg-white text-white border-l-[3px] border-chicket-border flex flex-col">
@@ -136,11 +137,11 @@ const HomeCartSection = () => {
           onBlur={() => setCustomerFocused(false)}
         >
            <SearchInput onInputChange={(e) => handleSearch(e.target.value)} />
-         {customerFocused && (
+           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList
                 searchTerm={searchTerm}
-                onSelectCustomer={handleCustomerSelect } // Pass the selection handler
+                onSelectCustomer={handleCustomerSelectInternal} // Pass the internal handler
               />
             </div>
           )}

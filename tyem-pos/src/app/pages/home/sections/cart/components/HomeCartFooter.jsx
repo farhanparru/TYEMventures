@@ -105,12 +105,12 @@ const HomeCartFooter = ({ selectedCustomer }) => {
       <Toaster position="bottom-center" richColors />
 
       <div className="flex justify-between gap-2">
-        <p className="text-xs font-semibold">
+        <p className="text-xs font-normal hover:font-bold">
           {selectedTable === null
             ? "No Table Selected"
             : `Table :  ${selectedTable.name} is Selected`}
         </p>
-        <p className="text-sm font-semibold flex items-center">
+        <p className="text-sm font-normal hover:font-bold flex items-center">
       <FaUser className="mr-2 text-lg animate-bounce" />
       Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
     </p>
