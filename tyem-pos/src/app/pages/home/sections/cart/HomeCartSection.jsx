@@ -92,7 +92,7 @@ const HomeCartSection = () => {
     setSearchTerm(value);
   };
 
-  const handleSelectCustomer = (customer) => {
+  const handleCustomerSelect  = (customer) => {
     setSelectedCustomer(customer);
     setCustomerFocused(false); // Close the customer list after selection
   };
@@ -140,7 +140,7 @@ const HomeCartSection = () => {
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList
                 searchTerm={searchTerm}
-                onSelectCustomer={handleSelectCustomer} // Pass the selection handler
+                onSelectCustomer={handleCustomerSelect } // Pass the selection handler
               />
             </div>
           )}
@@ -243,7 +243,7 @@ const HomeCartSection = () => {
         ))}
       </div>
       {/* Cart footer */}
-      <HomeCartFooter />
+      <HomeCartFooter selectedCustomer={selectedCustomer} />
     </div>
   );
 };
