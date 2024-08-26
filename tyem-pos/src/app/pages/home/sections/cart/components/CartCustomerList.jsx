@@ -33,7 +33,7 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm, selectedPhoneNumber }) => {
+const CartCustomerList = ({ searchTerm, selectedPhoneNumber , onSelectCustomer}) => {
   console.log(selectedPhoneNumber ,"selectedPhoneNumber ");
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
