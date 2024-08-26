@@ -72,7 +72,10 @@ import { Toaster, toast } from "sonner";
 import FooterActions from "./FooterAction";
 
 const actionBtnClass = `w-full text-[0.6rem] py-2 font-medium rounded-lg   transition-all ease-in-out hover:scale-95 `;
-const HomeCartFooter = () => {
+const HomeCartFooter = ({ selectedCustomer }) => {
+
+  console.log( selectedCustomer," selectedCustomer");
+  
   
   const {
     totalAmount,
@@ -107,10 +110,7 @@ const HomeCartFooter = () => {
             : `Table :  ${selectedTable.name} is Selected`}
         </p>
         <p className="text-xs font-semibold">
-          Customer :
-          {selectedCustomer === null
-            ? "No Customer Selected"
-            : `${selectedCustomer?.name}`}
+          Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
         </p>
       </div>
 

@@ -39,7 +39,7 @@ const HomeCartSection = () => {
   const selectedBodySection = useSelector(getSelectedBodySection);
   const selectedTab = useSelector(getSelectedTab);
 
-  const selectedCustomer = useSelector(getSelectedCustomer);
+  // const selectedCustomer = useSelector(getSelectedCustomer);
 
   const [showModal, setShowModal] = useState(false);
   const [discountType, setDiscountType] = useState("fixed");
@@ -48,19 +48,11 @@ const HomeCartSection = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
 
 
-  // pass to number 
-  const handleSearch = (value) => {
-    setSearchTerm(value);
-    // Update selectedPhoneNumber if it's a phone number
-    if (value.match(/^\d+$/)) {
-      setSelectedPhoneNumber(value);
-    } else {
-      setSelectedPhoneNumber('');
-    }
-  };
+
 
 
 
@@ -96,13 +88,13 @@ const HomeCartSection = () => {
       <Select.Option value="percentage">Percentage</Select.Option>
     </Select>
   );
-
-  const onSearch = (value) => {
+  const handleSearch = (value) => {
     setSearchTerm(value);
-  }
+  };
 
-  const handleSetCustomerFocused = (status) => {
-    setCustomerFocused(status);
+  const handleSelectCustomer = (customer) => {
+    setSelectedCustomer(customer);
+    setCustomerFocused(false); // Close the customer list after selection
   };
 
   return (
@@ -134,29 +126,21 @@ const HomeCartSection = () => {
       <div className="search__section w-full flex gap-4 items-center mb-2 p-3">
       <div className="flex items-center justify-center space-x-2">
         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 animate-bounce">
-          <FaUser className="text-black text-xl" />
+        <FaUser className="text-black text-xl" />
+          </div>
         </div>
-      </div>
         <div
           className="w-full relative"
           tabIndex={0}
           onFocus={() => setCustomerFocused(true)}
-      
-          onBlur={() => {
-            if (!customerFocused) {
-              setCustomerFocused(false);
-            }
-          }}
+          onBlur={() => setCustomerFocused(false)}
         >
-         <SearchInput
-          onInputChange={(e) => handleSearch(e.target.value)}
-          // defaultValue={selectedCustomerName}
-        />
-          {customerFocused && (
+           <SearchInput onInputChange={(e) => handleSearch(e.target.value)} />
+         {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList
-                
-                 searchTerm={searchTerm}
+                searchTerm={searchTerm}
+                onSelectCustomer={handleSelectCustomer} // Pass the selection handler
               />
             </div>
           )}
