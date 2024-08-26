@@ -39,7 +39,7 @@ const HomeCartSection = () => {
   const selectedBodySection = useSelector(getSelectedBodySection);
   const selectedTab = useSelector(getSelectedTab);
 
-  const selectedCustomer = useSelector(getSelectedCustomer);
+  // const selectedCustomer = useSelector(getSelectedCustomer);
 
   const [showModal, setShowModal] = useState(false);
   const [discountType, setDiscountType] = useState("fixed");
@@ -49,7 +49,7 @@ const HomeCartSection = () => {
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
 
-
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   // pass to number 
   const handleSearch = (value) => {
@@ -60,6 +60,12 @@ const HomeCartSection = () => {
     } else {
       setSelectedPhoneNumber('');
     }
+  };
+
+
+  const handleSelectCustomer = (customer) => {
+    setSelectedCustomer(customer);
+    setCustomerFocused(false); // Close the customer list after selection
   };
 
 
@@ -155,7 +161,7 @@ const HomeCartSection = () => {
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
               <CartCustomerList
-                
+                 onSelectCustomer={handleSelectCustomer} // Pass the selection handler
                  searchTerm={searchTerm}
               />
             </div>
@@ -259,7 +265,7 @@ const HomeCartSection = () => {
         ))}
       </div>
       {/* Cart footer */}
-      <HomeCartFooter />
+      <HomeCartFooter selectedCustomer={selectedCustomer} />
     </div>
   );
 };
