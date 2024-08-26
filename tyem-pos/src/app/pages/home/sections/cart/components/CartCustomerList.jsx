@@ -85,10 +85,21 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
 
+  const countryToPhoneCode = {
+    US: "1",
+    GB: "44",
+    AU: "61",
+    DE: "49",
+    FR: "33",
+    IN: "91",
+    // Add more mappings as needed
+  };
+
   const handleAddCustomer = async () => {
     try {
-      // Format the phone number with a space between the country code and the phone number
-      const formattedNumber = `+${countryCode} ${newCustomerPhone}`;
+      // Get the phone code using the country code
+      const phoneCode = countryToPhoneCode[countryCode];
+      const formattedNumber = `+${phoneCode} ${newCustomerPhone}`;
 
       console.log("Formatted Phone Number:", formattedNumber); // Verify the format
 
