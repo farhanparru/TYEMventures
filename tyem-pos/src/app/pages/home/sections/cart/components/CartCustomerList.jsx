@@ -33,13 +33,13 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone }) => {
+const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
  
   console.log(selectedPhone ,"selectedPhone ");
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
-  const [newCustomerPhone, setNewCustomerPhone] = useState(selectedPhone || ""); // Use selectedPhone or default to empty
+  const [newCustomerPhone, setNewCustomerPhone] = useState(selectedPhone  || ""); // Initialize with selectedPhone
   const [newCustomerPlace, setNewCustomerPlace] = useState("");
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);

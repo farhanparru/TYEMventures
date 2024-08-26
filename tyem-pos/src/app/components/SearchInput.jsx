@@ -5,6 +5,9 @@ import { getSelectedCustomer } from '../pages/home/store/customerSlice';
 const SearchInput = ({ placeholder, trailingTitle, onInputChange, defaultValue }) => {
   const selectedCustomer = useSelector(getSelectedCustomer);
 
+  // Use the selected customer's phone number if available and no defaultValue is provided
+  const inputDefaultValue = defaultValue || (selectedCustomer ? selectedCustomer.number : '');
+
   return (
     <form className="w-full">
       <div className="relative">
@@ -26,8 +29,8 @@ const SearchInput = ({ placeholder, trailingTitle, onInputChange, defaultValue }
           type="text"
           placeholder={placeholder ?? "Search"}
           onChange={onInputChange}
-          defaultValue={defaultValue}
-          className="w-full py-3 pl-12 pr-4 text-gray-800 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600 "
+          defaultValue={inputDefaultValue}
+          className="w-full py-3 pl-12 pr-4 text-gray-800 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
         />
         {trailingTitle && (
           <h2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400">

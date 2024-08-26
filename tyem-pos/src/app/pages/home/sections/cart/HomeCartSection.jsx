@@ -46,17 +46,23 @@ const HomeCartSection = () => {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
-  const [selectedPhone, setSelectedPhone] = useState('');
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [customerFocused, setCustomerFocused] = useState(false);
 
-;
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+    if (value.match(/^\d+$/)) {
+      setSelectedPhoneNumber(value);
+    } else {
+      setSelectedPhoneNumber('');
+    }
+  };
 
 
   const handleSelectCustomer = (customer) => {
     setSelectedCustomer(customer);
-    setSelectedPhone(customer.number);
     setCustomerFocused(false); // Close the customer list after selection
   };
 
