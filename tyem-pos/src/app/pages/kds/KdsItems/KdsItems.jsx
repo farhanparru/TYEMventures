@@ -25,7 +25,7 @@ const KdsItems = ({
           {}
         </h2>
         {/* <p className="text-xs font-medium text-gray-500">
-            index: {index} length : {total_length}, splice_length :{" "}
+            : {index} length : {total_length}, splice_length :{" "}
             {itemsToShow}
           </p> */}
       </div>

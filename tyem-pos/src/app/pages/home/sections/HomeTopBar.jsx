@@ -8,76 +8,85 @@ import { clearEditOrder } from "../store/orderSlice";
 const HomeTopBar = ({ selectedTab }) => {
   const { ordersList } = useSelector((state) => state.order);
 
-  const [allOrdersCount, setallOrdersCount] = useState(10)
-  const [onlineOrdersCount, setonlineOrdersCount] = useState(0)
-  const [scheduledOrdersCount, setscheduledOrdersCount] = useState(0)
+  const [allOrdersCount, setAllOrdersCount] = useState(10);
+  const [onlineOrdersCount, setOnlineOrdersCount] = useState(0);
+  const [scheduledOrdersCount, setScheduledOrdersCount] = useState(0);
   const dispatch = useDispatch();
 
-
   useEffect(() => {
-    getOrdersCount()
-  }, [ordersList])
+    getOrdersCount();
+  }, [ordersList]);
+
   const getOrdersCount = () => {
     // Count total orders
     const totalOrdersCount = ordersList.length;
     // Filter and count online orders
-    const onlineOrdersCount = ordersList.filter(order => order.selling_price_group.toLowerCase() === "online").length;
-
+    const onlineOrdersCount = ordersList.filter(
+      (order) => order.selling_price_group.toLowerCase() === "online"
+    ).length;
     // Filter and count scheduled orders
-    const scheduledOrdersCount = ordersList.filter(order => order.is_scheduled == 1).length;
-    setallOrdersCount(totalOrdersCount)
-    setonlineOrdersCount(onlineOrdersCount)
-    setscheduledOrdersCount(scheduledOrdersCount)
+    const scheduledOrdersCount = ordersList.filter(
+      (order) => order.is_scheduled === 1
+    ).length;
+
+    setAllOrdersCount(totalOrdersCount);
+    setOnlineOrdersCount(onlineOrdersCount);
+    setScheduledOrdersCount(scheduledOrdersCount);
   };
+
+  const buttonLabels = [
+    "Tables",
+    "On Hold",
+    "Takeaway",
+    "Dine In",
+    "Delivery",
+    "Online",
+    "Zomato",
+  ];
 
   const TextTab = ({ item, active }) => {
     return (
       <Link to={item.link}>
         <div className={`
-         font-bold  text-center
-         text-base px-3 py-2   rounded-md cursor-pointer transition-all 
-          
+          font-bold text-center text-base px-3 py-2 rounded-md cursor-pointer transition-all
           ${active
-            ? "bg-ch-headers-500 text-white"
-            : "hover:bg-ch-headers-300 hover:scale-90 bg-ch-headers-100 hover:text-ch-headers-500 text-ch-headers-500"
+            // ? "bg-ch-headers-500 text-white"
+            // : "hover:bg-ch-headers-300 hover:scale-90 bg-ch-headers-100 hover:text-ch-headers-500 text-ch-headers-500"
           }
-          `}>
-
+        `}>
           <h3
-
             onClick={() => {
               dispatch(selectBodySection(item.slug));
-              dispatch(clearEditOrder())
+              dispatch(clearEditOrder());
             }}
           >
-            {item.name}
-            {item.slug == "" &&
-
-              "(" + allOrdersCount + ")"
-            }
-
-            {item.slug == "" &&
-
-              "(" + onlineOrdersCount + ")"
-            }
-            {item.slug == "" &&
-
-              "(" + scheduledOrdersCount + ")"
-            }
+            {/* {item.name} */}
           </h3>
-
         </div>
       </Link>
     );
   };
-
   return (
-    <div className="w-full  gap-3  flex  m-3">
-
-      {homeBodySection.map((item, index) => {
+    <div className="w-full gap-3 flex m-3 ml-[-188px]">
+      {" "}
+      {/* Adjusted margin-left using Tailwind */}
+      {homeBodySection.map((item) => {
         let isActive = item.slug === selectedTab;
         return <TextTab key={item.slug} active={isActive} item={item} />;
       })}
+      {/* Add new buttons */}
+      {buttonLabels.map((label, index) => (
+        <button
+          key={index}
+          className="font-bold text-base text-center px-4 py-3 rounded-md cursor-pointer transition-all
+  bg-blue-500 hover:bg-blue-500 hover:scale-105 text-white"
+          onClick={() => {
+            console.log(`${label} button clicked`);
+          }}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
 };

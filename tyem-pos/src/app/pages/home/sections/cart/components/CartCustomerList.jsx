@@ -207,12 +207,12 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
               onSelect={(code) => setCountryCode(code)}
               countries={["US", "GB", "AU", "DE", "FR", "IN"]} // Available countries
               customLabels={{
-                US: "United States (+1)",
-                GB: "United Kingdom (+44)",
-                AU: "Australia (+61)",
-                DE: "Germany (+49)",
-                FR: "France (+33)",
-                IN: "India (+91)",
+                US: "United States +1",
+                GB: "United Kingdom +44",
+                AU: "Australia +61",
+                DE: "Germany +49",
+                FR: "France +33",
+                IN: "India +91",
               }}
               placeholder="Select Country"
               showSelectedLabel={true}

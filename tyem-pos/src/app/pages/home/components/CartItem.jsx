@@ -27,17 +27,21 @@ import CustomModal from "../../../components/CustomModal";
 import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
-const CartItem = ({ item, index, initialQuantity = [1] }) => {
-  const [quantity, setQuantity] = useState(initialQuantity);
+const CartItem = ({ item, index, initialQuantity = 1 }) => {
+  const [quantity, setQuantity] = useState(initialQuantity.toString());
+
+  
+  const dispatch = useDispatch();
+  const cartitems = useSelector(getorderitems); // Assuming getorderitems is a selector function
 
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
     const newQuantity = parseInt(quantity) + 1;
-    setQuantity(newQuantity);
+    setQuantity(newQuantity.toString());
     dispatch(
       addToCart({
         id: item.id,
-        type: "increase",
+        type: 'increase',
         name: item.name,
         price: item.price,
       })
@@ -46,33 +50,35 @@ const CartItem = ({ item, index, initialQuantity = [1] }) => {
 
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
-    if (quantity > 0) {
+    if (parseInt(quantity) > 1) {
       const newQuantity = parseInt(quantity) - 1;
-      setQuantity(newQuantity);
-      dispatch(addToCart({ id: item.id, type: "decrease" }));
+      setQuantity(newQuantity.toString());
+      dispatch(addToCart({ id: item.id, type: 'decrease' }));
+    } else {
+      setQuantity(''); // Clear the quantity if it's below 1
     }
   };
 
-  const dispatch = useDispatch();
-  const cartitems = useSelector(getorderitems);
-
-  const [openChangePriceBox, setOpenChangePriceBox] = useState(false);
-  const [singleItemChangePrice, setSingleItemChangePrice] = useState(0);
-  const [discountType, setDiscountType] = useState("fixed");
-  const [itemNote, setitemNote] = useState("");
-  const [discountAmount, setDiscountAmount] = useState(0);
-
-  const onRemoveItem = (e, isRemoveAll) => {
+  const handleQuantityChange = (e) => {
     e.stopPropagation();
-    dispatch(
-      removeFromCart({
-        id: item.id,
-        variation_id: item.variation_id,
-        isRemoveAll,
-      })
-    );
-  };
+    const value = e.target.value;
 
+    if (value === '' || /^[0-9\b]+$/.test(value)) {
+      setQuantity(value);
+    }
+
+    if (value !== '' && !isNaN(value)) {
+      dispatch(
+        addToCart({
+          id: item.id,
+          type: 'set',
+          name: item.name,
+          price: item.price,
+          quantity: parseInt(value),
+        })
+      );
+    }
+  };
   // const onAddItem = (e) => {
   //   e.stopPropagation();
   //   dispatch(addToCart({ item: item, isUpdateProduct: true }));
@@ -207,40 +213,33 @@ const CartItem = ({ item, index, initialQuantity = [1] }) => {
             ₹ {parseFloat(item.price).toFixed(2)}
           </div>
 
-          <form class="max-w-xs mx-auto">
-            <label
-              for="counter-input"
-              class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Choose quantity:
-            </label>
-            <div class="relative flex items-center">
+          <form className="max-w-xs mx-auto">
+           
+            <div className="relative flex items-center">
               <button
                 type="button"
                 onClick={onDecreaseQuantity}
                 id="decrement-button"
-                data-input-counter-decrement="counter-input"
-                class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                className="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
               >
-                  <AiOutlineMinus size={16} />
+                <AiOutlineMinus size={16} />
               </button>
               <input
                 type="text"
-                id="counter-input"
-                data-input-counter
-                class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
-                placeholder=""
+                id="quantity-input"
                 value={quantity}
+                onChange={handleQuantityChange}
+                aria-describedby="helper-text-explanation"
+                className="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required
               />
               <button
                 type="button"
                 onClick={onIncreaseQuantity}
                 id="increment-button"
-                data-input-counter-increment="counter-input"
-                class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                className="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
               >
-                  <AiOutlinePlus size={16} />
+                <AiOutlinePlus size={16} />
               </button>
             </div>
           </form>

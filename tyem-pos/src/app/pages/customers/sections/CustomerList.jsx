@@ -70,7 +70,7 @@ const CustomerList = () => {
           </button>
         </div>
       </div>
-
+  
       <div className="flex justify-between mb-2">
         <span>
           Showing {customers.length} / {customers.length} customers
@@ -82,11 +82,11 @@ const CustomerList = () => {
           </span>
         </a>
       </div>
-
-      <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100">
+  
+      <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100 h-96"> {/* Added height class */}
         {customers.map((customer, index) => {
           const { date, time } = formatDateTime(customer.customeraddDate);
-
+  
           return (
             <div
               key={index}
@@ -117,9 +117,9 @@ const CustomerList = () => {
           );
         })}
       </div>
-
+  
       <AddCustomerModal isOpen={open} setOpen={setOpen} />
-
+  
       {selectedCustomer && (
         <Drawer
           width="30%"
@@ -133,6 +133,7 @@ const CustomerList = () => {
       )}
     </div>
   );
+  
 };
 
 export default CustomerList;
