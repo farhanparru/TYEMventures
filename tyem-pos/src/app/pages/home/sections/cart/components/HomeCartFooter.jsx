@@ -111,7 +111,7 @@ const HomeCartFooter = ({ selectedCustomer }) => {
             : `Table :  ${selectedTable.name} is Selected`}
         </p>
         <p className="text-sm font-bold flex items-center">
-      <FaUser className="mr-2 text-lg animate-bounce" />
+      <FaUser className="mr-2 text-lg " />
       Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
     </p>
       </div>

@@ -89,6 +89,9 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
 
   const handleAddCustomer = async () => {
     try {
+      // Check the data before sending
+      console.log({ name: newCustomerName, number: `+${countryCode}${newCustomerPhone}`, place: newCustomerPlace });
+  
       const response = await axios.post(
         "https://tyem.invenro.site/api/user/addCustomer",
         {
@@ -97,11 +100,12 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
           place: newCustomerPlace,
         }
       );
-
+  
       toast.success("Customer added successfully!", {
         position: toast.POSITION?.TOP_RIGHT,
         autoClose: 3000,
       });
+  
 
       // Close the modal and reset form fields
       setModalIsOpen(false);
@@ -115,14 +119,8 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
       );
       setCustomers(updatedResponse.data.customers);
     } catch (error) {
-      toast.error(
-        "Failed to add customer: " +
-          (error.response?.data.message || error.message),
-        {
-          position: toast.POSITION?.TOP_RIGHT,
-          autoClose: 3000,
-        }
-      );
+    console.log(error,"error");
+    
     }
   };
 
@@ -201,7 +199,8 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
             />
           </div>
           <div className="mb-4 flex items-center border-b border-gray-300 pb-2">
-            <FaPhone className="text-gray-500 mr-3" />
+          <FaPhone className="text-gray-500 mr-3" size={23} />
+
             <ReactFlagsSelect
               selected={countryCode}
               onSelect={(code) => setCountryCode(code)}

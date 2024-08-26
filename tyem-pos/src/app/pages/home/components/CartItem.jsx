@@ -30,7 +30,6 @@ import TextArea from "antd/es/input/TextArea";
 const CartItem = ({ item, index, initialQuantity = 1 }) => {
   const [quantity, setQuantity] = useState(initialQuantity.toString());
 
-  
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems); // Assuming getorderitems is a selector function
 
@@ -41,7 +40,7 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
     dispatch(
       addToCart({
         id: item.id,
-        type: 'increase',
+        type: "increase",
         name: item.name,
         price: item.price,
       })
@@ -53,9 +52,9 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
     if (parseInt(quantity) > 1) {
       const newQuantity = parseInt(quantity) - 1;
       setQuantity(newQuantity.toString());
-      dispatch(addToCart({ id: item.id, type: 'decrease' }));
+      dispatch(addToCart({ id: item.id, type: "decrease" }));
     } else {
-      setQuantity(''); // Clear the quantity if it's below 1
+      setQuantity(""); // Clear the quantity if it's below 1
     }
   };
 
@@ -63,15 +62,15 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
     e.stopPropagation();
     const value = e.target.value;
 
-    if (value === '' || /^[0-9\b]+$/.test(value)) {
+    if (value === "" || /^[0-9\b]+$/.test(value)) {
       setQuantity(value);
     }
 
-    if (value !== '' && !isNaN(value)) {
+    if (value !== "" && !isNaN(value)) {
       dispatch(
         addToCart({
           id: item.id,
-          type: 'set',
+          type: "set",
           name: item.name,
           price: item.price,
           quantity: parseInt(value),
@@ -214,32 +213,36 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
           </div>
 
           <form className="max-w-xs mx-auto">
-           
-            <div className="relative flex items-center">
+            <div className="relative flex items-center space-x-3">
+              {/* Decrease Button */}
               <button
                 type="button"
                 onClick={onDecreaseQuantity}
                 id="decrement-button"
-                className="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                className="flex-shrink-0 bg-red-500 text-white hover:bg-red-600 inline-flex items-center justify-center border border-red-500 rounded-full h-10 w-10 focus:ring-red-500 focus:ring-2 focus:outline-none transition-colors duration-200"
               >
-                <AiOutlineMinus size={16} />
+                <AiOutlineMinus size={20} />
               </button>
+
+              {/* Quantity Input */}
               <input
                 type="text"
                 id="quantity-input"
                 value={quantity}
                 onChange={handleQuantityChange}
                 aria-describedby="helper-text-explanation"
-                className="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="bg-gray-50 border border-gray-300 text-center text-gray-900 text-lg focus:ring-blue-500 focus:border-blue-500 block w-20 h-10 rounded-full shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required
               />
+
+              {/* Increase Button */}
               <button
                 type="button"
                 onClick={onIncreaseQuantity}
                 id="increment-button"
-                className="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                className="flex-shrink-0 bg-green-500 text-white hover:bg-green-600 inline-flex items-center justify-center border border-green-500 rounded-full h-10 w-10 focus:ring-green-500 focus:ring-2 focus:outline-none transition-colors duration-200"
               >
-                <AiOutlinePlus size={16} />
+                <AiOutlinePlus size={20} />
               </button>
             </div>
           </form>
