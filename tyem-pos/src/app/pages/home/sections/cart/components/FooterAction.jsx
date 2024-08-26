@@ -866,9 +866,9 @@ const FooterActions = () => {
                   </h5>
                 </div>
                 <div>
-                  <h5 className="text-lg font-bold">
+                  {/* <h5 className="text-lg font-bold">
                     {selectedCustomer?.name}
-                  </h5>
+                  </h5> */}
                 </div>
               </div>
               <div className="flex flex-col items-center w-full justify-end">

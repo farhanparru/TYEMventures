@@ -33,12 +33,13 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm, selectedPhoneNumber , onSelectCustomer}) => {
-  console.log(selectedPhoneNumber ,"selectedPhoneNumber ");
+const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone }) => {
+ 
+  console.log(selectedPhone ,"selectedPhone ");
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
-  const [newCustomerPhone, setNewCustomerPhone] = useState(selectedPhoneNumber);
+  const [newCustomerPhone, setNewCustomerPhone] = useState(selectedPhone || ""); // Use selectedPhone or default to empty
   const [newCustomerPlace, setNewCustomerPlace] = useState("");
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
@@ -144,7 +145,7 @@ const CartCustomerList = ({ searchTerm, selectedPhoneNumber , onSelectCustomer})
             <li
             key={customer._id}
             className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
-              selectedCustomer?._id === customer._id ? "bg-blue-100" : ""
+              selectedCustomer?._id === customer._id ? "bg-blue-500" : ""
             }`}
             onClick={() => handleCustomerSelect(customer)}
           >

@@ -27,7 +27,7 @@ import CustomModal from "../../../components/CustomModal";
 import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
-const CartItem = ({ item, index, initialQuantity = 1 }) => {
+const CartItem = ({ item, index, initialQuantity = [] }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
   const handleInputChange = (e) => {

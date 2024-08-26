@@ -46,25 +46,17 @@ const HomeCartSection = () => {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
+  const [selectedPhone, setSelectedPhone] = useState('');
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [customerFocused, setCustomerFocused] = useState(false);
 
-  // pass to number 
-  const handleSearch = (value) => {
-    setSearchTerm(value);
-    // Update selectedPhoneNumber if it's a phone number
-    if (value.match(/^\d+$/)) {
-      setSelectedPhoneNumber(value);
-    } else {
-      setSelectedPhoneNumber('');
-    }
-  };
+;
 
 
   const handleSelectCustomer = (customer) => {
     setSelectedCustomer(customer);
+    setSelectedPhone(customer.number);
     setCustomerFocused(false); // Close the customer list after selection
   };
 
@@ -163,6 +155,7 @@ const HomeCartSection = () => {
             <CartCustomerList
                 onSelectCustomer={handleSelectCustomer}
                 searchTerm={searchTerm}
+                selectedPhone={selectedPhone}
               />
             </div>
           )}

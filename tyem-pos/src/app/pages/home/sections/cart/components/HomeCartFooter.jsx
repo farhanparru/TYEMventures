@@ -31,6 +31,7 @@ import {
   PAYMENTSTATUS,
   TABLESTATES,
 } from "../../../constants";
+import { FaUser } from 'react-icons/fa';
 import {
   addOrder,
   clearEditOrder,
@@ -109,9 +110,10 @@ const HomeCartFooter = ({ selectedCustomer }) => {
             ? "No Table Selected"
             : `Table :  ${selectedTable.name} is Selected`}
         </p>
-        <p className="text-xs font-semibold">
-          Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
-        </p>
+        <p className="text-sm italic hover:not-italic items-center">
+      <FaUser className="mr-2 text-lg " />
+      Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
+    </p>
       </div>
 
       <div className=" h-full  overflow-y-scroll">
