@@ -17,26 +17,26 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       try {
         const response = await axios.get('https://tyem.invenro.site/api/user/ExcelItems');
         const fetchedItems = response.data;
-
+  
         // Filter items based on the selected category
         const filteredItems = selectedCategory === 'All' ? fetchedItems : fetchedItems.filter(item => item.category === selectedCategory);
-
-        // Determine the number of items per column
-        const columnCount = Math.ceil(filteredItems.length / 3);
-
-        // Split items into three columns
+  
+        // Initialize arrays for three columns
         const splitItems = { firstColumn: [], secondColumn: [], thirdColumn: [] };
-        
-        filteredItems.forEach((item, index) => {
-          if (index < columnCount) {
+  
+        // Distribute items across the three columns
+        let columnIndex = 0;
+        filteredItems.forEach((item) => {
+          if (columnIndex === 0) {
             splitItems.firstColumn.push(item);
-          } else if (index < columnCount * 2) {
+          } else if (columnIndex === 1) {
             splitItems.secondColumn.push(item);
           } else {
             splitItems.thirdColumn.push(item);
           }
+          columnIndex = (columnIndex + 1) % 3; // Increment columnIndex and reset to 0 after 2
         });
-
+  
         setItems(splitItems);
       } catch (error) {
         console.error('There was an error fetching the items!', error);
@@ -44,9 +44,10 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         setLoading(false);
       }
     };
-
+  
     fetchItems();
   }, [selectedCategory]);
+  
 
   const onItemClick = useCallback((item) => {
     const cartItem = {
@@ -63,14 +64,14 @@ const ItemCard = React.memo(({ selectedCategory }) => {
   const secondColumnItems = useMemo(() => items.secondColumn, [items.secondColumn]);
   const thirdColumnItems = useMemo(() => items.thirdColumn, [items.thirdColumn]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className="flex justify-between gap-x-10 p-6">
       <div className="flex flex-col space-y-9">
-        {firstColumnItems.map((item) => (
+        {/* {firstColumnItems.map((item) => (
           <div
             key={item.Id}
             onClick={() => onItemClick(item)}
@@ -80,7 +81,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
             <h3 className="text-sm font-bold capitalize truncate">{item.ItemName}</h3>
             <h3 className="text-md font-medium mt-1">₹{parseFloat(item.Price).toFixed(2)}</h3>
           </div>
-        ))}
+        ))} */}
       </div>
       <div className="flex flex-col space-y-9">
         {secondColumnItems.map((item) => (
