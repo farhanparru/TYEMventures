@@ -44,12 +44,12 @@ const HomeCartSection = () => {
   const [showModal, setShowModal] = useState(false);
   const [discountType, setDiscountType] = useState("fixed");
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [customerFocused, setCustomerFocused] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [customerFocused, setCustomerFocused] = useState(false);
 
   // pass to number 
   const handleSearch = (value) => {
@@ -156,13 +156,13 @@ const HomeCartSection = () => {
         >
          <SearchInput
           onInputChange={(e) => handleSearch(e.target.value)}
-          // defaultValue={selectedCustomerName}
+      
         />
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50">
-              <CartCustomerList
-                 onSelectCustomer={handleSelectCustomer} // Pass the selection handler
-                 searchTerm={searchTerm}
+            <CartCustomerList
+                onSelectCustomer={handleSelectCustomer}
+                searchTerm={searchTerm}
               />
             </div>
           )}

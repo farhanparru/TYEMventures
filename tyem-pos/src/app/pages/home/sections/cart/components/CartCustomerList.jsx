@@ -46,10 +46,8 @@ const CartCustomerList = ({ searchTerm, selectedPhoneNumber }) => {
 
 
   const handleCustomerSelect = (customer) => {
-    setSelectedCustomer(customer);
-    // Additional logic to handle the selected customer, such as passing it to a parent component
-    console.log("Selected customer:", customer);
-  }
+    onSelectCustomer(customer);
+  };
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -144,12 +142,12 @@ const CartCustomerList = ({ searchTerm, selectedPhoneNumber }) => {
         <ul className="space-y-3">
           {filteredCustomers.map((customer) => (
             <li
-              key={customer._id} // Use a unique identifier from your API
-              className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
-                selectedCustomer?._id === customer._id ? "bg-blue-100" : ""
-              }`} // Highlight selected customer
-              onClick={() => handleCustomerSelect(customer)} // Handle customer selection
-            >
+            key={customer._id}
+            className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
+              selectedCustomer?._id === customer._id ? "bg-blue-100" : ""
+            }`}
+            onClick={() => handleCustomerSelect(customer)}
+          >
               <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
               <span className="text-gray-800">
                 {searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)
