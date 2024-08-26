@@ -5,6 +5,7 @@ import axios from "axios";
 import { getStoreUserData } from "../../../store/storeUser/storeUserSlice";
 
 const ItemCard = React.memo(({ selectedCategory }) => {
+  
   const dispatch = useDispatch();
   const store_user = useSelector(getStoreUserData);
   const [items, setItems] = useState({ firstColumn: [], secondColumn: [], thirdColumn: [] });
@@ -20,13 +21,16 @@ const ItemCard = React.memo(({ selectedCategory }) => {
         // Filter items based on the selected category
         const filteredItems = selectedCategory === 'All' ? fetchedItems : fetchedItems.filter(item => item.category === selectedCategory);
 
-        // Split items into three columns without repetition
-        const splitItems = { firstColumn: [], secondColumn: [], thirdColumn: [] };
+        // Determine the number of items per column
+        const columnCount = Math.ceil(filteredItems.length / 3);
 
+        // Split items into three columns
+        const splitItems = { firstColumn: [], secondColumn: [], thirdColumn: [] };
+        
         filteredItems.forEach((item, index) => {
-          if (index % 3 === 0) {
+          if (index < columnCount) {
             splitItems.firstColumn.push(item);
-          } else if (index % 3 === 1) {
+          } else if (index < columnCount * 2) {
             splitItems.secondColumn.push(item);
           } else {
             splitItems.thirdColumn.push(item);
