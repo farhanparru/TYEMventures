@@ -110,8 +110,8 @@ const HomeCartFooter = ({ selectedCustomer }) => {
             ? "No Table Selected"
             : `Table :  ${selectedTable.name} is Selected`}
         </p>
-        <p className="text-sm italic hover:not-italic items-center">
-      <FaUser className="mr-2 text-lg " />
+        <p className="text-sm font-bold flex items-center">
+      <FaUser className="mr-2 text-lg animate-bounce" />
       Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
     </p>
       </div>

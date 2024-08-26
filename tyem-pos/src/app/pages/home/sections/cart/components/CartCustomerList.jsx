@@ -39,7 +39,7 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
-  const [newCustomerPhone, setNewCustomerPhone] = useState(selectedPhone  || ""); // Initialize with selectedPhone
+  const [newCustomerPhone, setNewCustomerPhone] = useState(""); // Initialize as empty
   const [newCustomerPlace, setNewCustomerPlace] = useState("");
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
@@ -124,8 +124,14 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
     }
   };
 
-  const openModal = () => setModalIsOpen(true);
+
   const closeModal = () => setModalIsOpen(false);
+
+  const openModal = () => {
+    setNewCustomerPhone(selectedPhone); // Set the phone number before opening the modal
+    setModalIsOpen(true);
+  };
+
 
   return (
     <div className="p-4 bg-white rounded-md shadow-md">
@@ -140,25 +146,27 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
         </button>
       </div>
       <div className="max-h-64 overflow-y-auto mt-4">
-        <ul className="space-y-3">
-          {filteredCustomers.map((customer) => (
-            <li
-            key={customer._id}
-            className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
-              selectedCustomer?._id === customer._id ? "bg-blue-500" : ""
-            }`}
-            onClick={() => handleCustomerSelect(customer)}
-          >
-              <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
-              <span className="text-gray-800">
-                {searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)
-                  ? customer.number
-                  : customer.name}{" "}
-                {/* Display number or name based on search term */}
-              </span>
-            </li>
-          ))}
-        </ul>
+      <ul className="space-y-3">
+    {filteredCustomers.map((customer) => (
+      <li
+        key={customer._id}
+        className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
+          selectedCustomer?._id === customer._id ? "bg-blue-500 text-white" : "bg-white"
+        }`}
+        onClick={() => {
+          setSelectedCustomer(customer); // Set the selected customer
+          handleCustomerSelect(customer); // Call the function to pass the selected customer
+        }}
+      >
+        <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
+        <span className="text-gray-800">
+          {searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)
+            ? customer.number
+            : customer.name}{" "}
+        </span>
+      </li>
+    ))}
+  </ul>
       </div>
       <Modal
         isOpen={modalIsOpen}
