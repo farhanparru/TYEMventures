@@ -6,7 +6,7 @@ import {
   FaPhone,
   FaUser,
   FaMapMarkerAlt,
-  FaUserPlus
+  FaUserPlus,
 } from "react-icons/fa";
 import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
@@ -34,10 +34,9 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
- 
-  console.log(selectedPhone ,"selectedPhone ");
-  
+const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
+  console.log(selectedPhone, "selectedPhone ");
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
   const [newCustomerPhone, setNewCustomerPhone] = useState(""); // Initialize as empty
@@ -46,7 +45,6 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // State to hold the selected customer
-
 
   const handleCustomerSelect = (customer) => {
     onSelectCustomer(customer);
@@ -89,24 +87,24 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
 
   const handleAddCustomer = async () => {
     try {
-      // Check the data before sending
-      console.log({ name: newCustomerName, number: `+${countryCode}${newCustomerPhone}`, place: newCustomerPlace });
-  
+      // Format the phone number with a space between the country code and the phone number
+      const formattedNumber = `+${countryCode} ${newCustomerPhone}`;
+
+      console.log("Formatted Phone Number:", formattedNumber); // Verify the format
+
       const response = await axios.post(
         "https://tyem.invenro.site/api/user/addCustomer",
         {
           name: newCustomerName,
-          number: `+${countryCode}${newCustomerPhone}`, // Add the country code
+          number: formattedNumber, // Send the formatted phone number
           place: newCustomerPlace,
         }
       );
-  
+
       toast.success("Customer added successfully!", {
         position: toast.POSITION?.TOP_RIGHT,
         autoClose: 3000,
       });
-  
-
       // Close the modal and reset form fields
       setModalIsOpen(false);
       setNewCustomerName("");
@@ -119,11 +117,9 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
       );
       setCustomers(updatedResponse.data.customers);
     } catch (error) {
-    console.log(error,"error");
-    
+      console.log(error, "error");
     }
   };
-
 
   const closeModal = () => setModalIsOpen(false);
 
@@ -131,7 +127,6 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
     setNewCustomerPhone(selectedPhone); // Set the phone number before opening the modal
     setModalIsOpen(true);
   };
-
 
   return (
     <div className="p-4 bg-white rounded-md shadow-md">
@@ -146,27 +141,29 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
         </button>
       </div>
       <div className="max-h-64 overflow-y-auto mt-4">
-      <ul className="space-y-3">
-    {filteredCustomers.map((customer) => (
-      <li
-        key={customer._id}
-        className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
-          selectedCustomer?._id === customer._id ? "bg-blue-500 text-white" : "bg-white"
-        }`}
-        onClick={() => {
-          setSelectedCustomer(customer); // Set the selected customer
-          handleCustomerSelect(customer); // Call the function to pass the selected customer
-        }}
-      >
-        <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
-        <span className="text-gray-800">
-          {searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)
-            ? customer.number
-            : customer.name}{" "}
-        </span>
-      </li>
-    ))}
-  </ul>
+        <ul className="space-y-3">
+          {filteredCustomers.map((customer) => (
+            <li
+              key={customer._id}
+              className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
+                selectedCustomer?._id === customer._id
+                  ? "bg-blue-500 text-white"
+                  : "bg-white"
+              }`}
+              onClick={() => {
+                setSelectedCustomer(customer); // Set the selected customer
+                handleCustomerSelect(customer); // Call the function to pass the selected customer
+              }}
+            >
+              <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
+              <span className="text-gray-800">
+                {searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)
+                  ? customer.number
+                  : customer.name}{" "}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
       <Modal
         isOpen={modalIsOpen}
@@ -199,7 +196,7 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
             />
           </div>
           <div className="mb-4 flex items-center border-b border-gray-300 pb-2">
-          <FaPhone className="text-gray-500 mr-3" size={23} />
+            <FaPhone className="text-gray-500 mr-3" size={30} />
 
             <ReactFlagsSelect
               selected={countryCode}
@@ -218,6 +215,7 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
               showOptionLabel={true}
               className="mr-2"
             />
+
             <input
               type="tel"
               placeholder="Phone Number"
@@ -227,6 +225,7 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
               required
             />
           </div>
+
           <div className="mb-4 flex items-center border-b border-gray-300 pb-2">
             <FaMapMarkerAlt className="text-gray-500 mr-3" />
             <input
