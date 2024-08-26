@@ -70,13 +70,9 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Toaster, toast } from "sonner";
 import FooterActions from "./FooterAction";
-import { FaUser } from 'react-icons/fa';
 
 const actionBtnClass = `w-full text-[0.6rem] py-2 font-medium rounded-lg   transition-all ease-in-out hover:scale-95 `;
-const HomeCartFooter = ({ selectedCustomer }) => {
-
-  console.log( selectedCustomer," selectedCustomer");
-  
+const HomeCartFooter = () => {
   
   const {
     totalAmount,
@@ -88,7 +84,7 @@ const HomeCartFooter = ({ selectedCustomer }) => {
     totalAmountWithoutDiscount,
   } = useSelector((state) => state.cart);
   const selectedTable = useSelector(getselectedTable);
-  // const selectedCustomer = useSelector(getSelectedCustomer);
+  const selectedCustomer = useSelector(getSelectedCustomer);
   const taxLists = useSelector(getTaxTypeList);
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
   // const [isExpanded, setIsExpanded] = React.useState(false);
@@ -105,15 +101,17 @@ const HomeCartFooter = ({ selectedCustomer }) => {
       <Toaster position="bottom-center" richColors />
 
       <div className="flex justify-between gap-2">
-        <p className="text-xs font-normal hover:font-bold">
+        <p className="text-xs font-semibold">
           {selectedTable === null
             ? "No Table Selected"
             : `Table :  ${selectedTable.name} is Selected`}
         </p>
-        <p className="text-sm font-normal hover:font-bold flex items-center">
-      <FaUser className="mr-2 text-lg animate-bounce" />
-      Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
-    </p>
+        <p className="text-xs font-semibold">
+          Customer :
+          {selectedCustomer === null
+            ? "No Customer Selected"
+            : `${selectedCustomer?.name}`}
+        </p>
       </div>
 
       <div className=" h-full  overflow-y-scroll">

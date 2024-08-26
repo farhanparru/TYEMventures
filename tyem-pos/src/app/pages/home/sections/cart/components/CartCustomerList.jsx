@@ -33,10 +33,8 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm, selectedPhoneNumber,onSelectCustomer, }) => {
+const CartCustomerList = ({ searchTerm, selectedPhoneNumber }) => {
   console.log(selectedPhoneNumber ,"selectedPhoneNumber ");
-  console.log(onSelectCustomer ,"onSelectCustomer ");
-
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
@@ -44,8 +42,6 @@ const CartCustomerList = ({ searchTerm, selectedPhoneNumber,onSelectCustomer, })
   const [newCustomerPlace, setNewCustomerPlace] = useState("");
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
-
-  const [selectedCustomer, setSelectedCustomer] = useState(null); // State to hold the selected customer
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -137,14 +133,11 @@ const CartCustomerList = ({ searchTerm, selectedPhoneNumber,onSelectCustomer, })
         </button>
       </div>
       <div className="max-h-64 overflow-y-auto mt-4">
-      <ul className="space-y-3">
+        <ul className="space-y-3">
           {filteredCustomers.map((customer) => (
             <li
               key={customer._id} // Use a unique identifier from your API
-              className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
-                selectedCustomer?._id === customer._id ? "bg-blue-100" : ""
-              }`} // Highlight selected customer
-              onClick={() => onSelectCustomer(customer)} // Trigger the function to select customer
+              className="flex items-center p-2 border-b border-gray-200"
             >
               <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
               <span className="text-gray-800">
