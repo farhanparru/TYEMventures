@@ -70,6 +70,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Toaster, toast } from "sonner";
 import FooterActions from "./FooterAction";
+import { FaUser } from 'react-icons/fa';
 
 const actionBtnClass = `w-full text-[0.6rem] py-2 font-medium rounded-lg   transition-all ease-in-out hover:scale-95 `;
 const HomeCartFooter = ({ selectedCustomer }) => {
@@ -109,9 +110,10 @@ const HomeCartFooter = ({ selectedCustomer }) => {
             ? "No Table Selected"
             : `Table :  ${selectedTable.name} is Selected`}
         </p>
-        <p className="text-xs font-semibold">
-          Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
-        </p>
+        <p className="text-sm font-semibold flex items-center">
+      <FaUser className="mr-2 text-lg animate-bounce" />
+      Customer: {selectedCustomer ? selectedCustomer.name : 'No Customer Selected'}
+    </p>
       </div>
 
       <div className=" h-full  overflow-y-scroll">

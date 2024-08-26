@@ -45,6 +45,8 @@ const CartCustomerList = ({ searchTerm, selectedPhoneNumber,onSelectCustomer, })
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
+  const [selectedCustomer, setSelectedCustomer] = useState(null); // State to hold the selected customer
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
