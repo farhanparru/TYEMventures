@@ -46,7 +46,7 @@ const HomeCartSection = () => {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
+  const [selectedPhone, setSelectedPhone] = useState(''); // Manage the selected phone number
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [customerFocused, setCustomerFocused] = useState(false);
@@ -54,9 +54,9 @@ const HomeCartSection = () => {
   const handleSearch = (value) => {
     setSearchTerm(value);
     if (value.match(/^\d+$/)) {
-      setSelectedPhoneNumber(value);
+      setSelectedPhone(value);
     } else {
-      setSelectedPhoneNumber('');
+      setSelectedPhone('');
     }
   };
 
