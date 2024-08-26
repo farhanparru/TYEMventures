@@ -87,7 +87,7 @@ const HomeCartFooter = ({ selectedCustomer }) => {
     totalAmountWithoutDiscount,
   } = useSelector((state) => state.cart);
   const selectedTable = useSelector(getselectedTable);
-  const selectedCustomer = useSelector(getSelectedCustomer);
+  // const selectedCustomer = useSelector(getSelectedCustomer);
   const taxLists = useSelector(getTaxTypeList);
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
   // const [isExpanded, setIsExpanded] = React.useState(false);
