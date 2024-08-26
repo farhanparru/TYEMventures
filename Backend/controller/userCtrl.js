@@ -457,11 +457,17 @@ module.exports = {
   addCustomer: async (req, res) => {
     const { name, place, number } = req.body;
 
+    // Convert current date and time to IST
+  const customeraddDate = moment().tz("Asia/Kolkata").toDate(); // Use .toDate() to get a JavaScript Date object
+
+  
+
     try {
       const newCustomer = Customer({
         name,
         place,
         number,
+        customeraddDate, // Include the orderDate in the customer object
       });
 
       // Save the customer to the database

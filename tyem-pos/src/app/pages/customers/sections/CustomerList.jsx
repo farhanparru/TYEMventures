@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaUser,
-  FaUserPlus,
-  FaPrint,
-  FaMoneyCheckAlt,
-  FaFileExport,
-} from "react-icons/fa";
+import { FaUser, FaUserPlus, FaPrint, FaMoneyCheckAlt, FaFileExport, FaCalendarAlt, FaClock } from "react-icons/fa";
+import { Drawer } from "antd";
 import CustomerDetails from "./CustomerDetails";
 import AddCustomerModal from "../components/AddCustomerModal";
-import { Drawer } from "antd";
 import SearchBar from "./SearchBar";
+import { DateTime } from 'luxon'; // Import Luxon for date/time formatting
 
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
@@ -31,6 +26,16 @@ const CustomerList = () => {
   const handleCustomerClick = (customer) => {
     setSelectedCustomer(customer);
     setDrawerVisible(true);
+  };
+
+  // Function to format date and time
+  const formatDateTime = (date) => {
+    const utcDate = DateTime.fromJSDate(new Date(date), { zone: "utc" });
+    const zonedDate = utcDate.setZone("Asia/Kolkata");
+    return {
+      date: zonedDate.toFormat("MMM dd, yyyy"),
+      time: zonedDate.toFormat("hh:mm:ss a"),
+    };
   };
 
   return (
@@ -65,7 +70,7 @@ const CustomerList = () => {
           </button>
         </div>
       </div>
-    
+
       <div className="flex justify-between mb-2">
         <span>
           Showing {customers.length} / {customers.length} customers
@@ -77,34 +82,44 @@ const CustomerList = () => {
           </span>
         </a>
       </div>
-      <div className="bg-white p-4 rounded shadow-lg">
-        {customers.map((customer, index) => (
-          <div
-            key={index}
-            className={`p-4 mb-4 flex items-center rounded border cursor-pointer hover:bg-gray-100 transition-all duration-200 ${
-              selectedCustomer === customer
-                ? "border-blue-500"
-                : "border-gray-300"
-            }`}
-            onClick={() => handleCustomerClick(customer)}
-          >
-            <div className="mr-4">
-              <FaUser className="text-4xl text-gray-400" />
+
+      <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100">
+        {customers.map((customer, index) => {
+          const { date, time } = formatDateTime(customer.customeraddDate);
+
+          return (
+            <div
+              key={index}
+              className={`p-4 mb-4 flex items-center rounded border cursor-pointer hover:bg-gray-100 transition-all duration-200 ${
+                selectedCustomer === customer
+                  ? "border-blue-500"
+                  : "border-gray-300"
+              }`}
+              onClick={() => handleCustomerClick(customer)}
+            >
+              <div className="mr-4">
+                <FaUser className="text-4xl text-gray-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold">{customer.name}</p>
+                <p className="text-sm text-gray-500">Location: {customer.place}</p>
+                <p className="text-sm">{customer.number}</p>
+                <div className="flex items-center text-sm text-gray-500">
+                  <FaCalendarAlt className="mr-2" />
+                  <span>Added on: {date}</span>
+                </div>
+                <div className="flex items-center text-sm text-gray-500 mt-1">
+                  <FaClock className="mr-2" />
+                  <span>At: {time}</span>
+                </div>
+              </div>
             </div>
-            <div className="flex-1">
-              <p className="font-bold">{customer.name}</p>
-              <p className="text-sm text-gray-500">
-                Location: {customer.place}
-              </p>
-              <p className="text-sm">{customer.number}</p>
-              <p className="text-sm text-gray-500">
-                Created At: {new Date(customer.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
       <AddCustomerModal isOpen={open} setOpen={setOpen} />
+
       {selectedCustomer && (
         <Drawer
           width="30%"

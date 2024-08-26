@@ -11,6 +11,7 @@ import {
 import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReactFlagsSelect from "react-flags-select"; // Import react-flags-select
 
 const customStyles = {
   content: {
@@ -41,6 +42,7 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
   const [newCustomerName, setNewCustomerName] = useState("");
   const [newCustomerPhone, setNewCustomerPhone] = useState(""); // Initialize as empty
   const [newCustomerPlace, setNewCustomerPlace] = useState("");
+  const [countryCode, setCountryCode] = useState("IN"); // Default country code (India)
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // State to hold the selected customer
@@ -91,7 +93,7 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
         "https://tyem.invenro.site/api/user/addCustomer",
         {
           name: newCustomerName,
-          number: newCustomerPhone,
+          number: `+${countryCode}${newCustomerPhone}`, // Add the country code
           place: newCustomerPlace,
         }
       );
@@ -200,6 +202,23 @@ const CartCustomerList = ({ searchTerm,  onSelectCustomer,selectedPhone  }) => {
           </div>
           <div className="mb-4 flex items-center border-b border-gray-300 pb-2">
             <FaPhone className="text-gray-500 mr-3" />
+            <ReactFlagsSelect
+              selected={countryCode}
+              onSelect={(code) => setCountryCode(code)}
+              countries={["US", "GB", "AU", "DE", "FR", "IN"]} // Available countries
+              customLabels={{
+                US: "United States (+1)",
+                GB: "United Kingdom (+44)",
+                AU: "Australia (+61)",
+                DE: "Germany (+49)",
+                FR: "France (+33)",
+                IN: "India (+91)",
+              }}
+              placeholder="Select Country"
+              showSelectedLabel={true}
+              showOptionLabel={true}
+              className="mr-2"
+            />
             <input
               type="tel"
               placeholder="Phone Number"

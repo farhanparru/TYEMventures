@@ -12,19 +12,24 @@ const customerSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    number: {
+    phoneNumber: {
         type: String,
         required: true,
         unique: true,
         validate: {
             validator: function(v) {
-                return /\d{10}/.test(v); // Validates a 10-digit number
+                return /^\+\d{1,4} \d{6,15}$/.test(v); // Validates phone number with country code
             },
-            message: props => `${props.value} is not a valid phone number!`
+            message: props => `${props.value} is not a valid phone number with country code!`
         }
+    },
+    customeraddDate: {
+        type: Date, // Store date as UTC
+        required: true,
+        default: Date.now // Optional: Set default to current date and time
     }
 }, {
-    timestamps: true // Automatically adds createdAt and updatedAt fields
+   
 });
 
 module.exports = mongoose.model('Customer', customerSchema);

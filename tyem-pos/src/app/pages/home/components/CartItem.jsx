@@ -27,62 +27,32 @@ import CustomModal from "../../../components/CustomModal";
 import { CiDiscount1 } from "react-icons/ci";
 import TextArea from "antd/es/input/TextArea";
 
-const CartItem = ({ item, index, initialQuantity = [] }) => {
+const CartItem = ({ item, index, initialQuantity = [1] }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
-  const handleInputChange = (e) => {
-    const newQuantity = parseInt(e.target.value, 10);
-  
-    // Ensure the value is a valid number and greater than or equal to 0
-    if (!isNaN(newQuantity) && newQuantity >= 0) {
-      const difference = newQuantity - quantity;
-      setQuantity(newQuantity);
-  
-      if (difference > 0) {
-        for (let i = 0; i < difference; i++) {
-          dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
-        }
-      } else if (difference < 0) {
-        for (let i = 0; i < Math.abs(difference); i++) {
-          dispatch(addToCart({ id: item.id, type: 'decrease' }));
-        }
-      }
-    }
-  };
-  
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.target.blur();
-    } else if (e.key === 'Backspace') {
-      if (e.target.value === '') {
-        setQuantity(0);
-        dispatch(addToCart({ id: item.id, type: 'decrease', quantity: 0 }));
-      }
-    } else if (e.key === 'ArrowUp') {
-      onIncreaseQuantity(e);
-    } else if (e.key === 'ArrowDown') {
-      onDecreaseQuantity(e);
-    }
-  };
-  
   const onIncreaseQuantity = (e) => {
     e.stopPropagation();
     const newQuantity = parseInt(quantity) + 1;
     setQuantity(newQuantity);
-    dispatch(addToCart({ id: item.id, type: 'increase', name: item.name, price: item.price }));
+    dispatch(
+      addToCart({
+        id: item.id,
+        type: "increase",
+        name: item.name,
+        price: item.price,
+      })
+    );
   };
-  
+
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
     if (quantity > 0) {
       const newQuantity = parseInt(quantity) - 1;
       setQuantity(newQuantity);
-      dispatch(addToCart({ id: item.id, type: 'decrease' }));
+      dispatch(addToCart({ id: item.id, type: "decrease" }));
     }
   };
 
-  
-  
   const dispatch = useDispatch();
   const cartitems = useSelector(getorderitems);
 
@@ -237,35 +207,43 @@ const CartItem = ({ item, index, initialQuantity = [] }) => {
             ₹ {parseFloat(item.price).toFixed(2)}
           </div>
 
-          <div className="cart__item-quantity flex items-center bg-green-600 rounded-lg overflow-hidden">
-            <button
-              onClick={onDecreaseQuantity}
-              className="bg-green-700 text-white p-2 hover:bg-green-800"
-              aria-label="Decrease quantity"
+          <form class="max-w-xs mx-auto">
+            <label
+              for="counter-input"
+              class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
             >
-              <AiOutlineMinus size={16} />
-            </button>
-
-            <input
-              type="number"
-              min="0"
-              value={quantity}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              className="w-14 text-center bg-white text-black outline-none border-none"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              aria-label="Quantity input"
-            />
-
-            <button
-              onClick={onIncreaseQuantity}
-              className="bg-green-700 text-white p-2 hover:bg-green-800"
-              aria-label="Increase quantity"
-            >
-              <AiOutlinePlus size={16} />
-            </button>
-          </div>
+              Choose quantity:
+            </label>
+            <div class="relative flex items-center">
+              <button
+                type="button"
+                onClick={onDecreaseQuantity}
+                id="decrement-button"
+                data-input-counter-decrement="counter-input"
+                class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+              >
+                  <AiOutlineMinus size={16} />
+              </button>
+              <input
+                type="text"
+                id="counter-input"
+                data-input-counter
+                class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
+                placeholder=""
+                value={quantity}
+                required
+              />
+              <button
+                type="button"
+                onClick={onIncreaseQuantity}
+                id="increment-button"
+                data-input-counter-increment="counter-input"
+                class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+              >
+                  <AiOutlinePlus size={16} />
+              </button>
+            </div>
+          </form>
 
           <div className="cart__item-total text-sm font-bold">
             ₹ {parseFloat(item.totalPrice).toFixed(2)}
