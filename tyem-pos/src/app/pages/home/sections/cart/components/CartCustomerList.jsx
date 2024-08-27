@@ -98,40 +98,52 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
 
   const handleAddCustomer = async () => {
     try {
-      // Get the phone code using the country code
       const phoneCode = countryToPhoneCode[countryCode];
       const formattedNumber = `+${phoneCode} ${newCustomerPhone}`;
-
+  
       const response = await axios.post(
         "https://tyem.invenro.site/api/user/addCustomer",
         {
           name: newCustomerName,
-          number: formattedNumber, // Send the formatted phone number
+          number: formattedNumber,
           place: newCustomerPlace,
         }
       );
-
+  
       toast.success("Customer added successfully!", {
         position: toast.POSITION?.TOP_RIGHT,
         autoClose: 3000,
       });
+  
       // Close the modal and reset form fields
       setModalIsOpen(false);
       setNewCustomerName("");
       setNewCustomerPhone("");
       setNewCustomerPlace("");
       closeCustomerList(); // Close list after selecting a customer
-
+  
       // Refresh customer list
       const updatedResponse = await axios.get(
         "https://tyem.invenro.site/api/user/getCustomer"
       );
       setCustomers(updatedResponse.data.customers);
+  
     } catch (error) {
+      if (error.response && error.response.status === 400 && error.response.data.message === "Customer already exists") {
+        toast.error("Customer already exists!", {
+          position: toast.POSITION?.TOP_RIGHT,
+          autoClose: 3000,
+        });
+      } else {
+        toast.error("Failed to add customer!", {
+          position: toast.POSITION?.TOP_RIGHT,
+          autoClose: 3000,
+        });
+      }
       console.log(error, "error");
     }
   };
-
+  
   const closeModal = () => setModalIsOpen(false);
 
   const openModal = () => {

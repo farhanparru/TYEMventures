@@ -79,7 +79,7 @@ const Item = () => {
   useEffect(() => {
     if (itemModalIsOpen) {
       axios
-        .get("http://localhost:8000/api/user/getCategory")
+        .get("https://tyem.invenro.site/api/user/getCategory")
         .then((response) => {
           setCategories(response.data.categories);
         })

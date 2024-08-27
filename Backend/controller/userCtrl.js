@@ -78,7 +78,8 @@ module.exports = {
 
       let printer = new ThermalPrinter({
         type: PrinterTypes.ROCKET, // Set the printer type to Rocket
-        interface: "tcp://192.168.1.100:9100", // Use the correct port
+        interface: 'usb://', // Use USB interface for POS-80
+        driver: 'POS-80', // Specify the driver name if needed (if your library supports it)
       });
 
       printer.alignCenter();
