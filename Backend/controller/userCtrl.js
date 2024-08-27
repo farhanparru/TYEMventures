@@ -469,7 +469,6 @@ module.exports = {
       if (existingCustomer) {
         return res.status(400).json({
           message: "Customer already exists",
-          customer: existingCustomer,
         });
       }
   

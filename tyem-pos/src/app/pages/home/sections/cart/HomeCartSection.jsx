@@ -67,36 +67,36 @@ const HomeCartSection = () => {
   };
 
 
-  const customerListRef = useRef(null); // Create a ref for the CartCustomerList component
+  // const customerListRef = useRef(null); // Create a ref for the CartCustomerList component
 
-  // Function to handle clicks outside the CartCustomerList component
-  const handleClickOutside = (event) => {
-    if (customerListRef.current && !customerListRef.current.contains(event.target)) {
-      setCustomerFocused(false);
-    }
-  };
+  // // Function to handle clicks outside the CartCustomerList component
+  // const handleClickOutside = (event) => {
+  //   if (customerListRef.current && !customerListRef.current.contains(event.target)) {
+  //     setCustomerFocused(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (customerFocused) {
-      // Add event listener when customer list is focused
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      // Remove event listener when customer list is not focused
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
+  // useEffect(() => {
+  //   if (customerFocused) {
+  //     // Add event listener when customer list is focused
+  //     document.addEventListener('mousedown', handleClickOutside);
+  //   } else {
+  //     // Remove event listener when customer list is not focused
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   }
 
-    // Cleanup on component unmount
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [customerFocused]);
+  //   // Cleanup on component unmount
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [customerFocused]);
+
+
+
 
 
 
   const [form] = Form.useForm(); // Initialize form
-
-  
-
   useEffect(() => {
     if (selectedCustomer?.name) {
       setSelectedCustomerName(selectedCustomer?.name);
@@ -182,7 +182,7 @@ const HomeCartSection = () => {
         />
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50"
-              ref={customerListRef} // Attach ref to the CartCustomerList container
+              // ref={customerListRef} // Attach ref to the CartCustomerList container
             >
             <CartCustomerList
                 onSelectCustomer={handleSelectCustomer}
