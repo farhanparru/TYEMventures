@@ -458,44 +458,52 @@ module.exports = {
     const { name, place, number } = req.body;
 
     // Convert current date and time to IST
-  const customeraddDate = moment().tz("Asia/Kolkata").toDate(); // Use .toDate() to get a JavaScript Date object
-
+    const customeraddDate = moment().tz("Asia/Kolkata").toDate(); // Use .toDate() to get a JavaScript Date object
   
-
     try {
-      const newCustomer = Customer({
+      // Check if a customer with the same name or number already exists
+      const existingCustomer = await Customer.findOne({
+        $or: [{ name }, { number }]
+      });
+  
+      if (existingCustomer) {
+        return res.status(400).json({
+          message: "Customer already exists",
+          customer: existingCustomer,
+        });
+      }
+  
+      // Create a new customer
+      const newCustomer = new Customer({
         name,
         place,
         number,
         customeraddDate, // Include the orderDate in the customer object
       });
-
+  
       // Save the customer to the database
       await newCustomer.save();
-
+  
       // Send a success response
-      res
-        .status(201)
-        .json({
-          message: "Customer added successfully",
-          customer: newCustomer,
-        });
+      res.status(201).json({
+        message: "Customer added successfully",
+        customer: newCustomer,
+      });
     } catch (error) {
       // Handle errors and send a failure response
-      res
-        .status(500)
-        .json({ message: "Failed to add customer", error: error.message });
+      res.status(500).json({
+        message: "Failed to add customer",
+        error: error.message,
+      });
     }
   },
-
-
   // get customer
 
-  getCustomer:async(req,res)=>{
+  getCustomer: async (req, res) => {
     try {
       // Retrieve all customers from the database
       const customers = await Customer.find();
-  
+
       // Send a success response with the list of customers
       res.status(200).json({
         message: "Customers retrieved successfully",
@@ -503,10 +511,14 @@ module.exports = {
       });
     } catch (error) {
       // Handle errors and send a failure response
-      res.status(500).json({ message: "Failed to retrieve customers", error: error.message });
+      res
+        .status(500)
+        .json({
+          message: "Failed to retrieve customers",
+          error: error.message,
+        });
     }
   },
-
 
   // payment status
   statusUpdate: async (req, res) => {

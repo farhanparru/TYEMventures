@@ -12,6 +12,7 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactFlagsSelect from "react-flags-select"; // Import react-flags-select
+import { FaExclamationTriangle } from 'react-icons/fa'; // Import warning icon
 
 const customStyles = {
   content: {
@@ -34,7 +35,7 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
+const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCustomerList }) => {
   console.log(selectedPhone, "selectedPhone ");
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -45,6 +46,7 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // State to hold the selected customer
+  const [errorModalIsOpen, setErrorModalIsOpen] = useState(false); // State for error modal
 
   const handleCustomerSelect = (customer) => {
     onSelectCustomer(customer);
@@ -100,9 +102,24 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
       // Get the phone code using the country code
       const phoneCode = countryToPhoneCode[countryCode];
       const formattedNumber = `+${phoneCode} ${newCustomerPhone}`;
-
+  
       console.log("Formatted Phone Number:", formattedNumber); // Verify the format
-
+  
+      // Check if the customer already exists
+      const checkResponse = await axios.post(
+        "https://tyem.invenro.site/api/user/checkCustomer",
+        {
+          number: formattedNumber, // Send the formatted phone number
+        }
+      );
+  
+      if (checkResponse.data.exists) {
+        // Customer already exists, show the error modal
+        setErrorModalIsOpen(true);
+        return;
+      }
+  
+      // Proceed to add the customer
       const response = await axios.post(
         "https://tyem.invenro.site/api/user/addCustomer",
         {
@@ -111,17 +128,19 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
           place: newCustomerPlace,
         }
       );
-
+  
       toast.success("Customer added successfully!", {
         position: toast.POSITION?.TOP_RIGHT,
         autoClose: 3000,
       });
+  
       // Close the modal and reset form fields
       setModalIsOpen(false);
       setNewCustomerName("");
       setNewCustomerPhone("");
       setNewCustomerPlace("");
-
+      closeCustomerList(); // Close list after selecting a customer
+  
       // Refresh customer list
       const updatedResponse = await axios.get(
         "https://tyem.invenro.site/api/user/getCustomer"
@@ -129,11 +148,14 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
       setCustomers(updatedResponse.data.customers);
     } catch (error) {
       console.log(error, "error");
+      // Show error modal if an unexpected error occurs
+      setErrorModalIsOpen(true);
     }
   };
 
-  const closeModal = () => setModalIsOpen(false);
 
+  const closeModal = () => setModalIsOpen(false);
+const closeErrorModal = () => setErrorModalIsOpen(false);
   const openModal = () => {
     setNewCustomerPhone(selectedPhone); // Set the phone number before opening the modal
     setModalIsOpen(true);
@@ -168,9 +190,7 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
             >
               <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
               <span className="text-gray-800">
-                {searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)
-                  ? customer.number
-                  : customer.name}{" "}
+                {customer.name} {/* Always display the customer's name */}
               </span>
             </li>
           ))}
@@ -265,6 +285,45 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone }) => {
           </div>
         </form>
       </Modal>
+
+    {/* Error Modal */}
+    {errorModalIsOpen && (
+      <div className="fixed z-10 inset-0 overflow-y-auto">
+        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+          </div>
+          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+            &#8203;
+          </span>
+          <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+            role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <div>
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
+                <FaExclamationTriangle className="h-6 w-6 text-yellow-600" />
+              </div>
+              <div className="mt-3 text-center sm:mt-5">
+                <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
+                  Customer Already Exists
+                </h3>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500">
+                    A customer with this phone number already exists. Please use a different phone number or update the existing customer details.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-5 sm:mt-6">
+              <button
+                className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:text-sm"
+                onClick={closeErrorModal}>
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };
