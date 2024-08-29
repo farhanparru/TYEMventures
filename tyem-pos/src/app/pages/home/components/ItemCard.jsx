@@ -37,7 +37,7 @@ const ItemCard = React.memo(({ selectedCategory }) => {
       } catch (error) {
         console.error('There was an error fetching the items!', error);
       } finally {
-        setLoading(false);
+      
       }
     };
   
