@@ -5,7 +5,7 @@ const expenseSchema = require("../Model/expensemodel");
 const Customer = require("../Model/Customermodel");
 const WebSocket = require("ws");
 const moment = require("moment-timezone");
-const ThermalPrinter = require("node-thermal-printer").printer;
+const ThermalPrinter  = require("node-thermal-printer").printer;
 const PrinterTypes = require("node-thermal-printer").types;
 const customerOnline = require("../Model/OnlineCustomer");
 const path = require("path");
@@ -66,21 +66,31 @@ module.exports = {
   printOrderReceipt: async (req, res) => {
     try {
       const {
-        status,
-        orderDetails,
-        location,
-        itemDetails,
-        method,
-        total,
-        discount,
-        qrCodeData,
+          orderDetails,
+          location,
+          itemDetails,
+          method,
+          total,
+          discount,
+          qrCodeData,
       } = req.body;
 
-      let printer = new ThermalPrinter({
-        type: PrinterTypes.ROCKET, // Set the printer type to Rocket
-        interface: 'usb://', // Use USB interface for POS-80
-        driver: 'POS-80', // Specify the driver name if needed (if your library supports it)
+      // Initialize the printer
+      const printer = new ThermalPrinter({
+          type: PrinterTypes.EPSON, // Use 'PrinterTypes.STAR' if you have a Star printer
+          interface: "USB001", // 'usb' is the standard; it should work for most USB printers
+          characterSet: 'SLOVENIA',
+          removeSpecialCharacters: false,
+          lineCharacter: "=",
       });
+
+      const isConnected = await printer.isPrinterConnected();
+      console.log("Printer connected:", isConnected);
+
+      if (!isConnected) {
+          console.error("Printer is not connected.");
+          return res.status(500).send("Printer is not connected.");
+      }
 
       printer.alignCenter();
       printer.println("Restaurant Name");
@@ -93,50 +103,35 @@ module.exports = {
       printer.println(`Location: ${location}`);
       printer.drawLine();
 
-      itemDetails.itemName.forEach((item, index) => {
-        printer.println(
-          `${index + 1}. ${item} x ${itemDetails.quantity[index]}`
-        );
+      itemDetails.forEach((item, index) => {
+          printer.println(`${index + 1}. ${item.itemName} x ${item.quantity}`);
       });
 
       printer.drawLine();
       printer.println(`Payment Method: ${method}`);
       printer.println(`Total: ${total}`);
-      printer.println(`Discount: ${discount.value || "None"}`);
+      printer.println(`Discount: ${discount || "None"}`);
       printer.drawLine();
       printer.println("Thank you for dining with us!");
 
-      // Print a QR code at the bottom of the receipt
       if (qrCodeData) {
-        printer.println("Scan to View Details:");
-        printer.printQR(qrCodeData, {
-          cellSize: 8,
-          correction: "M",
-        });
+          printer.println("Scan to View Details:");
+          printer.printQR(qrCodeData, {
+              cellSize: 8,
+              correction: "M",
+          });
       }
 
-      // Ensure the printer is connected before printing
-      const isConnected = await new Promise((resolve, reject) => {
-        printer.isPrinterConnected((err, connected) => {
-          if (err) return reject(err);
-          resolve(connected);
-        });
-      });
+      printer.cut();
 
-      if (isConnected) {
-        await printer.execute();
-        console.log("Receipt printed successfully.");
-        res.send("Receipt printed successfully");
-      } else {
-        console.error("Printer is not connected.");
-        res.status(500).send("Printer is not connected");
-      }
-    } catch (printError) {
-      console.error("Error printing receipt:", printError);
+      await printer.execute();
+      console.log("Receipt printed successfully.");
+      res.send("Receipt printed successfully");
+  } catch (error) {
+      console.error("Error printing receipt:", error);
       res.status(500).send("Error printing receipt");
-    }
-  },
-
+  }
+},
   // sles report data get
 
   getOrders: async (req, res) => {
@@ -460,19 +455,19 @@ module.exports = {
 
     // Convert current date and time to IST
     const customeraddDate = moment().tz("Asia/Kolkata").toDate(); // Use .toDate() to get a JavaScript Date object
-  
+
     try {
       // Check if a customer with the same name or number already exists
       const existingCustomer = await Customer.findOne({
-        $or: [{ name }, { number }]
+        $or: [{ name }, { number }],
       });
-  
+
       if (existingCustomer) {
         return res.status(400).json({
           message: "Customer already exists",
         });
       }
-  
+
       // Create a new customer
       const newCustomer = new Customer({
         name,
@@ -480,10 +475,10 @@ module.exports = {
         number,
         customeraddDate, // Include the orderDate in the customer object
       });
-  
+
       // Save the customer to the database
       await newCustomer.save();
-  
+
       // Send a success response
       res.status(201).json({
         message: "Customer added successfully",
@@ -511,12 +506,10 @@ module.exports = {
       });
     } catch (error) {
       // Handle errors and send a failure response
-      res
-        .status(500)
-        .json({
-          message: "Failed to retrieve customers",
-          error: error.message,
-        });
+      res.status(500).json({
+        message: "Failed to retrieve customers",
+        error: error.message,
+      });
     }
   },
 

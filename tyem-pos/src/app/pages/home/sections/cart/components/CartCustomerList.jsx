@@ -11,7 +11,7 @@ import {
 import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ReactFlagsSelect from "react-flags-select"; // Import react-flags-select
+import ReactFlagsSelect from "react-flags-select";
 
 const customStyles = {
   content: {
@@ -34,18 +34,16 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCustomerList }) => {
-  console.log(selectedPhone, "selectedPhone ");
-
+const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone, closeCustomerList }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [warningModalIsOpen, setWarningModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
-  const [newCustomerPhone, setNewCustomerPhone] = useState(""); // Initialize as empty
+  const [newCustomerPhone, setNewCustomerPhone] = useState("");
   const [newCustomerPlace, setNewCustomerPlace] = useState("");
-  const [countryCode, setCountryCode] = useState("IN"); // Default country code (India)
+  const [countryCode, setCountryCode] = useState("IN");
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // State to hold the selected customer
-  const [errorModalIsOpen, setErrorModalIsOpen] = useState(false); // State for error modal
 
   const handleCustomerSelect = (customer) => {
     onSelectCustomer(customer);
@@ -54,10 +52,8 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(
-          "https://tyem.invenro.site/api/user/getCustomer"
-        );
-        setCustomers(response.data.customers); // Adjust based on your API response structure
+        const response = await axios.get("https://tyem.invenro.site/api/user/getCustomer");
+        setCustomers(response.data.customers);
         setFilteredCustomers(response.data.customers);
       } catch (error) {
         console.error("Failed to fetch customers:", error);
@@ -72,15 +68,9 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
     let filtered = [];
 
     if (searchTerm.startsWith("+") || searchTerm.match(/^\d+$/)) {
-      // Filtering by phone number
-      filtered = customers.filter((customer) =>
-        customer.number.includes(searchTerm)
-      );
+      filtered = customers.filter((customer) => customer.number.includes(searchTerm));
     } else {
-      // Filtering by name
-      filtered = customers.filter((customer) =>
-        customer.name.toLowerCase().includes(lowerCaseSearchTerm)
-      );
+      filtered = customers.filter((customer) => customer.name.toLowerCase().includes(lowerCaseSearchTerm));
     }
 
     setFilteredCustomers(filtered);
@@ -93,73 +83,63 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
     DE: "49",
     FR: "33",
     IN: "91",
-    // Add more mappings as needed
   };
 
   const handleAddCustomer = async () => {
     try {
       const phoneCode = countryToPhoneCode[countryCode];
       const formattedNumber = `+${phoneCode} ${newCustomerPhone}`;
-  
-      const response = await axios.post(
-        "https://tyem.invenro.site/api/user/addCustomer",
-        {
-          name: newCustomerName,
-          number: formattedNumber,
-          place: newCustomerPlace,
-        }
-      );
-  
+
+      const response = await axios.post("https://tyem.invenro.site/api/user/addCustomer", {
+        name: newCustomerName,
+        number: formattedNumber,
+        place: newCustomerPlace,
+      });
+
       toast.success("Customer added successfully!", {
-        position: toast.POSITION?.TOP_RIGHT,
+        position: toast.POSITION.TOP_RIGHT,
         autoClose: 3000,
       });
-  
-      // Close the modal and reset form fields
+
       setModalIsOpen(false);
       setNewCustomerName("");
       setNewCustomerPhone("");
       setNewCustomerPlace("");
-      closeCustomerList(); // Close list after selecting a customer
-  
-      // Refresh customer list
-      const updatedResponse = await axios.get(
-        "https://tyem.invenro.site/api/user/getCustomer"
-      );
+      closeCustomerList();
+
+      const updatedResponse = await axios.get("https://tyem.invenro.site/api/user/getCustomer");
       setCustomers(updatedResponse.data.customers);
-  
+
     } catch (error) {
       if (error.response && error.response.status === 400 && error.response.data.message === "Customer already exists") {
-        toast.error("Customer already exists!", {
-          position: toast.POSITION?.TOP_RIGHT,
-          autoClose: 3000,
-        });
+        setWarningModalIsOpen(true);
       } else {
         toast.error("Failed to add customer!", {
-          position: toast.POSITION?.TOP_RIGHT,
+          position: toast.POSITION.TOP_RIGHT,
           autoClose: 3000,
         });
       }
-      console.log(error, "error");
     }
   };
-  
-  const closeModal = () => setModalIsOpen(false);
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    closeCustomerList();
+  }
+
+  const closeWarningModal = () => setWarningModalIsOpen(false);
 
   const openModal = () => {
-    setNewCustomerPhone(selectedPhone); // Set the phone number before opening the modal
+    setNewCustomerPhone(selectedPhone);
     setModalIsOpen(true);
   };
 
   return (
     <div className="p-4 bg-white rounded-md shadow-md">
-      <ToastContainer /> {/* Add this to render the toast notifications */}
+      <ToastContainer />
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Customer List</h2>
-        <button
-          className="flex items-center bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-          onClick={openModal}
-        >
+        <button className="flex items-center bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" onClick={openModal}>
           <FaPlusCircle className="mr-2" /> New Customer
         </button>
       </div>
@@ -169,34 +149,23 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
             <li
               key={customer._id}
               className={`flex items-center p-2 border-b border-gray-200 cursor-pointer ${
-                selectedCustomer?._id === customer._id
-                  ? "bg-blue-500 text-white"
-                  : "bg-white"
+                selectedCustomer?._id === customer._id ? "bg-blue-500 text-white" : "bg-white"
               }`}
               onClick={() => {
-                setSelectedCustomer(customer); // Set the selected customer
-                handleCustomerSelect(customer); // Call the function to pass the selected customer
+                setSelectedCustomer(customer);
+                handleCustomerSelect(customer);
               }}
             >
               <FaUserCircle className="w-8 h-8 text-gray-500 mr-3" />
-              <span className="text-gray-800">
-                {customer.name} {/* Always display the customer's name */}
-              </span>
+              <span className="text-gray-800">{customer.name}</span>
             </li>
           ))}
         </ul>
       </div>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="Add New Customer"
-      >
+      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customStyles} contentLabel="Add New Customer">
         <div className="flex items-center justify-center space-x-2">
           <FaUserPlus className="text-blue-500 text-2xl animate-pulse" />
-          <h2 className="text-xl font-semibold mb-4 text-center">
-            Add New Customer
-          </h2>
+          <h2 className="text-xl font-semibold mb-4 text-center">Add New Customer</h2>
         </div>
 
         <form
@@ -218,11 +187,10 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
           </div>
           <div className="mb-4 flex items-center border-b border-gray-300 pb-2">
             <FaPhone className="text-gray-500 mr-3" size={30} />
-
             <ReactFlagsSelect
               selected={countryCode}
               onSelect={(code) => setCountryCode(code)}
-              countries={["US", "GB", "AU", "DE", "FR", "IN"]} // Available countries
+              countries={["US", "GB", "AU", "DE", "FR", "IN"]}
               customLabels={{
                 US: "United States +1",
                 GB: "United Kingdom +44",
@@ -236,7 +204,6 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
               showOptionLabel={true}
               className="mr-2"
             />
-
             <input
               type="tel"
               placeholder="Phone Number"
@@ -246,7 +213,6 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
               required
             />
           </div>
-
           <div className="mb-4 flex items-center border-b border-gray-300 pb-2">
             <FaMapMarkerAlt className="text-gray-500 mr-3" />
             <input
@@ -259,21 +225,37 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone,closeCus
             />
           </div>
           <div className="flex justify-end">
-            <button
-              type="button"
-              className="bg-gray-500 text-white px-3 py-1 rounded mr-2 hover:bg-gray-600"
-              onClick={closeModal}
-            >
+            <button type="button" className="bg-gray-500 text-white px-3 py-1 rounded mr-2 hover:bg-gray-600" onClick={closeModal}>
               Cancel
             </button>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-            >
+            <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
               Add Customer
             </button>
           </div>
         </form>
+      </Modal>
+
+      <Modal isOpen={warningModalIsOpen} onRequestClose={closeWarningModal} style={customStyles} contentLabel="Warning">
+        <div className="text-center">
+          <svg className="w-20 h-20 text-red-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 className="text-xl font-normal text-gray-500 mt-5 mb-6">Customer already exists</h3>
+          <button
+            className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2"
+            onClick={closeWarningModal}
+          >
+            Yes, I'm sure
+          </button>
+          <button
+            className="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"
+            onClick={closeWarningModal}
+          >
+            No, cancel
+          </button>
+        </div>
       </Modal>
     </div>
   );
