@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { homeBodySection, homeTopBarTabs } from "../constants";
-import { selectBodySection, selectTab } from "../store/homeSlice";
+import { homeBodySection } from "../constants";
+import { selectBodySection } from "../store/homeSlice";
 import { Link } from "react-router-dom";
 import { clearEditOrder } from "../store/orderSlice";
 
 const HomeTopBar = ({ selectedTab }) => {
   const { ordersList } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
 
   const [allOrdersCount, setAllOrdersCount] = useState(10);
   const [onlineOrdersCount, setOnlineOrdersCount] = useState(0);
   const [scheduledOrdersCount, setScheduledOrdersCount] = useState(0);
-  const dispatch = useDispatch();
+  const [selectedButton, setSelectedButton] = useState("Tables"); // Default selected button
 
   useEffect(() => {
     getOrdersCount();
   }, [ordersList]);
 
   const getOrdersCount = () => {
-    // Count total orders
     const totalOrdersCount = ordersList.length;
-    // Filter and count online orders
     const onlineOrdersCount = ordersList.filter(
       (order) => order.selling_price_group.toLowerCase() === "online"
     ).length;
-    // Filter and count scheduled orders
     const scheduledOrdersCount = ordersList.filter(
       (order) => order.is_scheduled === 1
     ).length;
@@ -47,13 +45,16 @@ const HomeTopBar = ({ selectedTab }) => {
   const TextTab = ({ item, active }) => {
     return (
       <Link to={item.link}>
-        <div className={`
-          font-bold text-center text-base px-3 py-2 rounded-md cursor-pointer transition-all
-          ${active
-            // ? "bg-ch-headers-500 text-white"
-            // : "hover:bg-ch-headers-300 hover:scale-90 bg-ch-headers-100 hover:text-ch-headers-500 text-ch-headers-500"
+        <div
+          className={`
+          font-bold text-center text-base px-3 py-2 cursor-pointer transition-all
+          ${
+            active
+              ? "bg-blue-500 text-white" // Active tab style
+              : "text-blue-500 hover:bg-blue-100 hover:text-blue-500"
           }
-        `}>
+        `}
+        >
           <h3
             onClick={() => {
               dispatch(selectBodySection(item.slug));
@@ -66,21 +67,26 @@ const HomeTopBar = ({ selectedTab }) => {
       </Link>
     );
   };
+
   return (
-    <div className="w-full gap-3 flex m-3 ml-[-188px]">
-      {" "}
-      {/* Adjusted margin-left using Tailwind */}
+    <div className="w-full flex gap-6 px-4 py-2 bg-white shadow-md ml-[-195px]">
       {homeBodySection.map((item) => {
         let isActive = item.slug === selectedTab;
         return <TextTab key={item.slug} active={isActive} item={item} />;
       })}
-      {/* Add new buttons */}
       {buttonLabels.map((label, index) => (
         <button
           key={index}
-          className="font-bold text-base text-center px-4 py-3 rounded-md cursor-pointer transition-all
-  bg-blue-500 hover:bg-blue-500 hover:scale-105 text-white"
+          className={`
+            font-bold text-base text-center px-4 py-2 rounded-md cursor-pointer transition-all
+            ${
+              selectedButton === label
+                ? "bg-blue-500 text-white" // Highlight selected button
+                : "bg-white text-blue-500 hover:bg-blue-100 hover:text-blue-600"
+            }
+          `}
           onClick={() => {
+            setSelectedButton(label); // Set selected button
             console.log(`${label} button clicked`);
           }}
         >

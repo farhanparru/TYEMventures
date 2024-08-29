@@ -77,8 +77,8 @@ module.exports = {
 
       // Initialize the printer
       const printer = new ThermalPrinter({
-          type: PrinterTypes.EPSON, // Use 'PrinterTypes.STAR' if you have a Star printer
-          interface: "USB001", // 'usb' is the standard; it should work for most USB printers
+          type: PrinterTypes.CUSTOM, // Use 'PrinterTypes.STAR' if you have a Star printer
+          interface: 'USB001', // Adjust based on your setup
           characterSet: 'SLOVENIA',
           removeSpecialCharacters: false,
           lineCharacter: "=",

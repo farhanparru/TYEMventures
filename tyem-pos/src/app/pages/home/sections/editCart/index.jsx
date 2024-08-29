@@ -12,7 +12,9 @@ const EditCart = () => {
             {editOrder && editOrder.orderitems && editOrder.orderitems.length > 0 ? (
                 <>
                     <div className="home__cart-top flex gap-3   ml-3 mr-3 mt-2">
+                  
                         <div className="home__cart-items flex flex-col pb-60 flex-auto gap-2 p-3 overflow-y-scroll ">
+                        
                             {[...editOrder?.orderitems]?.reverse().map((item, index) => {
                                 return <CartItem key={item.id} index={index} item={item} />;
                             })}

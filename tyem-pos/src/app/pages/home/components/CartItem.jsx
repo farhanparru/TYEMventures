@@ -46,7 +46,7 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
       })
     );
   };
-
+  
   const onDecreaseQuantity = (e) => {
     e.stopPropagation();
     if (parseInt(quantity) > 1) {
@@ -92,6 +92,13 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
         note: itemNote,
       })
     );
+  };
+
+  const onRemoveItem = (e, confirm) => {
+    e.stopPropagation();
+    if (confirm) {
+      dispatch(removeFromCart({ id: item.id }));
+    }
   };
 
   const addAddon = (e, addon) => {
@@ -232,7 +239,7 @@ const CartItem = ({ item, index, initialQuantity = 1 }) => {
                text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
                 placeholder=""
                 type="text"
-                value={quantity}
+                value={item.quantity}
                 onChange={handleQuantityChange}
                 required
               />

@@ -23,34 +23,32 @@ export const cartSlice = createSlice({
 
   reducers: {
     addToCart: (state, action) => {
-      const { id, type, name, price } = action.payload; // Extracting data from action
+      const { id, type, name, price, quantity: newQuantity } = action.payload;
       let currentTotal = state.totalAmount;
-
+    
       // Find if the item already exists in the cart
       const existingItem = state.orderitems.find((item) => item.id === id);
-      console.log(existingItem,"existingItem");
-      
-
+    
       if (existingItem) {
         if (type === 'increase') {
-          // Increase quantity if the type is 'increase'
           existingItem.quantity += 1;
           existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
           currentTotal += parseFloat(existingItem.price);
         } else if (type === 'decrease') {
-          // Decrease quantity if the type is 'decrease'
           if (existingItem.quantity > 1) {
             existingItem.quantity -= 1;
             existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
             currentTotal -= parseFloat(existingItem.price);
           } else {
-            // Remove item if quantity is 1 and type is 'decrease'
             state.orderitems = state.orderitems.filter((item) => item.id !== id);
             currentTotal -= parseFloat(existingItem.price);
           }
+        } else if (type === 'set' && newQuantity > 0) {
+          existingItem.quantity = newQuantity;
+          existingItem.totalPrice = (existingItem.price * existingItem.quantity).toFixed(2);
+          currentTotal += parseFloat(existingItem.price) * (newQuantity - 1);
         }
       } else if (type === 'increase') {
-        // Add item if it doesn’t exist and type is 'increase'
         const newItem = {
           id,
           name,
@@ -58,21 +56,17 @@ export const cartSlice = createSlice({
           quantity: 1,
           totalPrice: parseFloat(price).toFixed(2),
         };
-        console.log(newItem,"newItem");
-        
         state.orderitems.push(newItem);
-        currentTotal += parseFloat(newItem.totalPrice);
+        currentTotal += parseFloat(newItem.price);
       }
-
+    
       // Update state values
       state.totalAmount = currentTotal;
       state.totalAmountWithoutDiscount = currentTotal;
       state.tax = parseFloat((currentTotal * 0.1).toFixed(2));
       state.totalPayableAmount = parseFloat((currentTotal + state.tax - state.discount).toFixed(2));
     },
-  
-
-
+    
     
     
     removeFromCart: (state, action) => {
