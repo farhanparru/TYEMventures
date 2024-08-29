@@ -81,21 +81,17 @@ const HomeItemsSection = (props) => {
 
         <AddItemModal isOpen={open} setOpen={setOpen} />
         <AddCategoryModal isOpen={openCat} setOpen={setOpenCat} />
-
         <div
-          className={`
-            w-full items__section overflow-y-scroll 
-            grid grid-cols-1 gap-5
-            p-3
-            md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5
-            sm:gap-4 lg:gap-6 xl:gap-4
-          `}
-          style={{ alignContent: "start" }}
-        >
-          {items.map((item, index) => (
-            <ItemCard key={index} selectedCategory={selectedCategory} />
-          ))}
-        </div>
+  className={`
+    w-full items__section overflow-y-scroll 
+    grid grid-cols-4 gap-5
+    p-3
+  `}
+  style={{ alignContent: "start" }}
+>
+  <ItemCard selectedCategory={selectedCategory} />
+</div>
+
       </div>
     </>
   );
