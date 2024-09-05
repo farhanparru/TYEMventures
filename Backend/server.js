@@ -9,7 +9,7 @@ const userRouter = require('./router/userRouter')
 const {Server} = require('ws');
 
 app.use(cors({
-    origin: " https://ventrues.invenro.site/", 
+    origin: " https://ventrues.invenro.site", 
     methods: "GET,POST,PUT,DELETE, PATCH",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
