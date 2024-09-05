@@ -1,22 +1,30 @@
 import React from 'react';
+import { FaSearch } from 'react-icons/fa';
 
-const SearchBar = () => {
+const SearchBar = ({ setSearchQuery }) => {
   return (
-    <div>
-      <label
-        className="relative bg-white flex items-center border py-2 px-2 rounded-2xl shadow-md focus-within:border-gray-300"
-        htmlFor="search-bar"
-      >
+    <div className="flex justify-center mt-4">
+      <label className="flex border-2 border-orange-500 rounded-md items-center">
+        <span className="pl-2 pr-2 text-gray-500">
+          <FaSearch />
+        </span>
+
+        
         <input
-          id="search-bar"
+          type="text"
           placeholder="Search customer by name / phone / code"
-          className="px-4 py-2 w-full rounded-md flex-1 outline-none bg-white h-10" // Consistent height
+         className="outline-none border-none py-2 px-3 w-80 text-gray-700 rounded-md focus:ring-0 h-10"
+          onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
         />
-        <button
-          className="px-4 py-2 bg-black border-black text-white rounded-md"
+
+         {/* Alt + S Button */}
+         <button
+          className="bg-gray-200 text-gray-600 px-4 py-2 border-l border-gray-300 text-sm rounded-md flex items-center justify-center h-full"
+          title="Alt + S"
         >
-          Search
+          Alt + S
         </button>
+        
       </label>
     </div>
   );

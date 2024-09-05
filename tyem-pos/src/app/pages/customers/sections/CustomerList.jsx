@@ -11,6 +11,7 @@ const CustomerList = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(''); // New state to track the search query
 
   useEffect(() => {
     // Fetch customers from the API
@@ -38,14 +39,18 @@ const CustomerList = () => {
     };
   };
 
+  // Filter customers based on the search query
+  const filteredCustomers = customers.filter(customer => 
+    customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    customer.number.includes(searchQuery)
+  );
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
-          <SearchBar />
-          <button className="ml-2 bg-gray-200 p-2 rounded flex items-center justify-center h-full">
-            Alt + S
-          </button>
+          {/* Pass setSearchQuery to SearchBar to handle input changes */}
+          <SearchBar setSearchQuery={setSearchQuery} /> 
         </div>
         <div className="flex items-center space-x-2">
           <button
@@ -70,10 +75,10 @@ const CustomerList = () => {
           </button>
         </div>
       </div>
-  
+
       <div className="flex justify-between mb-2">
         <span>
-          Showing {customers.length} / {customers.length} customers
+          Showing {filteredCustomers.length} / {customers.length} customers
         </span>
         <a href="#" className="flex items-center text-blue-500 space-x-2 group">
           <FaFileExport className="text-xl transition-transform duration-300 transform group-hover:rotate-45 group-hover:scale-110" />
@@ -82,11 +87,11 @@ const CustomerList = () => {
           </span>
         </a>
       </div>
-  
+
       <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100 h-96"> {/* Added height class */}
-        {customers.map((customer, index) => {
+        {filteredCustomers.map((customer, index) => {
           const { date, time } = formatDateTime(customer.customeraddDate);
-  
+
           return (
             <div
               key={index}
@@ -117,9 +122,9 @@ const CustomerList = () => {
           );
         })}
       </div>
-  
+
       <AddCustomerModal isOpen={open} setOpen={setOpen} />
-  
+
       {selectedCustomer && (
         <Drawer
           width="30%"
@@ -133,7 +138,6 @@ const CustomerList = () => {
       )}
     </div>
   );
-  
 };
 
 export default CustomerList;
