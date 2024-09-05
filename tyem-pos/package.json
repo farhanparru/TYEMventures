@@ -101,7 +101,7 @@
       "target": [
         "nsis"
       ],
-      "icon": "build/icon.ico",
+      "icon": "build/Logo-3dd3c3d0.png",
       "artifactName": "${productName}-windows-${version}-Setup.${ext}"
     },
     "linux": {
