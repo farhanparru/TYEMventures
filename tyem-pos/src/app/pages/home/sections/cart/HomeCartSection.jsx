@@ -41,6 +41,10 @@ const HomeCartSection = () => {
 
   // const selectedCustomer = useSelector(getSelectedCustomer);
 
+
+  const cartCustomerListRef = useRef(null);
+  const modalRef = useRef(null);
+
   const [showModal, setShowModal] = useState(false);
   const [discountType, setDiscountType] = useState("fixed");
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -67,31 +71,25 @@ const HomeCartSection = () => {
   };
 
 
-  // const customerListRef = useRef(null); // Create a ref for the CartCustomerList component
-
-  // // Function to handle clicks outside the CartCustomerList component
-  // const handleClickOutside = (event) => {
-  //   if (customerListRef.current && !customerListRef.current.contains(event.target)) {
+   // Function to close the CartCustomerList component
+  //  const handleClickOutside = (event) => {
+  //   if (
+  //     cartCustomerListRef.current &&
+  //     !cartCustomerListRef.current.contains(event.target) 
+  //   ) {
   //     setCustomerFocused(false);
   //   }
   // };
 
   // useEffect(() => {
-  //   if (customerFocused) {
-  //     // Add event listener when customer list is focused
-  //     document.addEventListener('mousedown', handleClickOutside);
-  //   } else {
-  //     // Remove event listener when customer list is not focused
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   }
+  //   // Add the event listener to detect clicks outside the component
+  //   document.addEventListener("mousedown", handleClickOutside);
 
-  //   // Cleanup on component unmount
+  //   // Clean up the event listener when the component unmounts
   //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
+  //     document.removeEventListener("mousedown", handleClickOutside);
   //   };
-  // }, [customerFocused]);
-
-
+  // }, []);
 
 
 
@@ -182,13 +180,15 @@ const HomeCartSection = () => {
         />
           {customerFocused && (
             <div className="absolute right-1/2 w-[100%] translate-x-1/2 top-[100%] border-2 border-solid border-slate-200 bg-white px-2 pb-2 z-50"
-              // ref={customerListRef} // Attach ref to the CartCustomerList container
+            // ref={cartCustomerListRef}
             >
             <CartCustomerList
                 onSelectCustomer={handleSelectCustomer}
                 searchTerm={searchTerm}
+                modalRef={modalRef}
                 selectedPhone={selectedPhone}
                 closeCustomerList={() => setCustomerFocused(false)} // Close the list when modal is opened
+                
                
               />
             </div>

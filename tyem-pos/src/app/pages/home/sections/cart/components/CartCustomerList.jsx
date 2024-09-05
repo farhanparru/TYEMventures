@@ -34,7 +34,7 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone, closeCustomerList }) => {
+const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone, closeCustomerList,modalRef }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [warningModalIsOpen, setWarningModalIsOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
@@ -52,7 +52,7 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone, closeCu
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get("https://tyem.invenro.site/api/user/getCustomer");
+        const response = await axios.get("http://localhost:8000/api/user/getCustomer");
         setCustomers(response.data.customers);
         setFilteredCustomers(response.data.customers);
       } catch (error) {
@@ -162,7 +162,7 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone, closeCu
           ))}
         </ul>
       </div>
-      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customStyles} contentLabel="Add New Customer">
+      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customStyles}   contentLabel="Add New Customer">
         <div className="flex items-center justify-center space-x-2">
           <FaUserPlus className="text-blue-500 text-2xl animate-pulse" />
           <h2 className="text-xl font-semibold mb-4 text-center">Add New Customer</h2>
@@ -235,7 +235,7 @@ const CartCustomerList = ({ searchTerm, onSelectCustomer, selectedPhone, closeCu
         </form>
       </Modal>
 
-      <Modal isOpen={warningModalIsOpen} onRequestClose={closeWarningModal} style={customStyles} contentLabel="Warning">
+      <Modal isOpen={warningModalIsOpen} onRequestClose={closeWarningModal} style={customStyles}    ref={modalRef} contentLabel="Warning">
         <div className="text-center">
           <svg className="w-20 h-20 text-red-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">

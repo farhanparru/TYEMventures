@@ -512,13 +512,13 @@ const SalesSection = () => {
       try {
         // Fetch WhatsApp Orders
         const responseWhatsApp = await axios.get(
-          "https://tyem.invenro.site/api/tyem/Whatsappget"
+          "http://localhost:8000/api/tyem/Whatsappget"
         );
         console.log("WhatsApp API Response:", responseWhatsApp.data);
 
         // Fetch POS Orders
         const responsePosOrder = await axios.get(
-          "https://tyem.invenro.site/api/user/PosOrder"
+          "http://localhost:8000/api/user/PosOrder"
         );
         console.log("POS API Response:", responsePosOrder.data);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { AiOutlineShoppingCart } from 'react-icons/ai';
+import { AiOutlineShoppingCart } from "react-icons/ai";
 import { Layout } from "antd";
 import styled, { keyframes } from "styled-components";
 import {
@@ -9,15 +9,22 @@ import {
   UilFileGraph,
   UilSetting,
   UilTag, // Sales icon
- 
 } from "@iconscout/react-unicons";
-import { FaUtensils, FaShoppingCart, FaChartLine, FaClipboardList, FaCashRegister, FaUsers, FaCog, FaGlobe } from 'react-icons/fa';
+import {
+  FaUtensils,
+  FaShoppingCart,
+  FaChartLine,
+  FaClipboardList,
+  FaCashRegister,
+  FaUsers,
+  FaCog,
+  FaGlobe,
+} from "react-icons/fa";
 
 import { drawerMenuLabels } from "./constants/drawerMenu";
 import { Link } from "react-router-dom";
-import logo from '../../../assets/Logo.png';
+import logo from "../../../assets/Logo.png";
 import { useOrderContext } from "../../pages/home/sections/body/components/OrderContext";
-
 
 const { Sider } = Layout;
 
@@ -90,7 +97,7 @@ const DrawerMenuItemContainer = styled.div`
   }
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     height: 100%;
@@ -103,7 +110,6 @@ const DrawerMenuItemContainer = styled.div`
 const IconContainer = styled.div`
   position: relative;
 `;
-
 
 const LabelContainer = styled.div`
   display: flex;
@@ -120,7 +126,15 @@ const ShortcutText = styled.span`
   margin-top: 0.5rem; /* Increased space between label and shortcut */
 `;
 
-const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, shortcut }) => {
+const DrawerMenuItem = ({
+  Icon,
+  label,
+  active,
+  onClick,
+  path,
+  badge,
+  shortcut,
+}) => {
   return (
     <Link to={path}>
       <DrawerMenuItemContainer onClick={onClick} active={active}>
@@ -135,13 +149,8 @@ const DrawerMenuItem = ({ Icon, label, active, onClick, path, badge, shortcut })
   );
 };
 
-
-
 const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
-
   const { totalOrders } = useOrderContext(); // Access totalOrders from context
-   
-
 
   const menuItems = [
     {
@@ -160,7 +169,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
     },
     {
       label: drawerMenuLabels.online.label,
-      icon:FaGlobe,
+      icon: FaGlobe,
       onClick: () => setActiveMenu(drawerMenuLabels.online.label),
       path: drawerMenuLabels.online.path,
       badge: totalOrders, // Use totalOrders from context
@@ -178,7 +187,7 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       icon: FaClipboardList,
       onClick: () => setActiveMenu(drawerMenuLabels.reports.label),
       path: drawerMenuLabels.reports.path,
-       shortcut: "Alt+5"
+      shortcut: "Alt+5",
     },
     {
       label: drawerMenuLabels.settings.label,
@@ -210,13 +219,16 @@ const Drawer = ({ activeMenu, setActiveMenu, collapsed }) => {
       collapsible
       width={120}
       collapsed={!collapsed}
-      className="bg-gray-900"
+      className="bg-gray-900 h-[116%] fixed top-0 left-0" // Fixed position with full height
     >
       <div className="flex flex-col items-center py-4">
-      <div className="flex items-center justify-center">
-  <img src={logo} alt="logo" className="w-15 h-15 mb-2 max-w-[70%] animate-zoom" />
-</div>
-
+        <div className="flex items-center justify-center">
+          <img
+            src={logo}
+            alt="logo"
+            className="w-15 h-15 mb-2 max-w-[70%] animate-zoom"
+          />
+        </div>
 
         {menuItems.map((item) => (
           <DrawerMenuItem
